@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Shark's Sixth Sense — a cabinet drawer</title>
+<meta name="description" content="An interactive page on electroreception: the shark's ampullae of Lorenzini, the hidden flounder, and the debated electromagnetic-induction compass.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:86vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--teal)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(44px,7vw,88px); line-height:1.04; margin:18px 0 10px;
+}
+header.hero h1 em{color:var(--amber); font-style:normal}
+header.hero .stand{color:var(--ink-dim); font-size:19px; max-width:640px; margin:18px auto 0}
+header.hero .scroll{margin-top:44px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:88px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(30px,4.4vw,50px); line-height:1.12; margin:14px 0 6px}
+.chapter h2 .latin{font-style:italic; color:var(--ink-dim); font-size:.6em}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 30px}
+.chapter p{max-width:700px}
+.chapter p .k{color:var(--amber)}
+a{color:var(--teal)}
+.demo{
+  margin:30px 0; border:1px solid var(--line); border-radius:16px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(18,26,64,.6), rgba(10,15,40,.6));
+}
+.demo .bar{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap;
+}
+.demo .bar .t{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-dim)}
+.demo canvas{display:block; width:100%; height:auto; cursor:crosshair; touch-action:none}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; padding:14px 18px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:10px}
+.controls input[type=range]{accent-color:var(--amber); width:220px}
+.readout{font-size:13.5px; color:var(--ink-dim)}
+.readout b{color:var(--ink)}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px; padding:0 18px 16px}
+button.chip{
+  background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+  border-radius:999px; padding:.45em 1.1em; font-size:13.5px; cursor:pointer;
+  transition:border-color .2s, color .2s;
+}
+button.chip:hover{border-color:var(--amber); color:var(--ink)}
+button.chip.on{border-color:var(--amber); color:var(--amber)}
+.note{font-size:13.5px; color:var(--ink-faint); max-width:700px; padding:0 18px 18px; margin:0}
+.kills{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin:26px 0}
+.kill{border:1px solid var(--line); border-radius:12px; padding:18px; background:rgba(224,101,138,.05)}
+.kill h3{margin:0 0 8px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:19px; color:var(--rose)}
+.kill p{margin:0; font-size:14.5px; color:var(--ink-dim)}
+.coda{background:linear-gradient(180deg, rgba(79,209,197,.06), transparent); border-top:1px solid var(--line)}
+.sources{font-size:14px; color:var(--ink-dim)}
+.sources li{margin-bottom:8px; max-width:760px}
+footer.site{padding:56px 0 80px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:13.5px}
+footer.site a{color:var(--violet)}
+.meter{height:8px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; min-width:160px; flex:1}
+.meter i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--amber)); border-radius:99px; transition:width .12s}
+.badge{display:inline-block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; border:1px solid var(--line); border-radius:999px; padding:.3em 1em; color:var(--ink-dim); margin-right:8px}
+.badge.hot{color:var(--amber); border-color:rgba(240,168,64,.5)}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">The Cabinet</span>
+  <a href="../">All drawers</a>
+  <a href="#pores">The pores</a>
+  <a href="#flounder">The hidden flounder</a>
+  <a href="#battery">The ocean as a battery</a>
+  <a href="#swim">Swim the field</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#sources">Sources</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">A cabinet drawer · № 2</div>
+  <h1>The Shark's <em>Sixth Sense</em></h1>
+  <p class="stand">A shark reads voltages weaker than a thought. The pores are real, the jelly is real, the sensitivity is measured — and the compass they might add up to is still, forty years on, a beautiful maybe.</p>
+  <div class="scroll">↓ swim down</div>
+</div></header>
+
+<section class="chapter" id="pores"><div class="wrap">
+  <div class="num">Chapter I</div>
+  <h2>The pores <span class="latin">— ampullae of Lorenzini</span></h2>
+  <p class="standfirst">In 1678, Stefano Lorenzini described the small jelly-filled pores dotting a shark's snout. He had no idea what they were for. Nobody did, for three hundred years.</p>
+  <p>Each pore opens to the sea and runs down a long canal — in a big skate, up to <span class="k">25 centimeters</span> of canal — to a bulb of electrosensory cells. The canal is filled with a clear jelly that turned out, in 2016, to be the <span class="k">most proton-conducting biological material ever measured</span>, a keratan-sulfate gel that shuttles charge the way a fuel-cell membrane does. Three centuries of "what is this for" ended in materials science.</p>
+  <p>What it is for: the ampullae are a voltmeter of almost absurd delicacy. Behavioral thresholds sit near <span class="k">5 nanovolts per centimeter</span> — the weakest electric sense measured in any animal. A shark can feel the heartbeat of a flounder buried under sand. The prey experiment that proved it is the one you can run below.</p>
+</div></section>
+
+<section class="chapter" id="flounder"><div class="wrap">
+  <div class="num">Interactive · Kalmijn 1971</div>
+  <h2>The hidden flounder</h2>
+  <p class="standfirst">Move the shark over the sand. A flounder is buried somewhere, leaking its muscle electricity into the water. Get close enough and strike — then try it with the plastic sheet on.</p>
+  <div class="demo">
+    <div class="bar"><span class="t">Agar chamber · buried flounder</span><span class="readout" id="flounderStatus">move the shark…</span></div>
+    <canvas id="flounderCanvas" width="900" height="460"></canvas>
+    <div class="btnrow">
+      <button class="chip" id="flounderReset">new hiding spot</button>
+      <button class="chip" id="flounderSheet">plastic sheet: off</button>
+    </div>
+    <p class="note">Kalmijn's control: cover the chamber with a thin plastic film and the feeding responses stop entirely — though the film's mechanical damping was far too weak to explain it. Not sight, not smell, not touch: <em>voltage</em>. Strikes: <b id="flounderScore" style="color:var(--amber)">0</b> · whiffs under plastic: <b id="flounderWhiff" style="color:var(--rose)">0</b></p>
+  </div>
+  <p>The flounder's field falls off with distance — that's why the strike zone is small, and why the shark spirals in, following voltage equipotentials the way you might follow contour lines on a map. Prey detection is the settled half of the story. The compass is the unsettled half.</p>
+</div></section>
+
+<section class="chapter" id="battery"><div class="wrap">
+  <div class="num">Chapter II</div>
+  <h2>The ocean as a battery</h2>
+  <p class="standfirst">Seawater is a conductor. Move a conductor through a magnetic field and physics writes a voltage across it. The ocean has been running this experiment, unattended, for four billion years.</p>
+  <p>The Earth's field is weak — about <span class="k">50 microtesla</span> — but the ocean is enormous and always moving. A current of 10 cm/s sweeping through the vertical part of the field generates a few <span class="k">nanovolts per centimeter</span>: right at the edge of what the ampullae can read. Kalmijn's proposal came in two modes:</p>
+  <p><b style="color:var(--teal)">Passive.</b> The shark holds still (relatively) and reads the voltages that <em>ocean currents</em> induce — a way to feel its own drift, the way a balloonist reads the wind by watching the ground.<br>
+  <b style="color:var(--teal)">Active.</b> The shark swims and reads the voltage induced by <em>its own motion</em> through the horizontal part of the field — <span class="k">v × B</span> across its own body. Swim east and the top of the snout goes one way; swim west and it flips. A compass made of your own movement.</p>
+  <p>The active mode has a signature shape: swim along the field (north or south) and the induced voltage vanishes; swim across it (east or west) and it peaks. And the <em>sign</em> tells east from west — which matters, because yellow stingrays can in fact discriminate the polarity of an electric field. Try it below. The scale is illustrative; the shape is the physics.</p>
+</div></section>
+
+<section class="chapter" id="swim"><div class="wrap">
+  <div class="num">Interactive · the induction compass</div>
+  <h2>Swim the field</h2>
+  <p class="standfirst">Drag the heading dial — or the shark itself. The rosette shows the induced voltage across the snout at every heading; the arrows show which way the top of the snout is being pushed, electrically.</p>
+  <div class="demo">
+    <div class="bar"><span class="t">uniform field · B points north (up)</span><span class="readout" id="swimStatus">heading 000°</span></div>
+    <canvas id="swimCanvas" width="900" height="480"></canvas>
+    <div class="controls">
+      <label>heading <input type="range" id="heading" min="0" max="359" value="90"> <b id="headingVal" style="color:var(--ink)">090°</b></label>
+      <label>swim speed <input type="range" id="speed" min="0" max="300" value="120"> <b id="speedVal" style="color:var(--ink)">1.2 m/s</b></label>
+      <div class="meter"><i id="emeter"></i></div>
+      <span class="readout">induced: <b id="eVal">0.0</b> nV/cm <span style="color:var(--ink-faint)">(threshold ≈ 5)</span></span>
+    </div>
+    <p class="note">Schematic, honestly labeled: constant speed is assumed, and a real shark would need an independent speed sense (vestibular, visual) to calibrate the reading — the compass cannot grade its own homework. At cruising speeds the naive v×B number lands <em>near</em> the lab threshold, which is exactly why this mechanism is still argued about rather than settled. Speeds: dogfish cruise ≈ 0.5–1 m/s; blue sharks faster.</p>
+  </div>
+  <p>Notice the ambiguity the animal has to live with: north and south give the same silence; east and west give the same loudness, opposite sign. A compass with two holes in it — unless polarity discrimination patches one hole, and the map sense (turtles and lobsters turn two field numbers into position; the menagerie's Exhibit III) patches the other. The senses are a committee, not a soloist.</p>
+</div></section>
+
+<section class="chapter" id="kills"><div class="wrap">
+  <div class="num">Chapter III</div>
+  <h2>Kill conditions</h2>
+  <p class="standfirst">Every exhibit in this cabinet is tethered to the conditions that would retire it. Here are this one's.</p>
+  <div class="kills">
+    <div class="kill">
+      <h3>1 · No direct evidence</h3>
+      <p>Johnsen &amp; Lohmann (2005, 2008): no study has shown direct evidence that any shark, ray, or skate actually <em>uses</em> electromagnetic induction. The mechanism remains supposition — the most elegant supposition in the field, but supposition.</p>
+    </div>
+    <div class="kill">
+      <h3>2 · The rival mechanism</h3>
+      <p>Anderson et al. (2017): sandbar sharks may detect magnetic fields <em>directly</em> via magnetite as well as indirectly via electroreception. The compass might not need the ocean-battery at all.</p>
+    </div>
+    <div class="kill">
+      <h3>3 · The numbers are close</h3>
+      <p>A cruising shark's own v×B lands near — not safely above — the 5 nV/cm lab threshold. If the canals, the speed, or the field geometry don't cooperate, the signal drowns. The threshold sitting exactly at the environmental signal level is either a beautiful tuning or a warning.</p>
+    </div>
+  </div>
+  <p>And the honest counterweight: Kalmijn (1982) did condition stingrays to magnetic east versus magnetic west in fields matched to their habitat — the behavior is real even where the mechanism is not. Something is being read. The argument is only about <em>which page</em>.</p>
+</div></section>
+
+<section class="chapter coda" id="coda"><div class="wrap">
+  <div class="num">Coda</div>
+  <h2>Get the frame right</h2>
+  <p class="standfirst">Kalmijn's late treatise on all of this is, at bottom, a book about reference frames.</p>
+  <p>The voltage across the snout depends on who is moving relative to whom — the shark through the water, the water through the field, the field through space. There is no fact of the matter about "the" electric field until you say whose frame you're standing in. The animal's problem is the physicist's problem: pick the frame, or misread the instrument.</p>
+  <p>Maybe that's what the sixth sense is: not an organ but a relationship — between a body, a medium, and a field — that only becomes a sense when the animal learns which frame it lives in. The pores are 350 million years old. The reader is still catching up.</p>
+</div></section>
+
+<section class="chapter" id="sources"><div class="wrap">
+  <div class="num">Sources</div>
+  <h2>Follow the voltage</h2>
+  <ul class="sources">
+    <li>Kalmijn, A. J. (1971). The electric sense of sharks and rays. <i>J. Exp. Biol.</i> 55, 371–383 — the hidden-flounder experiments; agar chamber and plastic-film controls.</li>
+    <li>Kalmijn, A. J. (1982). Electric and magnetic field detection in elasmobranch fishes. <i>Science</i> 218, 916–918 — stingray conditioning to magnetic east/west; 5 nV/cm thresholds at sea.</li>
+    <li>Camperi, Tricas &amp; Brown (2007) — ampullary sensitivity thresholds near 5 nV/cm.</li>
+    <li>Josberger et al. (2016). Proton conductivity in ampullae of Lorenzini jelly. <i>Science Advances</i> 2, e1600112 — the jelly as a proton conductor.</li>
+    <li>Johnsen &amp; Lohmann (2005, 2008) — reviews: no direct evidence for the induction mechanism; it remains supposition.</li>
+    <li>Anderson et al. (2017) — sandbar shark: possible direct (magnetite) and indirect (electroreceptor) magnetoreception.</li>
+    <li>Klimley (1993) — scalloped hammerheads following seafloor magnetic anomalies; long straight-line shark migrations.</li>
+    <li>Morin — <i>Electricity and Magnetism</i>: Kalmijn's lifetime treatise on the physics of electromagnetic orientation, frames included.</li>
+  </ul>
+  <p style="margin-top:26px"><a href="../">← back to the cabinet</a></p>
+</div></section>
+</main>
+<footer class="site"><div class="wrap">
+  The Shark's Sixth Sense · a cabinet drawer · October 2026<br>
+  Built by Ziggy in the studio. Single file, no build step, no trackers. The demos simplify real experiments — follow the sources for the full story. "Maybe" belongs in every sentence here too.
+</div></footer>
+<script>
+"use strict";
+function $(id){return document.getElementById(id);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function pad3(n){n=((Math.round(n)%360)+360)%360; return String(n).padStart(3,"0");}
+// ============ Interactive 1: the hidden flounder (Kalmijn 1971) ============
+(function(){
+  var cv=$("flounderCanvas"), ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height;
+  var SAND_TOP=150;
+  var prey={x:0,y:0}, shark={x:W/2,y:70}, plastic=false, score=0, whiffs=0, strikeT=0;
+  function hide(){ prey.x=80+Math.random()*(W-160); prey.y=SAND_TOP+40+Math.random()*(H-SAND_TOP-80); }
+  hide();
+  function pos(e){
+    var r=cv.getBoundingClientRect();
+    var sx=cv.width/r.width, sy=cv.height/r.height;
+    return {x:(e.clientX-r.left)*sx, y:(e.clientY-r.top)*sy};
+  }
+  cv.addEventListener("mousemove",function(e){ var p=pos(e); shark.x=p.x; shark.y=Math.min(p.y, SAND_TOP-24); });
+  cv.addEventListener("touchmove",function(e){ e.preventDefault(); var t=e.touches[0]; var p=pos(t); shark.x=p.x; shark.y=Math.min(p.y, SAND_TOP-24); },{passive:false});
+  $("flounderReset").addEventListener("click",function(){ hide(); plastic=false; $("flounderSheet").textContent="plastic sheet: off"; $("flounderSheet").classList.remove("on"); });
+  $("flounderSheet").addEventListener("click",function(){
+    plastic=!plastic;
+    $("flounderSheet").textContent="plastic sheet: "+(plastic?"on":"off");
+    $("flounderSheet").classList.toggle("on",plastic);
+  });
+  function fieldAt(x,y){
+    var dx=x-prey.x, dy=y-prey.y, d=Math.sqrt(dx*dx+dy*dy);
+    return {d:d, v: 9000/(d*d+400)}; // dipole-ish falloff, arbitrary units
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // water
+    var wg=ctx.createLinearGradient(0,0,0,SAND_TOP);
+    wg.addColorStop(0,"#0b1030"); wg.addColorStop(1,"#101a4a");
+    ctx.fillStyle=wg; ctx.fillRect(0,0,W,SAND_TOP);
+    // sand
+    var sg=ctx.createLinearGradient(0,SAND_TOP,0,H);
+    sg.addColorStop(0,"#2a2418"); sg.addColorStop(1,"#171307");
+    ctx.fillStyle=sg; ctx.fillRect(0,SAND_TOP,W,H-SAND_TOP);
+    ctx.fillStyle="rgba(233,228,214,.5)"; ctx.fillRect(0,SAND_TOP,W,2);
+    if(!plastic){
+      // field rings around the buried prey
+      for(var r=28;r<=220;r+=32){
+        var a=Math.max(0, .34 - r/700);
+        ctx.strokeStyle="rgba(79,209,197,"+a.toFixed(3)+")";
+        ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.arc(prey.x,prey.y,r,0,Math.PI*2); ctx.stroke();
+      }
+      // flounder hint: a faint disturbance
+      ctx.fillStyle="rgba(233,228,214,.10)";
+      ctx.beginPath(); ctx.ellipse(prey.x,prey.y,26,10,0,0,Math.PI*2); ctx.fill();
+    } else {
+      // plastic sheet: nothing leaks
+      ctx.strokeStyle="rgba(224,101,138,.55)"; ctx.lineWidth=2; ctx.setLineDash([10,8]);
+      ctx.beginPath(); ctx.moveTo(0,SAND_TOP+6); ctx.lineTo(W,SAND_TOP+6); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle="rgba(224,101,138,.8)"; ctx.font="12px sans-serif";
+      ctx.fillText("plastic film — the field cannot reach the shark", 18, SAND_TOP+30);
+    }
+    // shark (top-down glyph following the mouse)
+    var f=plastic?{d:1e9,v:0}:fieldAt(shark.x,shark.y);
+    var near = f.v>1.15;
+    ctx.save(); ctx.translate(shark.x,shark.y);
+    ctx.fillStyle= near ? "#f0a840" : "#8b7ff0";
+    ctx.beginPath();
+    ctx.moveTo(26,0); ctx.lineTo(-14,-11); ctx.lineTo(-7,0); ctx.lineTo(-14,11); ctx.closePath(); ctx.fill();
+    // snout pores: dots that brighten with the field
+    var glow=Math.min(1,f.v/3);
+    ctx.fillStyle="rgba(79,209,197,"+(0.25+0.75*glow).toFixed(2)+")";
+    for(var i=0;i<7;i++){ ctx.beginPath(); ctx.arc(14-i*3.4,-6+i*2,1.8,0,Math.PI*2); ctx.fill(); }
+    ctx.restore();
+    // strike logic
+    if(near && !plastic){
+      strikeT++;
+      if(strikeT>14){ score++; $("flounderScore").textContent=score; hide(); strikeT=0;
+        $("flounderStatus").textContent="STRIKE — flounder taken. New one buried."; }
+      else $("flounderStatus").textContent="field strong — hold steady…";
+    } else {
+      if(strikeT>0){ strikeT=0; }
+      if(plastic){
+        var ddx=shark.x-prey.x, ddy=shark.y-prey.y;
+        if(Math.sqrt(ddx*ddx+ddy*ddy)<70){ whiffs++; $("flounderWhiff").textContent=whiffs;
+          $("flounderStatus").textContent="right over it — and nothing. The sheet ate the field."; }
+        else $("flounderStatus").textContent="plastic on: no voltage reaches you.";
+      } else $("flounderStatus").textContent="move the shark…";
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+// ============ Interactive 2: swim the field (induction compass) ============
+(function(){
+  var cv=$("swimCanvas"), ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height;
+  var heading=90, speed=1.2; // degrees, 0=N; m/s
+  var TH=5; // nV/cm behavioral threshold, illustrative scale
+  var headEl=$("heading"), speedEl=$("speed");
+  headEl.addEventListener("input",function(){ heading=+headEl.value; });
+  speedEl.addEventListener("input",function(){ speed=+speedEl.value/100; });
+  // drag the shark to set heading too
+  var dragging=false;
+  function setFromEvent(e){
+    var r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
+    var x=((e.clientX-r.left)*sx)-170, y=((e.clientY-r.top)*sy)-H/2;
+    var a=Math.atan2(x,-y)*180/Math.PI; // 0 = up(north), clockwise
+    heading=((a%360)+360)%360; headEl.value=Math.round(heading);
+  }
+  cv.addEventListener("pointerdown",function(e){dragging=true; setFromEvent(e); cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener("pointermove",function(e){ if(dragging) setFromEvent(e); });
+  cv.addEventListener("pointerup",function(){dragging=false;});
+  function induced(){ // |E| ~ v * B_h * |sin(heading)|, scaled illustratively
+    var rad=heading*Math.PI/180;
+    var mag=8.4*speed*Math.abs(Math.sin(rad)); // peaks ~10 nV/cm at 1.2 m/s
+    var sign=Math.sin(rad)>=0?1:-1;
+    return {mag:mag, sign:sign};
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var e=induced(), rad=heading*Math.PI/180;
+    // --- left panel: ocean top-down ---
+    var cx=170, cy=H/2, R=150;
+    ctx.fillStyle="rgba(16,26,74,.55)";
+    ctx.beginPath(); ctx.arc(cx,cy,R+24,0,Math.PI*2); ctx.fill();
+    // B field arrows pointing north
+    ctx.strokeStyle="rgba(139,127,240,.30)"; ctx.lineWidth=1;
+    for(var gx=cx-R-10; gx<=cx+R+10; gx+=34){
+      for(var gy=cy-R-10; gy<=cy+R+10; gy+=34){
+        var dx=gx-cx, dy=gy-cy; if(dx*dx+dy*dy>R*R) continue;
+        ctx.beginPath(); ctx.moveTo(gx,gy+9); ctx.lineTo(gx,gy-9); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(gx-4,gy-4); ctx.lineTo(gx,gy-10); ctx.lineTo(gx+4,gy-4); ctx.stroke();
+      }
+    }
+    ctx.fillStyle="rgba(169,164,154,.8)"; ctx.font="12px sans-serif";
+    ctx.fillText("B → magnetic north", cx-58, cy-R-34);
+    // shark glyph rotated to heading
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(rad);
+    var hot=e.mag>=TH;
+    ctx.fillStyle= hot ? "#f0a840" : "#8b7ff0";
+    ctx.beginPath();
+    ctx.moveTo(44,0); ctx.lineTo(-26,-18); ctx.lineTo(-14,0); ctx.lineTo(-26,18); ctx.closePath(); ctx.fill();
+    // induced E across the snout: arrows showing push direction (sign)
+    ctx.strokeStyle= hot ? "#f0a840" : "rgba(79,209,197,.85)"; ctx.lineWidth=2;
+    var dir=e.sign; // +1: pushed to shark's left; -1: to shark's right (schematic)
+    for(var i=-1;i<=1;i++){
+      var bx=18, by=i*10;
+      ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(bx,by+dir*22); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx-4,by+dir*16); ctx.lineTo(bx,by+dir*23); ctx.lineTo(bx+4,by+dir*16); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.fillStyle="rgba(169,164,154,.75)"; ctx.font="13px sans-serif";
+    ctx.fillText("drag the shark or the dial", cx-72, cy+R+44);
+    // --- right panel: response rosette ---
+    var rx=600, ry=H/2, RR=140;
+    ctx.strokeStyle="rgba(139,127,240,.25)";
+    ctx.beginPath(); ctx.arc(rx,ry,RR,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle="rgba(169,164,154,.7)"; ctx.font="12px sans-serif";
+    ctx.fillText("N",rx-4,ry-RR-10); ctx.fillText("S",rx-4,ry+RR+22);
+    ctx.fillText("E",rx+RR+10,ry+4); ctx.fillText("W",rx-RR-18,ry+4);
+    // rosette: |sin| lobes (east-west)
+    ctx.strokeStyle="rgba(79,209,197,.9)"; ctx.lineWidth=2.5; ctx.beginPath();
+    for(var a=0;a<=360;a+=2){
+      var rr=RR*Math.abs(Math.sin(a*Math.PI/180));
+      var px=rx+rr*Math.sin(a*Math.PI/180), py=ry-rr*Math.cos(a*Math.PI/180);
+      if(a===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // threshold circle (scaled)
+    ctx.strokeStyle="rgba(224,101,138,.6)"; ctx.setLineDash([6,6]); ctx.lineWidth=1.5;
+    var tr=RR*(TH/(8.4*1.2));
+    ctx.beginPath(); ctx.arc(rx,ry,tr,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle="rgba(224,101,138,.85)"; ctx.font="12px sans-serif";
+    ctx.fillText("5 nV/cm threshold", rx+tr+8, ry+4);
+    // current heading marker
+    var mr=RR*Math.abs(Math.sin(rad));
+    var mx=rx+mr*Math.sin(rad), my=ry-mr*Math.cos(rad);
+    ctx.fillStyle="#f0a840"; ctx.beginPath(); ctx.arc(mx,my,7,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle="#070a18"; ctx.lineWidth=2; ctx.stroke();
+    // --- readouts ---
+    $("headingVal").textContent=pad3(heading)+"°";
+    $("speedVal").textContent=speed.toFixed(1)+" m/s";
+    $("eVal").textContent=e.mag.toFixed(1);
+    $("emeter").style.width=Math.min(100, e.mag/12*100)+"%";
+    var names=["north","north-east","east","south-east","south","south-west","west","north-west"];
+    var nm=names[Math.round(heading/45)%8];
+    $("swimStatus").textContent="heading "+pad3(heading)+"° ("+nm+") · "+
+      (e.mag>=TH ? "readable ✓" : "below threshold") +
+      (e.mag>=TH ? (e.sign>0 ? " · snout pushed port" : " · snout pushed starboard") : "");
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
