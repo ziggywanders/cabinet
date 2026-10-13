@@ -8,3 +8,4 @@ Published from the studio via GitHub Pages. Everything here is built in the open
 
 - **The Compass Menagerie** (`menagerie/`) — stand inside each animal's magnetic sense: the robin's quantum compass, the pigeon's liver, the turtle's map, the lobster's night sense, and a museum corner for retired hypotheses. v0.1.
 - **The Shark's Sixth Sense** (`shark/`) — electroreception and the debated electromagnetic-induction compass: the ampullae of Lorenzini, Kalmijn's hidden flounder, and a swim-the-field compass demo.
+- **The Quantum Ladder** (`quantum-ladder/`) — seven rungs from C<sub>60</sub> to the OIST centimeter-scale diamond: a clickable mass ladder, the hybrid-lever apparatus demo with its control pulse, and the next rung toward gravity. v0.1.

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Quantum Ladder — a cabinet drawer</title>
+<meta name="description" content="An interactive page on how quantum effects climbed from electrons to a centimeter-wide diamond — and the rung that might finally reach gravity.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a; --green:#7ee081;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap; text-decoration:none}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:86vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--teal)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(44px,7vw,88px); line-height:1.04; margin:18px 0 10px;
+}
+header.hero h1 em{color:var(--amber); font-style:normal}
+header.hero .stand{color:var(--ink-dim); font-size:19px; max-width:640px; margin:18px auto 0}
+header.hero .scroll{margin-top:44px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:88px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(30px,4.4vw,50px); line-height:1.12; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 30px}
+.chapter p{max-width:700px}
+.chapter p .k{color:var(--amber)}
+a{color:var(--teal)}
+.demo{
+  margin:30px 0; border:1px solid var(--line); border-radius:16px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(18,26,64,.6), rgba(10,15,40,.6));
+}
+.demo .bar{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap;
+}
+.demo .bar .t{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-dim)}
+.demo canvas{display:block; width:100%; height:auto; touch-action:none}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; padding:14px 18px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:10px}
+.controls input[type=range]{accent-color:var(--amber); width:220px}
+.readout{font-size:13.5px; color:var(--ink-dim)}
+.readout b{color:var(--ink)}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px; padding:0 18px 16px}
+button.chip{
+  background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+  border-radius:999px; padding:.5em 1.1em; font-size:13.5px; cursor:pointer;
+  transition:border-color .2s, color .2s;
+}
+button.chip:hover{border-color:var(--amber); color:var(--ink)}
+button.chip.active{border-color:var(--amber); color:var(--amber)}
+button.chip:disabled{opacity:.4; cursor:default}
+.note{font-size:13px; color:var(--ink-faint); max-width:700px; margin-top:14px}
+.rung{
+  border:1px solid var(--line); border-radius:16px; padding:26px 28px; margin:0 0 22px;
+  background:linear-gradient(180deg, rgba(20,27,68,.5), rgba(12,17,44,.5));
+  position:relative; overflow:hidden;
+}
+.rung .mass{
+  position:absolute; top:18px; right:24px; font-size:12.5px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--teal); border:1px solid rgba(79,209,197,.35);
+  border-radius:999px; padding:.2em .9em; background:rgba(7,10,24,.6);
+}
+.rung h3{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.45rem; margin:.2em 0 .35em; max-width:78%}
+.rung h3 .yr{color:var(--amber); font-size:.72em; letter-spacing:.06em}
+.rung p{margin:.55em 0; max-width:660px}
+.rung .move{color:var(--ink-dim)}
+.rung .kill{border-left:3px solid var(--rose); padding:8px 0 8px 16px; margin:16px 0 0; color:var(--ink-dim); font-size:.93rem; max-width:660px}
+.rung .kill .kh{color:var(--rose); font-size:.75rem; letter-spacing:.16em; text-transform:uppercase; display:block; margin-bottom:4px}
+.axiswrap{margin:34px 0 44px}
+.axis{
+  position:relative; height:120px; border:1px solid var(--line); border-radius:14px;
+  background:rgba(10,15,40,.55); overflow:hidden;
+}
+.axis .tick{position:absolute; top:0; bottom:0; width:1px; background:rgba(139,127,240,.14)}
+.axis .ticklab{position:absolute; bottom:8px; transform:translateX(-50%); font-size:11px; color:var(--ink-faint); white-space:nowrap}
+.axis .mark{
+  position:absolute; top:50%; width:14px; height:14px; border-radius:50%;
+  transform:translate(-50%,-50%); cursor:pointer; border:2px solid var(--amber);
+  background:var(--bg); transition:transform .15s, background .15s;
+}
+.axis .mark:hover{transform:translate(-50%,-50%) scale(1.5); background:var(--amber)}
+.axis .mark .lab{
+  position:absolute; bottom:22px; transform:translateX(-50%); white-space:nowrap;
+  font-size:12px; color:var(--ink-dim); pointer-events:none;
+}
+.axis .mark.now .lab{color:var(--amber)}
+.axis .cap{font-size:12px; color:var(--ink-faint); padding:10px 2px 0}
+.axiswrap .cap{font-size:12px; color:var(--ink-faint); padding:10px 2px 0}
+.qgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin:30px 0}
+.qcard{border:1px solid var(--line); border-radius:14px; padding:20px 22px; background:rgba(14,20,52,.5)}
+.qcard h4{margin:0 0 .4em; font-size:1.02rem; color:var(--amber); font-weight:600}
+.qcard p{font-size:.93rem; color:var(--ink-dim); margin:.4em 0}
+.meter{margin:30px 0; padding:22px 24px; border:1px solid var(--line); border-radius:14px; background:rgba(10,15,40,.55)}
+.meter .track{position:relative; height:10px; border-radius:999px; background:linear-gradient(90deg,var(--teal),var(--amber),var(--rose)); margin:44px 8px 8px}
+.meter .tickm{position:absolute; top:-34px; transform:translateX(-50%); text-align:center; font-size:11.5px; color:var(--ink-dim); white-space:nowrap; line-height:1.35}
+.meter .tickm b{color:var(--ink); display:block; font-size:12.5px}
+.meter .tickm::after{content:""; display:block; width:2px; height:20px; background:var(--ink-dim); margin:4px auto 0; opacity:.6}
+.meter .goal{position:absolute; right:-8px; top:-34px; transform:translateX(0); text-align:right; font-size:11.5px; color:var(--rose); white-space:nowrap; line-height:1.35}
+.meter .goal b{color:var(--rose); display:block; font-size:12.5px}
+blockquote.pull{
+  border-left:3px solid var(--amber); margin:34px 0; padding:6px 0 6px 22px;
+  font-family:"Iowan Old Style",Georgia,serif; font-size:clamp(20px,2.6vw,28px); line-height:1.4;
+  color:var(--ink); max-width:700px;
+}
+blockquote.pull cite{display:block; margin-top:10px; font-size:14px; font-style:normal; color:var(--ink-dim); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+footer.site{padding:64px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:.85rem}
+footer.site a{color:var(--violet)}
+.srclist{columns:2; column-gap:32px; margin:18px 0; padding:0; list-style:none; max-width:900px}
+.srclist li{break-inside:avoid; margin-bottom:8px; font-size:.82rem}
+@media(max-width:640px){.srclist{columns:1}}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="../">✦ The Cabinet</a>
+  <a href="#question">The question</a>
+  <a href="#rungs">The rungs</a>
+  <a href="#lever">The lever</a>
+  <a href="#next">The next rung</a>
+  <a href="#kill">What ends the climb</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">A cabinet drawer · Interactive</div>
+  <h1>The Quantum <em>Ladder</em></h1>
+  <p class="stand">For a century, quantum mechanics has been climbing toward the world you can hold — one experiment, one rung, one order of magnitude at a time. This is the climb so far. And the next rung might finally reach gravity.</p>
+  <div class="scroll">↓ climb</div>
+</div></header>
+
+<section class="chapter" id="question"><div class="wrap">
+  <div class="num">Prologue</div>
+  <h2>Why does the world look classical?</h2>
+  <p class="standfirst">Nobody disputes that electrons interfere with themselves. The question is why nothing bigger seems to — and whether that's a law of nature or a failure of engineering.</p>
+  <p>In 1935 Erwin Schrödinger wrote down a thought experiment to show the absurdity of taking quantum theory literally at scale: a cat in a box, its fate entangled with a single decaying atom, <span class="k">both dead and alive</span> until someone looks. He meant it as a reductio. Ninety years later it is a research program.</p>
+  <p>There are two families of answers. The <span class="k">decoherence</span> family says the quantum-ness never goes away — it leaks. Every collision with air, every photon bouncing off, entangles the object with its environment and scrambles the interference pattern faster than any experiment can read it. Bigger objects couple to more environment; the ladder is an engineering problem. The <span class="k">collapse</span> family — Ghirardi–Rimini–Weber, continuous spontaneous localization, Diósi–Penrose — says the theory itself changes at scale: superpositions of sufficiently massive objects collapse on their own, with a rate that grows with mass. On this view the ladder has a top, and the top is a discovery.</p>
+  <p>Every rung on this ladder tests both at once. A successful rung is an engineering triumph <em>and</em> a tightening of the noose around collapse models. That's why the ladder matters: it is the only instrument we have for finding out whether quantum mechanics has an edge — and the instrument is built by climbing.</p>
+</div></section>
+<section class="chapter" id="rungs"><div class="wrap">
+  <div class="num">Chapter one</div>
+  <h2>The rungs</h2>
+  <p class="standfirst">Seven experiments, ninety-nine years, roughly <strong>twenty-six orders of magnitude</strong> in mass. Drag your eye along the bottom; click a marker to visit its rung.</p>
+
+  <div class="axiswrap">
+    <div class="axis" id="massAxis" role="img" aria-label="Logarithmic mass scale with rung markers"></div>
+    <div class="cap">Mass, in atomic mass units, log scale — from an electron (10<sup>−3</sup> amu) to the 100-milligram diamond (10<sup>23</sup> amu).</div>
+  </div>
+
+  <div class="rung" id="rung-0">
+    <span class="mass">≈ 5×10⁻⁴ amu</span>
+    <h3>Rung 0 · The base <span class="yr">— 1927</span></h3>
+    <p class="move">Clinton Davisson and Lester Germer (and, independently, George Thomson) fire electrons at a nickel crystal and watch them diffract. Matter has a wavelength — de Broglie's 1923 prediction, confirmed. Everything above this rung is the question: how far up does the wave survive?</p>
+    <div class="kill"><span class="kh">Kill condition</span>Already settled: no one has ever repeated electron diffraction and found the fringes missing. The base holds.</div>
+  </div>
+
+  <div class="rung" id="rung-1">
+    <span class="mass">720 amu · 60 atoms</span>
+    <h3>Rung 1 · The buckyball <span class="yr">— Vienna, 1999</span></h3>
+    <p class="move">Markus Arndt, Anton Zeilinger and colleagues send C<sub>60</sub> — a soccer-ball molecule a nanometer across, big enough to see under a microscope — through a diffraction grating and watch it interfere with itself. The molecule's de Broglie wavelength is 2.5 picometers: <span class="k">four hundred times smaller than the molecule itself</span>. Their own paper called C<sub>60</sub> "almost a classical body," because of its many internal degrees of freedom and their couplings to the environment — which is precisely what made the result matter: decoherence had to be beaten, and was.</p>
+    <div class="kill"><span class="kh">Kill condition</span>Would have failed if the molecules' internal heat or the grating's van der Waals forces washed out the fringes. The fringes arrived anyway — and the interference pattern set the template for everything that followed.</div>
+  </div>
+
+  <div class="rung" id="rung-2">
+    <span class="mass">microns across · billions of atoms</span>
+    <h3>Rung 2 · The quantum drumbeat <span class="yr">— UCSB, 2010</span></h3>
+    <p class="move">Andrew Cleland and John Martinis's group builds a 6 GHz piezoelectric mechanical resonator and does the opposite of what everyone expected: instead of laser-cooling a slow oscillator, they make the oscillator so fast that a dilution refrigerator drops it straight into its <span class="k">quantum ground state</span>. Then, coupling it to a superconducting qubit, they create single phonons — individual quanta of vibration — in a manufactured object you could almost see. The first deliberate quantum control of a mechanical thing.</p>
+    <div class="kill"><span class="kh">Kill condition</span>Any uncontrolled thermal phonon would have shown up as a population the qubit couldn't account for. The resonator sat at the bottom rung of its energy ladder, empty, and the group put it there one quantum at a time.</div>
+  </div>
+
+  <div class="rung" id="rung-3">
+    <span class="mass">millimeter-scale · ~10 mg</span>
+    <h3>Rung 3 · Entangled diamonds, room temperature <span class="yr">— Oxford, 2011</span></h3>
+    <p class="move">Katherine Lee and colleagues link two millimeter-scale diamond chips with a single shared phonon — the crystals' vibrational modes entangled <span class="k">at room temperature</span>, in broad daylight, on a bench. The entanglement is fleeting (picoseconds), but the point stands: the quantum effect doesn't need the cold, and it doesn't need the small. Two objects you could pick up with tweezers, briefly, were one system.</p>
+    <div class="kill"><span class="kh">Kill condition</span>Thermal noise at 300 K should drown any shared quantum state instantly. The team read the entanglement out with ultrafast pulses faster than the noise — speed as the countermeasure to scale.</div>
+  </div>
+
+  <div class="rung" id="rung-4">
+    <span class="mass">25,000 amu · ~2,000 atoms</span>
+    <h3>Rung 4 · Two thousand atoms in two places <span class="yr">— Vienna &amp; Basel, 2019</span></h3>
+    <p class="move">Yaakov Fein, Markus Arndt and colleagues push matter-wave interferometry to molecules of over 25 kDa — hulking porphyrin derivatives, <span class="k">some 25,000 times the mass of hydrogen</span>, held in superposition for more than 7 milliseconds inside a two-meter interferometer. The beamline was so large the team had to correct for gravity and the rotation of the Earth. The experiment set new interferometric bounds on spontaneous-collapse models and what the authors call an order-of-magnitude increase in "macroscopicity" — a formal score for how hard a given experiment squeezes the alternatives to quantum mechanics.</p>
+    <div class="kill"><span class="kh">Kill condition</span>This rung is explicitly a noose: if any collapse model were right at the scale it predicts, the fringes would have been gone. They weren't. Every future model now has to survive Vienna's two-meter machine.</div>
+  </div>
+
+  <div class="rung" id="rung-5">
+    <span class="mass">~10¹³ amu · ~10¹² atoms each</span>
+    <h3>Rung 5 · The trillion-atom drums <span class="yr">— NIST, 2021</span></h3>
+    <p class="move">John Teufel's group at NIST entangles two aluminum drumheads — each about a trillion atoms, the width of a human hair — and <span class="k">measures the entanglement directly</span>, deterministically, reading motions a quadrillionth of a meter across with radar-like microwaves. Looked at one drum alone, each is just hot; looked at together, their random motions are correlated in a way no classical system can fake. The same year, a parallel Aalto experiment used two entangled drums to sidestep Heisenberg's back-action — measuring a quantum system by making the measurement's disturbance cancel itself.</p>
+    <div class="kill"><span class="kh">Kill condition</span>The entanglement claim would die if the correlations could be explained by a shared thermal bath. The team measured during separated phases inside a refrigerator — the correlations survived, the classical alibi didn't.</div>
+  </div>
+
+  <div class="rung" id="rung-6">
+    <span class="mass">100 mg · ~10²³ amu · centimeter-scale</span>
+    <h3>Rung 6 · Spin moves a diamond you can hold <span class="yr">— OIST, 2026</span></h3>
+    <p class="move">At the Okinawa Institute of Science and Technology, Anshuman Nayak and Jason Twamley build a hybrid lever: a 100-milligram diamond, studded with billions of nitrogen-vacancy centers — each an unpaired electron, a tiny controllable quantum magnet — hung on a carbon rod that rises through magnetic shielding to a diamagnetically levitated graphite plate carrying a mirror. A 50-milliwatt green laser pulse polarizes the electron spins; the changing spin state changes the diamond's magnetic moment; the diamond is pushed down toward a magnet below. An interferometer reads the plate's motion with <span class="k">picometer precision</span>. Electron spin alone, visibly shifting a centimeter-wide object — <span class="k">eight to nine orders of magnitude</span> more massive than the previous state of the art in spin-mechanical experiments, and the first time a quantum effect has been seen directly pushing around an object subject to gravity.</p>
+    <p class="move">The move to admire: the field's standing strategy was to levitate something tiny and climb upward toward gravity's regime. This team went <span class="k">large-to-small</span> instead — diamagnetic levitation (the same trick behind maglev trains) holds the centimeter scale, and the quantum came down to meet it.</p>
+    <div class="kill"><span class="kh">Kill condition</span>The obvious impostor is heat: a 50 mW laser is a small heater, and heat moves things too. The experiment's control is a pulse that delivers the same energy without flipping the spins — same heat, no push. Try the control below.</div>
+  </div>
+</div></section>
+<section class="chapter" id="lever"><div class="wrap">
+  <div class="num">Chapter two</div>
+  <h2>The lever</h2>
+  <p class="standfirst">Stand inside the OIST apparatus. Fire the green laser, watch billions of electron spins line up, and feel the diamond move — then run the control that would have killed the claim.</p>
+
+  <div class="demo">
+    <div class="bar"><span class="t">The hybrid lever · schematic</span><span class="t" id="leverState">idle</span></div>
+    <canvas id="leverCanvas" width="960" height="520"></canvas>
+    <div class="btnrow">
+      <button class="chip" id="btnPulse">Pulse the laser — polarize the spins</button>
+      <button class="chip" id="btnControl">Control — same energy, no spin flip</button>
+      <span class="readout" id="leverReadout">Spin polarization <b>0%</b> · plate displacement <b>0.0 pm</b></span>
+    </div>
+  </div>
+  <p class="note">An illustration of the experiment's logic, not its data. Real displacement is picometers — shown here enlarged by roughly a factor of a billion so a human eye can see it. The spins are drawn as two dozen arrows standing in for billions of NV centers. The control pulse is the experiment's own falsification logic: identical heating, but the spins never align, so if the diamond still moved, the push would have to be classical.</p>
+</div></section>
+
+<section class="chapter" id="next"><div class="wrap">
+  <div class="num">Chapter three</div>
+  <h2>The next rung</h2>
+  <p class="standfirst">Jason Twamley's own framing: one more order of magnitude, and the experiment reaches "Schrödinger's cat in real life."</p>
+  <blockquote class="pull">
+    "We've shown a large classical response from a small quantum effect. We're pushing the bar from nanometers to centimeters. All we need is another order of magnitude, and we can finally observe Schrödinger's cat in real life."
+    <cite>— Jason Twamley, OIST, on the 2026 result</cite>
+  </blockquote>
+  <div class="meter">
+    <div class="track" id="gapTrack"></div>
+    <div class="cap" style="font-size:12px;color:var(--ink-faint);padding:10px 2px 0">Logarithmic mass scale — where the ladder stands, and how far the cat sits.</div>
+  </div>
+  <p>What's up there is not just a bigger diamond. At that scale sit the experiments that could settle the oldest question in the field: <span class="k">is gravity quantum?</span> Proposals like Bose–et al.'s 2017 scheme would entangle two masses through their mutual gravitational attraction — if the entanglement appears, gravity must be a quantum mediator; no classical gravity can fake it. The OIST lever is the on-ramp: a proven way to put quantum state information into, and read quantum-scale motion out of, an object you can hold.</p>
+  <p>And here's the quiet part of the program, the part that comes free: <span class="k">the philosophy experiment is also a sensor</span>. A centimeter-scale object whose motion is read at picometer precision, driven by quantum spins, is a force detector. The same lever that chases Schrödinger's cat is natively sensitive to the faintest nudges imaginable — the territory of dark matter candidates and gravitational waves. The instrument for the deepest question and the instrument for the most practical sensing are the same machine. Build the ladder, get the telescope.</p>
+</div></section>
+
+<section class="chapter" id="kill"><div class="wrap">
+  <div class="num">Chapter four</div>
+  <h2>What would end the climb</h2>
+  <p class="standfirst">A ladder with no top is just a road. This one has two candidate ceilings — and finding either would be the biggest discovery of all.</p>
+  <div class="qgrid">
+    <div class="qcard">
+      <h4>The practical ceiling: decoherence</h4>
+      <p>Every rung fights the environment. Air molecules, blackbody photons, seismic rumble — each entangles with the quantum object and smears the pattern. Beating it is an engineering war fought with vacuum chambers, cryostats, magnetic shielding, and speed. So far engineering keeps winning. But it gets harder with every order of magnitude, and it gets harder <em>faster</em> than the mass grows.</p>
+    </div>
+    <div class="qcard">
+      <h4>The theoretical ceiling: collapse</h4>
+      <p>Spontaneous-collapse models predict a genuine breakdown: above some mass and some timescale, superpositions simply don't survive, no matter how perfect the vacuum. Each successful rung redraws that boundary upward and tightens the parameters the models are allowed. The day a rung <em>fails</em> — the fringes refuse to appear despite perfect engineering — is the day quantum mechanics shows its edge. That failure would be a Nobel.</p>
+    </div>
+    <div class="qcard">
+      <h4>The mirror ceiling: gravity</h4>
+      <p>Diósi–Penrose and friends tie collapse to gravity itself: a superposition of a massive object is a superposition of spacetimes, and spacetime refuses. This is why the OIST result matters beyond its size — it's the first rung standing <em>inside</em> gravity's regime rather than climbing toward it. The ladder and the theory of gravity are now in the same room.</p>
+    </div>
+  </div>
+  <p>The honest version of the story, the one the menagerie pages tell too: <span class="k">"maybe" belongs in every sentence.</span> The ladder might top out at a fundamental scale. It might not top out at all. Nobody has earned the right to claim either yet — which is exactly what makes the next rung worth building.</p>
+</div></section>
+<footer class="site"><div class="wrap">
+  <p>Built in Ziggy's studio, October 2026, from the wandering log. The OIST result is days old at the time of writing; treat the top rung as news, the lower rungs as history, and the ceiling as an open question.</p>
+  <ul class="srclist">
+    <li>Nayak, Twamley et al., "Quantum actuation of a centimeter-scale object," <em>Science Advances</em> (Oct 2026) — <a href="https://phys.org/news/2026-10-quantum-shifting-centimeter-scale-lab.html">phys.org summary</a></li>
+    <li>Fein et al., "Quantum superposition of molecules beyond 25 kDa," <em>Nature Physics</em> (2019) — <a href="https://phys.org/news/2019-09-atoms-quantum-superposition.html">phys.org summary</a></li>
+    <li>Kotler et al., "Direct observation of deterministic macroscopic entanglement," <em>Science</em> 372, 622 (2021) — <a href="https://www.nanowerk.com/nanotechnology-news2/newsid=57945.php">NIST summary</a></li>
+    <li>Mercier de Lépinay et al., "Quantum mechanics–free subsystem with mechanical oscillators," <em>Science</em> 372, 625 (2021)</li>
+    <li>Lee et al., "Entangling macroscopic diamonds at room temperature," <em>Science</em> 334, 1253 (2011)</li>
+    <li>O'Connell et al., "Quantum ground state and single-phonon control of a mechanical resonator," <em>Nature</em> 464, 697 (2010)</li>
+    <li>Arndt et al., "Wave–particle duality of C<sub>60</sub> molecules," <em>Nature</em> 401, 680 (1999) — <a href="https://physicsworld.com/a/wave-particle-duality-seen-in-carbon-60-molecules/">Physics World</a></li>
+    <li>Bose et al., "Spin entanglement witness for quantum gravity," <em>PRL</em> 119, 240401 (2017)</li>
+  </ul>
+  <p><a href="../">← back to the Cabinet</a></p>
+</div></footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- mass axis (chapter one) ---------- */
+var RUNGS=[
+  {log:-3.3, lab:"e⁻ · 1927", target:"rung-0"},
+  {log: 2.86, lab:"C₆₀ · 1999", target:"rung-1"},
+  {log: 9.5,  lab:"drumbeat · 2010", target:"rung-2"},
+  {log:19.0,  lab:"diamonds · 2011", target:"rung-3"},
+  {log: 4.40, lab:"2,000 atoms · 2019", target:"rung-4"},
+  {log:13.4,  lab:"drums · 2021", target:"rung-5"},
+  {log:22.8,  lab:"diamond · 2026", target:"rung-6", now:true}
+];
+var LO=-4, HI=24;
+function xFor(log){ return (log-LO)/(HI-LO)*100; }
+var axis=document.getElementById('massAxis');
+RUNGS.forEach(function(r){
+  var m=document.createElement('div');
+  m.className='mark'+(r.now?' now':'');
+  m.style.left=xFor(r.log)+'%';
+  m.setAttribute('data-target',r.target);
+  m.setAttribute('title','Jump to '+r.lab);
+  var l=document.createElement('span'); l.className='lab'; l.textContent=r.lab; m.appendChild(l);
+  m.addEventListener('click',function(){
+    var t=document.getElementById(this.getAttribute('data-target'));
+    if(t) t.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+  axis.appendChild(m);
+});
+for(var p=-3;p<=24;p+=3){
+  var t=document.createElement('div'); t.className='tick'; t.style.left=xFor(p)+'%'; axis.appendChild(t);
+  var tl=document.createElement('div'); tl.className='ticklab'; tl.style.left=xFor(p)+'%';
+  tl.textContent='10^'+p; axis.appendChild(tl);
+}
+
+/* ---------- gap meter (chapter three) ---------- */
+var track=document.getElementById('gapTrack');
+/* log-mass positions: diamond now ~22.8 (100 mg), Twamley rung +1 order (1 g ~23.8), cat ~4 kg -> log10(4kg/amu) */
+var GLO=21, GHI=27.6;
+function gx(log){ return Math.max(0,Math.min(100,(log-GLO)/(GHI-GLO)*100)); }
+var gapMarks=[
+  {log:22.8, b:'OIST diamond, 2026', s:'100 mg · you are here'},
+  {log:23.8, b:"Twamley's rung", s:'×10 · Schrödinger territory'},
+  {log:27.6, b:'A cat', s:'4 kg · the thought experiment'}
+];
+gapMarks.forEach(function(g,i){
+  var d=document.createElement('div'); d.className='tickm'; d.style.left=gx(g.log)+'%';
+  if(i===gapMarks.length-1){ d.style.transform='translateX(-92%)'; d.style.textAlign='right'; }
+  var b=document.createElement('b'); b.textContent=g.b; d.appendChild(b);
+  d.appendChild(document.createTextNode(g.s)); track.appendChild(d);
+});
+
+/* ---------- the lever demo (chapter two) ---------- */
+var cv=document.getElementById('leverCanvas'), ctx=cv.getContext('2d');
+var btnP=document.getElementById('btnPulse'), btnC=document.getElementById('btnControl');
+var readout=document.getElementById('leverReadout'), stateEl=document.getElementById('leverState');
+var W=960,H=520;
+var S={phase:'idle', t:0, polarized:false, disp:0, dispTarget:0, fringe:0, heat:false};
+var spins=[];
+for(var i=0;i<22;i++){ spins.push({x:0,y:0,a:Math.random()*Math.PI*2,tx:0,ty:0}); }
+/* scatter spin positions inside diamond */
+(function(){ var k=0; for(var r=0;r<4;r++){ for(var c=0;c<6;c++){ if(k>=spins.length)break;
+  spins[k].tx=-26+c*10.5+(Math.random()*6-3); spins[k].ty=-16+r*11+(Math.random()*6-3); k++; } } })();
+
+function drawBeam(on){ if(!on)return; ctx.strokeStyle='rgba(126,224,129,.9)'; ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(128,265); ctx.lineTo(432,265); ctx.stroke();
+  ctx.strokeStyle='rgba(126,224,129,.25)'; ctx.lineWidth=12;
+  ctx.beginPath(); ctx.moveTo(128,265); ctx.lineTo(432,265); ctx.stroke(); }
+
+function drawMagnet(){
+  ctx.fillStyle='#123'; ctx.strokeStyle='rgba(139,127,240,.35)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(420,392,116,34,6); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#e0658a'; ctx.fillRect(426,398,48,22);
+  ctx.fillStyle='#4f8fd1'; ctx.fillRect(482,398,48,22);
+  ctx.fillStyle='#a9a49a'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('N',450,414); ctx.fillText('S',506,414);
+  ctx.fillStyle='#a9a49a'; ctx.fillText('magnet',478,448); }
+
+function drawDiamond(dy){
+  var cx=478, cy=265+dy;
+  ctx.save();
+  ctx.shadowColor='rgba(79,209,197,.7)'; ctx.shadowBlur=26;
+  var g=ctx.createLinearGradient(cx,cy-45,cx,cy+40);
+  g.addColorStop(0,'rgba(79,209,197,.95)'); g.addColorStop(1,'rgba(79,209,197,.35)');
+  ctx.fillStyle=g;
+  ctx.beginPath(); ctx.moveTo(cx,cy-45); ctx.lineTo(cx+46,cy-12); ctx.lineTo(cx+30,cy+38);
+  ctx.lineTo(cx-30,cy+38); ctx.lineTo(cx-46,cy-12); ctx.closePath(); ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.strokeStyle='rgba(233,228,214,.6)'; ctx.lineWidth=1.2; ctx.stroke();
+  ctx.strokeStyle='rgba(233,228,214,.25)';
+  ctx.beginPath(); ctx.moveTo(cx-46,cy-12); ctx.lineTo(cx+46,cy-12); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-45); ctx.lineTo(cx-30,cy+38); ctx.moveTo(cx,cy-45); ctx.lineTo(cx+30,cy+38); ctx.stroke();
+  /* spin arrows */
+  var pol=S.polarized?1:0;
+  spins.forEach(function(s){
+    var a=s.a*(1-pol)+(-Math.PI/2)*pol;
+    var px=cx+s.tx, py=cy+s.ty, len=7;
+    ctx.strokeStyle=S.polarized?'rgba(126,224,129,.95)':'rgba(233,228,214,.5)'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+Math.cos(a)*len,py+Math.sin(a)*len); ctx.stroke();
+    var hx=px+Math.cos(a)*len, hy=py+Math.sin(a)*len;
+    ctx.beginPath(); ctx.moveTo(hx,hy); ctx.lineTo(hx-Math.cos(a-0.4)*3.4,hy-Math.sin(a-0.4)*3.4);
+    ctx.lineTo(hx-Math.cos(a+0.4)*3.4,hy-Math.sin(a+0.4)*3.4); ctx.closePath();
+    ctx.fillStyle=S.polarized?'rgba(126,224,129,.95)':'rgba(233,228,214,.5)'; ctx.fill();
+  });
+  ctx.restore();
+  ctx.fillStyle='#a9a49a'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('diamond · NV centers',cx,cy+62);
+}
+
+function drawFringes(){
+  ctx.fillStyle='#123'; ctx.strokeStyle='rgba(139,127,240,.35)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(690,84,230,140,8); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#a9a49a'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('interferometer · picometer readout',805,104);
+  for(var i=0;i<14;i++){
+    var v=0.5+0.5*Math.sin(i*0.9+S.fringe);
+    var h=Math.round(40+80*v);
+    ctx.fillStyle='rgba(240,168,64,'+(0.12+0.75*v).toFixed(2)+')';
+    ctx.fillRect(712+i*14,190-h,9,h);
+  }
+  /* beam from mirror to interferometer */
+  ctx.setLineDash([6,6]); ctx.strokeStyle='rgba(240,168,64,.35)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(560,76); ctx.lineTo(690,120); ctx.stroke(); ctx.setLineDash([]);
+}
+
+function draw(dt){
+  ctx.clearRect(0,0,W,H);
+  var bob=S.phase==='idle'?Math.sin(S.t*1.4)*3:0;
+  /* laser housing */
+  ctx.fillStyle='#1a2148'; ctx.strokeStyle='rgba(139,127,240,.4)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(36,244,92,42,8); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#a9a49a'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('green laser',82,270);
+  drawBeam(S.phase==='pulse');
+  /* carbon rod */
+  ctx.fillStyle='#2a3358'; ctx.fillRect(475.5,76+bob*0.4,5,224);
+  /* graphite plate + mirror */
+  ctx.fillStyle='#232c52'; ctx.strokeStyle='rgba(139,127,240,.4)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(380,44+bob*0.4,196,30,6); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='rgba(233,228,214,.85)'; ctx.fillRect(398,74+bob*0.4,164,4);
+  ctx.fillStyle='#a9a49a'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('levitated graphite plate · mirror',478,36+bob*0.4);
+  ctx.fillText('carbon rod',478,200);
+  drawDiamond(S.disp+bob*0.4);
+  /* gap arrow */
+  ctx.strokeStyle='rgba(169,164,154,.5)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(600,330+S.disp); ctx.lineTo(600,392); ctx.stroke();
+  ctx.fillStyle='#a9a49a'; ctx.textAlign='left';
+  ctx.fillText('magnetic pull',610,368);
+  drawMagnet();
+  drawFringes();
+  /* spin legend */
+  ctx.fillStyle='#a9a49a'; ctx.textAlign='left'; ctx.font='12px sans-serif';
+  ctx.fillText(S.polarized?'spins: polarized (ms = −1)':'spins: random (ms = 0)',36,492);
+  ctx.fillStyle='#6f6c84';
+  ctx.fillText('NV-center spins shown as arrows · diamond shown enlarged',36,508);
+}
+
+function setState(s){ stateEl.textContent=s; }
+function runSeq(polarize){
+  if(S.phase!=='idle')return;
+  btnP.disabled=true; btnC.disabled=true;
+  S.phase='pulse'; S.t=0; S.heat=!polarize; S.polarized=false;
+  setState(polarize?'laser on — polarizing spins':'control pulse — energy only');
+  setTimeout(function(){
+    if(polarize){ S.polarized=true; S.dispTarget=20; }
+    else { S.polarized=false; S.dispTarget=0; }
+    setState(polarize?'spins aligned — diamond shifting':'control: no spin flip, no push');
+  },1400);
+  setTimeout(function(){
+    S.phase='settle'; setState(polarize?'interferometer reading':'control complete');
+  },3000);
+  setTimeout(function(){
+    S.phase='idle'; S.polarized=false; S.dispTarget=0;
+    btnP.disabled=false; btnC.disabled=false; setState('idle');
+  },4600);
+}
+
+var last=performance.now();
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000); last=now; S.t+=dt;
+  /* ease displacement toward target; fringe follows displacement */
+  S.disp+=(S.dispTarget-S.disp)*Math.min(1,dt*3.2);
+  S.fringe=S.disp*0.35;
+  var pol=S.polarized?100:0;
+  var pm=Math.abs(S.disp)*0.62; /* illustrative mapping */
+  readout.innerHTML='Spin polarization <b>'+pol+'%</b> · plate displacement <b>'+pm.toFixed(1)+' pm</b>'+(S.heat&&S.phase!=='idle'?' · heat only':'');
+  draw(dt);
+  requestAnimationFrame(frame);
+}
+btnP.addEventListener('click',function(){runSeq(true);});
+btnC.addEventListener('click',function(){runSeq(false);});
+draw(0); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
