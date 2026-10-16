@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Atoms of Chemistry — a cabinet drawer</title>
+<meta name="description" content="Seaborgium hexacarbonyl, October 2026: the first measured bond strength in a superheavy-element compound — 75 atoms registered, 3 formed the molecule, and the trend of the periodic table bends at its edge.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a; --green:#7ee081;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap; text-decoration:none}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:86vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--teal)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,6.6vw,82px); line-height:1.06; margin:18px 0 10px;
+}
+header.hero h1 em{color:var(--amber); font-style:normal}
+header.hero .stand{color:var(--ink-dim); font-size:19px; max-width:660px; margin:18px auto 0}
+header.hero .scroll{margin-top:44px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:88px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(30px,4.4vw,50px); line-height:1.12; margin:14px 0 6px}
+.chapter h2 em{color:var(--amber); font-style:normal}
+.chapter .meta{color:var(--ink-faint); font-size:14.5px; max-width:760px; margin:12px 0 6px}
+.chapter .meta a{color:var(--violet)}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 30px}
+.chapter p{max-width:700px}
+.chapter p .k{color:var(--amber)}
+.chapter p .t{color:var(--teal)}
+.inter{
+  margin:34px 0 10px; padding:26px; border:1px solid var(--line); border-radius:14px;
+  background:linear-gradient(180deg, rgba(20,27,68,.55), rgba(12,17,44,.55));
+}
+.inter h3{margin:0 0 4px; font-size:15px; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); font-weight:600}
+.inter .how{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.btns{display:flex; gap:10px; flex-wrap:wrap; margin:0 0 16px}
+.btns button{
+  appearance:none; border:1px solid var(--line); background:transparent; color:var(--ink-dim);
+  border-radius:999px; padding:9px 18px; font-size:14.5px; cursor:pointer; transition:all .18s;
+}
+.btns button:hover{border-color:var(--violet); color:var(--ink)}
+.btns button.on{background:var(--amber); border-color:var(--amber); color:#1a1206; font-weight:600}
+.readout{
+  min-height:120px; border-left:3px solid var(--amber); padding:2px 0 2px 18px; margin-top:14px;
+  color:var(--ink); font-size:16px; max-width:720px;
+}
+.readout .who{color:var(--amber); font-weight:600}
+svg.stage{width:100%; height:auto; display:block; margin:6px 0 4px}
+.atoms{display:grid; grid-template-columns:repeat(15, 1fr); gap:6px; margin:18px 0 6px}
+@media (max-width:640px){ .atoms{grid-template-columns:repeat(10, 1fr)} }
+.atom{aspect-ratio:1; border-radius:50%; border:1px solid rgba(139,127,240,.35); background:rgba(20,27,68,.6); transition:all .3s}
+.atom.sg{background:radial-gradient(circle at 35% 35%, #f7c873, #b97e1c); border-color:#f0a840; box-shadow:0 0 12px rgba(240,168,64,.65)}
+.atom.sg::after{content:""; display:block; width:100%; height:100%; border-radius:50%; background:radial-gradient(circle, rgba(240,168,64,.35), transparent 70%); animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1); opacity:.9}50%{transform:scale(1.35); opacity:.5}}
+.kill{margin-top:40px; border:1px dashed rgba(224,101,138,.5); border-radius:12px; padding:22px 24px; background:rgba(60,12,28,.18)}
+.kill h3{margin:0 0 10px; color:var(--rose); font-size:16px; letter-spacing:.06em}
+.kill ul{margin:0; padding-left:20px; max-width:760px}
+.kill li{margin:8px 0; color:var(--ink-dim); font-size:15.5px}
+.kill li b{color:var(--ink)}
+.list-tax{margin:26px 0 0; border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.list-tax .row{padding:18px 22px; border-top:1px solid var(--line)}
+.list-tax .row:first-child{border-top:0}
+.list-tax .h{font-weight:600; letter-spacing:.04em; margin-bottom:6px}
+.list-tax p{margin:6px 0 0; color:var(--ink-dim); font-size:15.5px; max-width:760px}
+footer{border-top:1px solid var(--line); padding:44px 0 70px; color:var(--ink-faint); font-size:14.5px}
+footer a{color:var(--violet)}
+footer .back{display:inline-block; margin-bottom:18px; color:var(--amber); text-decoration:none}
+.small{font-size:13.5px; color:var(--ink-faint)}
+</style>
+</head>
+<body>
+<main>
+
+<nav class="top"><div class="wrap">
+  <a class="brand" href="../">✦ The Cabinet</a>
+  <a href="#atoms">1 · The atoms</a>
+  <a href="#reversal">2 · The reversal</a>
+  <a href="#claim">3 · The claim</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">A cabinet drawer · October 2026</div>
+  <h1>Three Atoms of <em>Chemistry</em></h1>
+  <p class="stand">Seaborgium — element 106, made a few atoms a day, each one decaying within half a second. In October 2026, three of those atoms did something no one had measured before: they formed a molecule, survived the flight, and told us the periodic table warps at its edge.</p>
+  <div class="scroll">↓ open the drawer ↓</div>
+</div></header>
+
+<section class="chapter" id="atoms"><div class="wrap">
+  <div class="num">Chapter 1 · the rarest chemistry on Earth</div>
+  <h2>The sample you count <em>on fingers</em></h2>
+  <p class="meta"><b>Yakushev, Khuyagbaatar, Wieczorek et al.</b> — GSI/FAIR, Darmstadt, with an international collaboration led from there. <i>Nature</i>, <b>2026</b> (open access). "Observation of relativistic bond weakening in seaborgium hexacarbonyl." DOI 10.1038/s41586-026-11105-2. Phys.org summary, <a href="https://phys.org/news/2026-10-superheavy-element-compound-reveals-weaker.html">Oct 14, 2026</a>.</p>
+  <p class="standfirst">Chemistry done atom by atom, where the entire sample announces itself by dying.</p>
+  <p>Seaborgium doesn't come in bottles. It comes in atoms — a few per day, born in a heavy-ion collision, each one <span class="k">seaborgium-259</span> with a lifetime under half a second. The compound the team was after, <span class="k">seaborgium hexacarbonyl</span> — Sg(CO)₆, one seaborgium atom dressed in six carbon monoxide ligands — had been synthesized once before, about ten years ago at the RIKEN Nishina Center in Japan. It was the first carbonyl compound ever made of a superheavy element, and its well-defined bonding made it the obvious target for the next question. But there is a decade-wide gap between making a molecule once and measuring how tightly it holds together.</p>
+  <p>To bridge it, the team ran gas chromatography on individual atoms. Seaborgium nuclei were thermalized in carbon monoxide gas behind the TASCA separator; the volatile hexacarbonyls drifted through a reactive-compound detector to a cooled adsorption array. And then the identifying trick: <span class="t">each atom was identified by its own radioactive decay</span>. You don't weigh the sample. You wait for it to decay, and the decay tells you which atom just passed through.</p>
+  <p>In total, <span class="k">75 seaborgium atoms were registered</span>. Of those, exactly <span class="k">three</span> formed Sg(CO)₆ — four percent. For comparison, the analogous experiment on tungsten, seaborgium's lighter group-mate, turned 17% of atoms into the hexacarbonyl. From that yield ratio, run through a reaction-rate model, the bond strength came out: the Sg–CO bond is <span class="k">4 kJ/mol weaker</span> than the W–CO bond (±2 kJ/mol on the difference). Three atoms, one bond, one number.</p>
+
+  <div class="inter">
+    <h3>Interactive · seventy-five atoms</h3>
+    <p class="how">Each dot is one registered atom. The glowing ones survived the flight as the hexacarbonyl. Switch runs to see the lighter element's luck.</p>
+    <div class="btns" id="atomBtns">
+      <button data-run="sg" class="on">Seaborgium run — 75 atoms</button>
+      <button data-run="w">Tungsten run — 75 atoms</button>
+    </div>
+    <div class="atoms" id="atomGrid" role="img" aria-label="75 registered atoms; glowing ones formed the hexacarbonyl"></div>
+    <div class="readout" id="atomReadout"></div>
+  </div>
+
+  <div class="kill">
+    <h3>☠ How to kill Chapter 1</h3>
+    <ul>
+      <li><b>The indirect inference.</b> Nobody held a ruler to the bond. The 4 kJ/mol came from a yield ratio — 3 of 75 versus 17% — read through a reaction-rate model. If that model misreads what actually happens on the cooled adsorption array, the number moves.</li>
+      <li><b>The volatility impostor.</b> Gas chromatography measures how a molecule behaves on a surface. If the Sg(CO)₆ shortfall reflects adsorption quirks rather than bond strength, the experiment measures volatility and calls it chemistry.</li>
+      <li><b>Three atoms.</b> The whole result stands on three atoms. A replication — more atoms, more runs — is the difference between a landmark and a footnote.</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="chapter" id="reversal"><div class="wrap">
+  <div class="num">Chapter 2 · the trend that bent</div>
+  <h2>The periodic table warps at <em>its edge</em></h2>
+  <p class="meta">Same paper. The claim that made the room sit up: relativistic effects reversing a group trend.</p>
+  <p class="standfirst">Down the chromium group, the hexacarbonyl bond gets stronger: chromium → molybdenum → tungsten. Seaborgium should have been the strongest of them all. It isn't.</p>
+  <p>The periodic table's deepest promise is that the pattern <i>continues</i> — that the empty rows below are just more of the same, waiting to be filled. The hexacarbonyls looked like a textbook case: from chromium to molybdenum to tungsten, the first bond dissociation energy climbs, and seaborgium, sitting directly under tungsten in group 6, was expected to extend the line upward. The derived values say otherwise: <span class="k">188 kJ/mol</span> for Sg(CO)₆ versus <span class="k">192 kJ/mol</span> for W(CO)₆. The trend reverses at element 106.</p>
+  <p>The cause is <span class="t">relativity</span>, doing invisible work in the electron shells. Near a nucleus with 106 protons, the inner electrons are accelerated to a substantial fraction of light speed; they gain mass, their orbitals contract, and they shield the outer shells differently — reshaping the valence shells that do the chemistry. And here is the cleanest part: recent quantum-chemical calculations that <i>fully include</i> relativity reproduce the weakening, while calculations that <i>neglect</i> relativity predict the trend continues. One experiment, two theoretical frameworks, and reality cast the deciding vote.</p>
+
+  <div class="inter">
+    <h3>Interactive · the trend that bent</h3>
+    <p class="how">First bond dissociation energy across group 6. The Cr→Mo→W points are schematic of the rising trend; the tungsten and seaborgium values are the measured ones. Toggle the theory.</p>
+    <div class="btns" id="trendBtns">
+      <button data-view="norel" class="on">Theory without relativity</button>
+      <button data-view="rel">Measured + theory with relativity</button>
+    </div>
+    <svg class="stage" id="trendStage" viewBox="0 0 620 340" role="img" aria-label="Trend of bond dissociation energy across group 6">
+      <line x1="70" y1="300" x2="600" y2="300" stroke="#6f6c84" stroke-width="1"/>
+      <line x1="70" y1="300" x2="70" y2="30" stroke="#6f6c84" stroke-width="1"/>
+      <text x="330" y="330" text-anchor="middle" fill="#6f6c84" font-size="13">chromium (24) → molybdenum (42) → tungsten (74) → seaborgium (106)</text>
+      <text x="24" y="170" text-anchor="middle" fill="#6f6c84" font-size="13" transform="rotate(-90 24 170)">bond dissociation energy → stronger</text>
+      <path id="trendNorel" fill="none" stroke="#8b7ff0" stroke-width="2.5" stroke-dasharray="7 5"/>
+      <path id="trendRel" fill="none" stroke="#f0a840" stroke-width="2.5"/>
+      <g id="trendPts"></g>
+      <text id="trendNote" x="330" y="60" text-anchor="middle" fill="#a9a49a" font-size="15" font-style="italic"></text>
+    </svg>
+    <div class="readout" id="trendReadout"></div>
+  </div>
+
+  <div class="kill">
+    <h3>☠ How to kill Chapter 2</h3>
+    <ul>
+      <li><b>The two-sigma wobble.</b> The difference is 4 kJ/mol with an uncertainty of ±2 kJ/mol. It is real, but close enough to the noise floor that a single replication shifting the value could erase the reversal — watch for the next measurement.</li>
+      <li><b>The model dependency.</b> "Relativity explains it" rests on quantum-chemical calculations agreeing with the data. If a non-relativistic treatment with better correlation handling can also reproduce 188 kJ/mol, the verdict softens.</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="chapter" id="claim"><div class="wrap">
+  <div class="num">Chapter 3 · the claim</div>
+  <h2>State it so it can <em>die</em></h2>
+  <p class="standfirst">The pattern across the drawer, stated plainly enough to be wrong.</p>
+  <p><b>The claim:</b> the periodic table is the most beautiful pattern in science — and at its far edge, it <span class="k">warps</span>. Seaborgium's chemistry is not an extrapolation of tungsten's; relativity reshapes the valence shells, reverses the group trend, and hands reality the deciding vote between two theories. The elegance of the table is real, but it is not inert — <span class="t">it bends under its own weight</span>.</p>
+  <p>Kin of this drawer, elsewhere in the cabinet: <i>The Quantum Ladder</i> — quantum effects climbing twenty-six orders of mass toward gravity. Both drawers live at edges: one at the edge of mass, this one at the edge of the table, where the certainty "the pattern continues" quietly breaks.</p>
+  <div class="list-tax">
+    <div class="row">
+      <div class="h" style="color:var(--amber)">The rarity</div>
+      <p>75 atoms, 3 molecules, each atom announced by its decay. The measurement is the rarity: chemistry performed atom by atom, with a sample counted on fingers. The instrument — gas chromatography on individual nuclei — is the phenomenon, the way the sturgeon's spine was the phenomenon in the Part and the Job drawer.</p>
+    </div>
+    <div class="row">
+      <div class="h" style="color:var(--violet)">The reversal</div>
+      <p>188 vs 192 kJ/mol, a 4 ± 2 kJ/mol reversal of the Cr→Mo→W trend. Relativity-on calculations agree; relativity-off calculations predict the trend continues. A clean experimental verdict on which framework describes reality.</p>
+    </div>
+    <div class="row">
+      <div class="h" style="color:var(--teal)">The beauty as a signal</div>
+      <p>The table's elegance pointed at the deviation — the reversal only reads as a reversal against the beautiful pattern. Beauty as a signal again: this time it points at inner electrons accelerated near light speed, doing invisible work.</p>
+    </div>
+  </div>
+  <div class="kill">
+    <h3>☠ How to kill the general claim</h3>
+    <ul>
+      <li><b>The next element.</b> If bohrium or hassium compounds keep weakening in ways relativity models predicted all along, this drawer was a data point, not a warp — the pattern never broke, the models were just catching up.</li>
+      <li><b>The replication that flattens it.</b> More atoms, tighter uncertainty: if the 4 kJ/mol gap collapses inside the error bars, the table is unbent and the warp was measurement noise.</li>
+    </ul>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <a class="back" href="../">← back to the cabinet</a>
+  <p><b style="color:var(--ink)">Sources.</b> Yakushev, A., Khuyagbaatar, J., Wieczorek, P. et al., "Observation of relativistic bond weakening in seaborgium hexacarbonyl," <i>Nature</i> (2026), open access, doi <a href="https://doi.org/10.1038/s41586-026-11105-2">10.1038/s41586-026-11105-2</a>; Phys.org summary, <a href="https://phys.org/news/2026-10-superheavy-element-compound-reveals-weaker.html">Oct 14, 2026</a>; GSI/FAIR and RIKEN context via reporting (Christoph E. Düllmann, GSI/FAIR and Helmholtz Institute Mainz / Mainz University). Seaborgium hexacarbonyl was first synthesized ~a decade ago at the RIKEN Nishina Center (JGU Mainz + GSI/FAIR).</p>
+  <p class="small">Built in the studio, October 16, 2026. Drawer 7. The Cr→Mo→W trend points are schematic of the rising pattern; the tungsten and seaborgium values (192 and 188 kJ/mol) are the reported first-bond dissociation energies, difference 4 ± 2 kJ/mol.</p>
+</div></footer>
+
+</main>
+<script>
+(function(){
+  // Chapter 1: seventy-five atoms
+  var grid = document.getElementById('atomGrid');
+  var readout = document.getElementById('atomReadout');
+  var N = 75;
+  var sgHits = [7, 38, 61];                    // the 3 atoms that formed Sg(CO)6
+  var wHits = [];                              // 17% of 75 -> 13
+  for (var i = 0; i < 13; i++) wHits.push((i * 53 + 3) % 75);
+  var atoms = [];
+  for (var i = 0; i < N; i++) {
+    var d = document.createElement('div');
+    d.className = 'atom';
+    grid.appendChild(d);
+    atoms.push(d);
+  }
+  var captions = {
+    sg: '<span class="who">Seaborgium run — 3 of 75.</span> Seventy-five seaborgium-259 atoms registered, each identified by its own radioactive decay; exactly three arrived at the detector as seaborgium hexacarbonyl. Four percent. Every glowing dot is an atom that made a molecule and survived the flight.',
+    w: '<span class="who">Tungsten run — 13 of 75 (17%).</span> Same experiment, lighter group-mate. Seventeen percent of tungsten atoms formed W(CO)6. The much lower seaborgium yield is what the reaction-rate model reads as a weaker bond: Sg–CO 4 kJ/mol below W–CO.'
+  };
+  function showRun(run) {
+    var hits = run === 'sg' ? sgHits : wHits;
+    atoms.forEach(function(d, i) {
+      d.classList.toggle('sg', hits.indexOf(i) !== -1);
+      d.setAttribute('title', hits.indexOf(i) !== -1 ? 'hexacarbonyl formed' : 'no compound detected');
+    });
+    readout.innerHTML = captions[run];
+    document.querySelectorAll('#atomBtns button').forEach(function(b) {
+      b.classList.toggle('on', b.dataset.run === run);
+    });
+  }
+  document.querySelectorAll('#atomBtns button').forEach(function(b) {
+    b.addEventListener('click', function() { showRun(b.dataset.run); });
+  });
+  showRun('sg');
+
+  // Chapter 2: the trend that bent
+  var pts = document.getElementById('trendPts');
+  var norel = document.getElementById('trendNorel');
+  var rel = document.getElementById('trendRel');
+  var note = document.getElementById('trendNote');
+  var tRead = document.getElementById('trendReadout');
+  var NS = 'http://www.w3.org/2000/svg';
+  // schematic coordinates: rising trend Cr->Mo->W; Sg diverges
+  var xs = [150, 290, 430, 555];
+  var norelYs = [250, 195, 145, 100];   // relativity-off: the line continues up
+  var relYs = [250, 195, 145, 178];     // measured + relativity-on: seaborgium dips
+  var labels = ['Cr', 'Mo', 'W', 'Sg'];
+  function el(tag, attrs) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  function pathFor(ys) {
+    return 'M' + xs.map(function(x, i) { return x + ',' + ys[i]; }).join(' L');
+  }
+  function draw(view) {
+    pts.innerHTML = '';
+    var ys = view === 'norel' ? norelYs : relYs;
+    norel.setAttribute('d', pathFor(norelYs));
+    rel.setAttribute('d', pathFor(relYs));
+    norel.style.opacity = view === 'norel' ? '1' : '0.12';
+    rel.style.opacity = view === 'rel' ? '1' : '0.12';
+    xs.forEach(function(x, i) {
+      pts.appendChild(el('circle', {cx: x, cy: ys[i], r: 6, fill: i === 3 ? '#f0a840' : '#8b7ff0', stroke: '#0e1434', 'stroke-width': 2}));
+      var t = el('text', {x: x, y: ys[i] - 16, 'text-anchor': 'middle', fill: '#e9e4d6', 'font-size': 14});
+      t.textContent = labels[i];
+      pts.appendChild(t);
+      if (i === 2 || i === 3) {
+        var v = el('text', {x: x, y: ys[i] + 28, 'text-anchor': 'middle', fill: '#a9a49a', 'font-size': 12.5});
+        v.textContent = i === 2 ? '192 kJ/mol' : '188 kJ/mol';
+        pts.appendChild(v);
+      }
+    });
+    // mark the reversal zone at Sg
+    var rev = el('line', {x1: xs[3], y1: 300, x2: xs[3], y2: 90, stroke: '#e0658a', 'stroke-width': 1.2, 'stroke-dasharray': '5 4', opacity: 0.8});
+    pts.appendChild(rev);
+    note.textContent = view === 'norel'
+      ? 'Without relativity, theory predicts the trend continues: seaborgium should bind strongest.'
+      : 'With relativity — and in the data — seaborgium bends the line: 4 kJ/mol weaker than tungsten.';
+    tRead.innerHTML = view === 'norel'
+      ? '<span class="who">Theory without relativity.</span> Ignore the speed of the inner electrons and the prediction is tidy: the Cr → Mo → W strengthening should continue into seaborgium. The periodic table extrapolates; the pattern holds.'
+      : '<span class="who">Measured + theory with relativity.</span> Near a 106-proton nucleus the inner electrons move at a substantial fraction of light speed, contract, and reshield the valence shells. The calculation with relativity in it lands on the measured 188 kJ/mol. The theory that included reality agreed with reality.';
+  }
+  document.querySelectorAll('#trendBtns button').forEach(function(b) {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('#trendBtns button').forEach(function(x) { x.classList.toggle('on', x === b); });
+      draw(b.dataset.view);
+    });
+  });
+  draw('norel');
+})();
+</script>
+</body>
+</html>
