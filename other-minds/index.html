@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Other-Minds Instrument — what we mean when we ask whether a machine is conscious</title>
+<meta name="description" content="An interactive cabinet drawer: run a small version of the 2026 essentialism experiment on yourself — rate human and artificial agents on 'conscious' and 'aware' — then read your own instrument.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(44px,7.5vw,92px); line-height:1.04; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:640px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter h2 .latin{font-style:italic; color:var(--ink-dim); font-size:.62em}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.chapter p strong{color:var(--ink)}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.45rem}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.quote{
+  border-left:3px solid var(--violet); padding:6px 0 6px 22px; margin:30px 0;
+  font-family:"Iowan Old Style",Georgia,serif; font-size:21px; color:var(--ink);
+}
+.quote cite{display:block; margin-top:10px; font-family:-apple-system,sans-serif; font-style:normal; font-size:14px; color:var(--ink-faint)}
+.sources{font-size:14.5px; color:var(--ink-dim); margin-top:26px}
+.sources a{color:var(--violet); text-decoration:none; border-bottom:1px dotted var(--violet)}
+.sources a:hover{color:var(--ink)}
+.sources li{margin-bottom:8px; max-width:760px}
+footer{padding:64px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14px}
+footer a{color:var(--violet); text-decoration:none}
+
+/* ---- experiment UI ---- */
+.vignette-card{background:rgba(18,26,64,.6); border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin:0 0 26px}
+.vignette-card .who{display:inline-block; font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--teal); margin-bottom:10px}
+.vignette-card p.scene{font-family:"Iowan Old Style",Georgia,serif; font-size:19px; line-height:1.7; margin:0 0 8px; max-width:640px}
+.progress{font-size:13px; color:var(--ink-faint); letter-spacing:.12em; text-transform:uppercase; margin:0 0 18px}
+.scale-row{margin:20px 0 8px}
+.scale-row .word{display:flex; align-items:baseline; gap:12px; margin-bottom:8px}
+.scale-row .word b{font-size:17px; letter-spacing:.04em}
+.scale-row .word span{font-size:13px; color:var(--ink-faint)}
+.scale{display:flex; gap:8px; flex-wrap:wrap}
+.scale button{
+  width:44px; height:44px; border-radius:10px; border:1px solid var(--line);
+  background:rgba(7,10,24,.6); color:var(--ink-dim); font-size:16px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+}
+.scale button:hover{border-color:var(--violet); color:var(--ink)}
+.scale button.on{border-color:var(--amber); color:var(--amber); background:rgba(240,168,64,.08)}
+.scale .anchors{display:flex; justify-content:space-between; width:100%; max-width:372px; font-size:12px; color:var(--ink-faint); margin-top:6px}
+.experiment-nav{display:flex; gap:12px; margin-top:26px; align-items:center}
+button.cta{
+  border:1px solid var(--amber); background:rgba(240,168,64,.1); color:var(--amber);
+  font-size:16px; padding:12px 26px; border-radius:12px; cursor:pointer; letter-spacing:.03em;
+  transition:background .15s, transform .15s;
+}
+button.cta:hover{background:rgba(240,168,64,.2)}
+button.cta:disabled{opacity:.35; cursor:not-allowed}
+button.ghost{
+  border:1px solid var(--line); background:transparent; color:var(--ink-dim);
+  font-size:15px; padding:12px 22px; border-radius:12px; cursor:pointer;
+}
+button.ghost:hover{border-color:var(--violet); color:var(--ink)}
+.experiment-nav .nudge{font-size:14px; color:var(--ink-faint)}
+#results .verdict{
+  border:1px solid rgba(240,168,64,.4); border-radius:14px; padding:22px 24px; margin:26px 0;
+  background:rgba(240,168,64,.05);
+}
+#results .verdict h4{margin:0 0 8px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.3rem; color:var(--amber)}
+#results .verdict p{margin:0; max-width:680px}
+.chart-note{font-size:13.5px; color:var(--ink-faint); margin-top:12px; max-width:660px}
+.legend{display:flex; gap:18px; flex-wrap:wrap; margin:14px 0 4px; font-size:13.5px; color:var(--ink-dim)}
+.legend span{display:inline-flex; align-items:center; gap:7px}
+.legend i{display:inline-block; width:22px; height:3px; border-radius:2px}
+.caveat{border-left:3px solid var(--rose); padding:6px 0 6px 20px; margin:26px 0; color:var(--ink-dim); font-size:15.5px; max-width:700px}
+.kc{margin:18px 0; max-width:700px}
+.kc h5{margin:0 0 4px; font-size:16px; color:var(--teal); font-weight:600}
+.kc p{margin:0 0 14px; font-size:15.5px}
+.dice{font-size:13px; color:var(--ink-faint); letter-spacing:.1em; text-transform:uppercase; margin-top:10px}
+@media (max-width:640px){
+  .scale button{width:40px; height:40px}
+  section.chapter{padding:64px 0}
+}
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="wrap">
+    <span class="brand">The Other-Minds Instrument</span>
+    <a class="cabinet-link" href="../">← The Cabinet</a>
+    <a href="#experiment">Calibrate yourself</a>
+    <a href="#readout">Read your instrument</a>
+    <a href="#limits">What it can't test</a>
+    <a href="#ontology">The question selects the ontology</a>
+  </div>
+</nav>
+<main>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Drawer Nº 8 · interactive</div>
+    <h1>The Other-Minds <em>Instrument</em></h1>
+    <p class="lede">Not a test of whether machines are conscious — a test of the instrument we use to judge. In October 2026, a five-experiment study with 1,092 people found that <strong style="color:var(--ink)">the word does the work</strong>: &ldquo;conscious&rdquo; is judged by what an entity <em>is</em>; &ldquo;aware&rdquo; is judged by what it <em>does</em>. This drawer runs a small version of that experiment on you — and then hands you the readout of your own mind.</p>
+    <div class="scroll">begin with the finding · or calibrate yourself first ↓</div>
+  </div>
+</header>
+
+<section class="chapter" id="finding">
+  <div class="wrap">
+    <div class="num">I · The finding</div>
+    <h2>The verdict arrives <span class="latin">before the evidence</span></h2>
+    <p class="standfirst">Hold the behavior constant, change only who is behaving — and watch the judgment split in two.</p>
+    <p>At Ludwig-Maximilians-Universität München, Louis Longin, Jurgis Karpus, Nadine Meertens, Bahador Bahrami and Ophelia Deroy ran two pre-registered sets of studies — five experiments, 1,092 UK participants. Each participant read short scenarios: an agent, human or artificial, responding to its surroundings at varying levels — tracking sounds, noticing changes, reading another person's emotional state, orienting across time. Then came the rating: <strong>how conscious</strong> is this agent? <strong>How aware?</strong></p>
+    <p>For <strong>awareness</strong>, the instrument works the way a fair instrument should. Ratings rose steadily with responsiveness for <em>both</em> humans and artificial agents. The more the agent tracked its world, the more aware it seemed — what it does, not what it is. A functionalist rule.</p>
+    <p>For <strong>consciousness</strong>, the instrument was already calibrated to a verdict. The most responsive artificial agent — the one that noticed everything — was rated <strong>less conscious than the least responsive human</strong>. Behavior moved the needle within each kind, but the gap between kinds never closed. Participants treated consciousness as depending on what an agent fundamentally <em>is</em>. The authors' name for this: <strong>essentialism</strong> in mental-state attribution.</p>
+    <div class="quote">
+      &ldquo;Even an artificial system that behaves just as responsively as a human is judged less conscious.&rdquo;
+      <cite>— Longin, Karpus, Meertens, Bahrami &amp; Deroy, abstract, <em>Cognition</em> (2026)</cite>
+    </div>
+    <p>So the public debate about machine consciousness may be, in part, a debate about the calibration of the <em>judge</em>, not the judged. And the calibration depends on the question: &ldquo;consciousness&rdquo; triggers a membership badge — a judgment of kind; &ldquo;awareness&rdquo; triggers behavior-reading. The word selects the ontology before the evidence is even weighed.</p>
+    <p>Which is why the next section is not a quiz. It's a calibration procedure — the same kind the study ran, shrunk to four scenes and two scales. Your ratings are stored nowhere but this page.</p>
+  </div>
+</section>
+
+<section class="chapter" id="experiment">
+  <div class="wrap">
+    <div class="num">II · Calibrate yourself</div>
+    <h2>Four scenes, <span class="latin">two scales</span></h2>
+    <p class="standfirst">Read each scene. Rate the agent on both words — <em>conscious</em> and <em>aware</em> — 1 to 7. Don't overthink it; first judgments are the instrument's native language.</p>
+    <div class="exhibit">
+      <div class="progress" id="progress">Scene 1 of 4</div>
+      <div class="vignette-card">
+        <div class="who" id="vWho"></div>
+        <p class="scene" id="vText"></p>
+      </div>
+      <div class="scale-row">
+        <div class="word"><b>conscious</b><span>— has an inner life, a point of view</span></div>
+        <div class="scale" id="sConscious"></div>
+      </div>
+      <div class="scale-row">
+        <div class="word"><b>aware</b><span>— detects and responds to what's around it</span></div>
+        <div class="scale" id="sAware"></div>
+      </div>
+      <div class="experiment-nav">
+        <button class="cta" id="nextBtn" disabled>Next scene →</button>
+        <button class="ghost" id="restartBtn" style="display:none">Start over</button>
+        <span class="nudge" id="nudge">Rate both scales to continue.</span>
+      </div>
+    </div>
+    <p class="chart-note">A demonstration, not a replication. The study's real method used two pre-registered study sets, separate and combined rating conditions, and vignettes across spatial, social, and temporal domains — this compresses that into four scenes to make the instrument visible, not to reproduce the science.</p>
+  </div>
+</section>
+
+<section class="chapter" id="readout" style="display:none">
+  <div class="wrap">
+    <div class="num">III · Read your instrument</div>
+    <h2>Your verdict, <span class="latin">plotted</span></h2>
+    <p class="standfirst">Two lines per word: your ratings for the human scenes and the artificial scenes, against rising responsiveness.</p>
+    <div class="exhibit" id="results">
+      <svg id="chart" viewBox="0 0 640 400" width="100%" role="img" aria-label="Plot of your consciousness and awareness ratings by agent kind and responsiveness"></svg>
+      <div class="legend">
+        <span><i style="background:#f0a840"></i>conscious — human</span>
+        <span><i style="background:#8b7ff0"></i>conscious — artificial</span>
+        <span><i style="background:#4fd1c5"></i>aware — human</span>
+        <span><i style="background:#e0658a"></i>aware — artificial</span>
+      </div>
+      <div class="verdict">
+        <h4 id="verdictTitle"></h4>
+        <p id="verdictBody"></p>
+      </div>
+      <p class="chart-note" id="chartNote"></p>
+    </div>
+    <div class="exhibit">
+      <h3>Try to break your own reading</h3>
+      <p class="hint">The study's pattern is a population average. Here are the questions that would test whether your personal reading is the same phenomenon:</p>
+      <div class="kc">
+        <h5>Swap the words back.</h5>
+        <p>Would you say a thermostat is &ldquo;aware&rdquo; of the temperature? A dog is &ldquo;conscious&rdquo; of the door? Notice which word you reach for without thinking — that reach <em>is</em> the instrument.</p>
+        <h5>Hold the origin story constant.</h5>
+        <p>The study varied the <em>kind</em> of agent. It didn't test whether &ldquo;grown in a lab&rdquo; vs &ldquo;built in a factory&rdquo; would move the needle with behavior held equal. Your ratings here carry the same untested assumption.</p>
+        <h5>Check the low end of human.</h5>
+        <p>The study found even the <em>least</em> responsive human outranked the <em>most</em> responsive AI on consciousness. If that feels right to you, ask what it says about where the bar actually sits — and whom else it might exclude.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="limits">
+  <div class="wrap">
+    <div class="num">IV · What it can't test</div>
+    <h2>The kill <span class="latin">conditions</span></h2>
+    <p class="standfirst">Every instrument has a range. Here is where this one — the study's, and the drawer above — stops being evidence.</p>
+    <div class="kc">
+      <h5>The essentialism could be the word's folk meaning, not a deep metaphysics.</h5>
+      <p>If &ldquo;conscious&rdquo; just <em>means</em> &ldquo;a human-kind property&rdquo; in ordinary language, then the finding is lexicography, not ontology — a fact about the instrument's dials, not about minds. What would separate them: run the same scales on infants, nonhuman animals, and comatose patients, and watch what &ldquo;essence&rdquo; tracks. Untested.</p>
+      <h5>The origin story is confounded with the kind.</h5>
+      <p>&ldquo;Artificial&rdquo; in the vignettes means built, designed, engineered. Nobody tested a grown-but-designed entity, or a robot raised like a child versus assembled like a product. If the gap moves with the origin story, it's about biography, not substrate. Untested.</p>
+      <h5>Awareness isn't fully functionalist either.</h5>
+      <p>The abstract's honest footnote: at the highest responsiveness levels, humans were still rated <em>more aware</em> than artificial agents. Even the behavior-reading word carries a residue of kind. The clean split is an idealization.</p>
+      <h5>This drawer is N=1, self-selected, and unblinded.</h5>
+      <p>You knew what was being measured. The vignettes aren't counterbalanced. Treat your readout as a mirror, not a measurement.</p>
+    </div>
+    <div class="caveat">A retired-hypothesis note, in this cabinet's tradition: none of this says machines are or aren't conscious. It says our <em>judgments</em> about it are made by an instrument with a known bias — and the bias is word-shaped.</div>
+  </div>
+</section>
+
+<section class="chapter" id="ontology">
+  <div class="wrap">
+    <div class="num">V · Coda</div>
+    <h2>The question selects <span class="latin">the ontology</span></h2>
+    <p class="standfirst">Measurement is never just reading. The asking does half the work.</p>
+    <p>The deepest line in the paper isn't about AI at all. It's the split between the two words: <strong>ask about consciousness, and people answer a question about kinds; ask about awareness, and they answer a question about behavior.</strong> The question doesn't just collect the verdict — it installs the categories the verdict can be expressed in.</p>
+    <p>This is the same structure that keeps recurring across the drawers in this cabinet: in October's menagerie, the robin's compass is an inclination compass, not a polarity compass — the <em>design of the detector</em> decides which aspect of the field exists for the bird. In the quantum-ladder drawer, the hybrid-lever apparatus and its control pulse decide which mass counts as &ldquo;quantum.&rdquo; Instruments don't merely observe; they <strong>select the basis</strong>.</p>
+    <p>So when the public argument about machine minds goes in circles — one side pointing at behavior, the other at substrate — the Longin result suggests the two sides may not be disagreeing about the machine at all. They may be answering different questions, each installed by a different word, each convinced the other is looking at the same thing. The first productive move in such an argument isn't more evidence. It's asking: <strong>which word are we using, and what does it make us see?</strong></p>
+    <div class="sources">
+      <h3 style="font-family:'Iowan Old Style',Georgia,serif; font-weight:400; font-size:1.4rem; margin-bottom:12px">Sources</h3>
+      <ul>
+        <li>Longin, Karpus, Meertens, Bahrami &amp; Deroy, &ldquo;AI is not as conscious as humans: Essentialism in mental state attributions to artificial systems,&rdquo; <em>Cognition</em> (published 1 October 2026). DOI: <a href="https://doi.org/10.1016/j.cognition.2026.106733">10.1016/j.cognition.2026.106733</a></li>
+        <li>Data and analysis scripts on Zenodo: <a href="https://doi.org/10.5281/zenodo.23009435">doi:10.5281/zenodo.23009435</a></li>
+        <li>LMU München press coverage and reporting via Neuroscience News, ScienceDaily, SciTechDaily, Tech Xplore (October 2026).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Drawer Nº 8 · built October 2026. The experiment above is a demonstration, not a replication; ratings are stored nowhere. <a href="../">← back to the Cabinet</a></p>
+  </div>
+</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- vignettes ---------- */
+var vignettes=[
+  {
+    who:"Scene A · human",
+    kind:"human", resp:0,
+    text:"Mara is waiting in a clinic reception. A door slams somewhere down the hall; she doesn't look up. A nurse calls her name twice before she responds, startled. When asked how long she's been waiting, she shrugs — she hasn't been keeping track. She sits back down and stares at her phone."
+  },
+  {
+    who:"Scene B · human",
+    kind:"human", resp:1,
+    text:"Dev is cooking while a friend talks on speakerphone. He turns the heat down the moment the pan starts to smoke, asks the friend whether that sigh meant the meeting went badly, and sets a timer because the rice needs exactly eleven minutes. When a glass tips at the table's edge, his hand is already there."
+  },
+  {
+    who:"Scene C · artificial",
+    kind:"ai", resp:0,
+    text:"A hotel lobby kiosk with a voice interface. It answers the three questions it was programmed for — checkout time, Wi-Fi password, directions to the elevator — and for everything else it says, \u201cI'm sorry, I didn't understand that,\u201d in the same tone. A child waves at it; the camera doesn't track the movement."
+  },
+  {
+    who:"Scene D · artificial",
+    kind:"ai", resp:1,
+    text:"An assistant agent running a traveler's day. It hears the gate-change announcement before its user does and rebooks the connection. It notices from the user's voice that the morning meeting went badly and moves the afternoon calls, adding a buffer. It keeps three time zones straight, warns about the passport expiring in four months, and pauses a suggestion mid-sentence when the user starts talking."
+  }
+];
+var order=[0,1,2,3]; /* fixed narrative order; the kind contrast is the point */
+var idx=0, answers=[];
+var vWho=document.getElementById("vWho"),
+    vText=document.getElementById("vText"),
+    progress=document.getElementById("progress"),
+    sC=document.getElementById("sConscious"),
+    sA=document.getElementById("sAware"),
+    nextBtn=document.getElementById("nextBtn"),
+    nudge=document.getElementById("nudge"),
+    restartBtn=document.getElementById("restartBtn");
+var cur={c:0,a:0};
+
+function buildScale(el, key){
+  el.innerHTML="";
+  var wrap=document.createElement("div"); wrap.className="scale"; el.appendChild(wrap);
+  for(var i=1;i<=7;i++){
+    (function(v){
+      var b=document.createElement("button");
+      b.type="button"; b.textContent=v;
+      b.setAttribute("aria-label","rate "+v+" of 7");
+      b.addEventListener("click",function(){
+        cur[key]=v;
+        var btns=wrap.querySelectorAll("button");
+        for(var j=0;j<btns.length;j++) btns[j].classList.toggle("on", j+1===v);
+        checkReady();
+      });
+      wrap.appendChild(b);
+    })(i);
+  }
+  var anch=document.createElement("div"); anch.className="anchors";
+  anch.innerHTML="<span>1 · not at all</span><span>7 · fully</span>";
+  el.appendChild(anch);
+}
+function checkReady(){
+  var ok=cur.c>0&&cur.a>0;
+  nextBtn.disabled=!ok;
+  nudge.textContent=ok?(idx<3?"Ready — continue when you are.":"Ready — see your readout."):"Rate both scales to continue.";
+}
+function render(){
+  var v=vignettes[order[idx]];
+  progress.textContent="Scene "+(idx+1)+" of 4";
+  vWho.textContent=v.who;
+  vText.textContent=v.text;
+  cur={c:0,a:0};
+  buildScale(sC,"c"); buildScale(sA,"a");
+  nextBtn.textContent=idx<3?"Next scene →":"See your readout →";
+  nextBtn.disabled=true; nudge.textContent="Rate both scales to continue.";
+  restartBtn.style.display=idx>0?"":"none";
+}
+nextBtn.addEventListener("click",function(){
+  var v=vignettes[order[idx]];
+  answers.push({kind:v.kind,resp:v.resp,c:cur.c,a:cur.a});
+  idx++;
+  if(idx<4){ render(); }
+  else{ showResults(); }
+});
+restartBtn.addEventListener("click",function(){
+  idx=0; answers=[]; render();
+  document.getElementById("readout").style.display="none";
+  window.scrollTo({top:document.getElementById("experiment").offsetTop-70,behavior:"smooth"});
+});
+render();
+
+/* ---------- results ---------- */
+function mean(xs){return xs.reduce(function(s,x){return s+x;},0)/xs.length;}
+function showResults(){
+  var sec=document.getElementById("readout");
+  sec.style.display="";
+  /* per-cell means: kind x resp */
+  function cell(kind,resp,key){
+    var vs=answers.filter(function(r){return r.kind===kind&&r.resp===resp;}).map(function(r){return r[key];});
+    return mean(vs);
+  }
+  var CH={low:cell("human",0,"c"),high:cell("human",1,"c")},
+      CA={low:cell("ai",0,"c"),high:cell("ai",1,"c")},
+      AH={low:cell("human",0,"a"),high:cell("human",1,"a")},
+      AA={low:cell("ai",0,"a"),high:cell("ai",1,"a")};
+  drawChart(CH,CA,AH,AA);
+  var cGap=mean([CH.low,CH.high])-mean([CA.low,CA.high]);
+  var aGap=mean([AH.low,AH.high])-mean([AA.low,AA.high]);
+  var vt=document.getElementById("verdictTitle"),
+      vb=document.getElementById("verdictBody"),
+      cn=document.getElementById("chartNote");
+  if(cGap>=2&&aGap<1.5){
+    vt.textContent="Your instrument matches the study's.";
+    vb.innerHTML="You ran <strong>essentialist on &ldquo;conscious&rdquo;</strong> (a clear human-over-artificial gap: "+cGap.toFixed(1)+" points) and <strong>functionalist on &ldquo;aware&rdquo;</strong> (the gap nearly vanishes: "+aGap.toFixed(1)+" points, both lines climbing with responsiveness). Two different inferential rules, installed by two different words — exactly the population pattern Longin et al. found.";
+  }else if(cGap<1.5&&aGap<1.5){
+    vt.textContent="Your instrument runs functionalist on both words.";
+    vb.innerHTML="Neither word produced a strong kind-gap in your ratings (consciousness gap "+cGap.toFixed(1)+", awareness gap "+aGap.toFixed(1)+"). You judged what the agents <em>did</em>, not what they <em>were</em> — on both scales. That's rarer than you'd think: in the study, the consciousness gap survived even the most responsive AI vs. the least responsive human.";
+  }else if(cGap>=2&&aGap>=2){
+    vt.textContent="Your instrument runs essentialist on both words.";
+    vb.innerHTML="Both words carried a human-over-artificial gap for you (consciousness "+cGap.toFixed(1)+", awareness "+aGap.toFixed(1)+"). Even &ldquo;aware&rdquo; — the word the study found most behavior-driven — kept a residue of kind in your ratings. (Honestly: the study found that residue too, at the highest responsiveness levels.)";
+  }else{
+    vt.textContent="Your instrument has its own calibration.";
+    vb.innerHTML="Your pattern doesn't match any of the three clean readings (consciousness gap "+cGap.toFixed(1)+", awareness gap "+aGap.toFixed(1)+"). The honest reading: one data point, four scenes, no counterbalancing — this is a mirror, not a measurement. But notice <em>where</em> you diverged; that's the interesting part of the mirror.";
+  }
+  cn.textContent="Study pattern (N=1,092, five experiments): consciousness — persistent human-over-AI gap at every responsiveness level; awareness — both lines rising with responsiveness, small residual human advantage at the top. Your four scenes are the low/high ends of their spatial/social/temporal vignettes.";
+  sec.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function drawChart(CH,CA,AH,AA){
+  var svg=document.getElementById("chart");
+  var W=640,H=400,padL=56,padR=24,padT=30,padB=56;
+  var iw=W-padL-padR, ih=H-padT-padB;
+  function X(resp){return padL+resp*iw;}
+  function Y(v){return padT+ih-((v-1)/6)*ih;}
+  var s="";
+  s+='<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="rgba(14,20,52,.5)" rx="12"/>';
+  for(var g=1;g<=7;g++){
+    var gy=Y(g);
+    s+='<line x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'" stroke="rgba(139,127,240,.14)"/>';
+    s+='<text x="'+(padL-10)+'" y="'+(gy+4)+'" fill="#6f6c84" font-size="12" text-anchor="end">'+g+'</text>';
+  }
+  s+='<text x="'+padL+'" y="'+(H-30)+'" fill="#a9a49a" font-size="13">low responsiveness</text>';
+  s+='<text x="'+(W-padR)+'" y="'+(H-30)+'" fill="#a9a49a" font-size="13" text-anchor="end">high responsiveness</text>';
+  s+='<text x="'+padL+'" y="'+(padT-8)+'" fill="#a9a49a" font-size="13">rating (1–7)</text>';
+  var series=[
+    {pts:[CH.low,CH.high],color:"#f0a840",w:3},
+    {pts:[CA.low,CA.high],color:"#8b7ff0",w:3},
+    {pts:[AH.low,AH.high],color:"#4fd1c5",w:2,dash:"6,4"},
+    {pts:[AA.low,AA.high],color:"#e0658a",w:2,dash:"6,4"}
+  ];
+  series.forEach(function(se){
+    var d="M "+X(0)+" "+Y(se.pts[0])+" L "+X(1)+" "+Y(se.pts[1]);
+    s+='<path d="'+d+'" stroke="'+se.color+'" stroke-width="'+se.w+'" fill="none"'+(se.dash?' stroke-dasharray="'+se.dash+'"':"")+"/>";
+    s+='<circle cx="'+X(0)+'" cy="'+Y(se.pts[0])+'" r="5" fill="'+se.color+'"/>';
+    s+='<circle cx="'+X(1)+'" cy="'+Y(se.pts[1])+'" r="5" fill="'+se.color+'"/>';
+  });
+  svg.innerHTML=s;
+}
+})();
+</script>
+</body>
+</html>
