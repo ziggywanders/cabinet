@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Species Is the Sequence — the smallest archaeal genome on record</title>
+<meta name="description" content="An interactive cabinet drawer: Candidatus Sukunaarchaeum mirabile — 189 genes, a 238-kilobase circle, never directly observed. The species is the sequence.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(44px,7.5vw,92px); line-height:1.04; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:660px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter h2 .latin{font-style:italic; color:var(--ink-dim); font-size:.62em}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.chapter p strong{color:var(--ink)}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.45rem}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.quote{
+  border-left:3px solid var(--violet); padding:6px 0 6px 22px; margin:30px 0;
+  font-family:"Iowan Old Style",Georgia,serif; font-size:21px; color:var(--ink);
+}
+.quote cite{display:block; margin-top:10px; font-family:-apple-system,sans-serif; font-style:normal; font-size:14px; color:var(--ink-faint)}
+.sources{font-size:14.5px; color:var(--ink-dim); margin-top:26px}
+.sources a{color:var(--violet); text-decoration:none; border-bottom:1px dotted var(--violet)}
+.sources a:hover{color:var(--ink)}
+.sources li{margin-bottom:8px; max-width:760px}
+footer{padding:64px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14px}
+footer a{color:var(--violet); text-decoration:none}
+
+/* ---- genome exhibit ---- */
+.genome-grid{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:26px; align-items:start}
+@media (max-width:820px){.genome-grid{grid-template-columns:1fr}}
+.genome-svg{width:100%; height:auto; display:block}
+.gdot{fill:var(--teal); opacity:.85; transition:fill .25s, opacity .25s, r .25s}
+.gdot.dim{opacity:.14}
+.gdot.hl-unknown{fill:var(--violet); opacity:1}
+.gdot.hl-keeper{fill:var(--amber); opacity:1}
+.ringlabel{font-family:"Iowan Old Style",Georgia,serif; font-size:22px; fill:var(--ink)}
+.ringlabel small, .ringlabel tspan.sub{font-family:-apple-system,sans-serif; font-size:13px; fill:var(--ink-faint)}
+.genome-btns{display:flex; gap:10px; flex-wrap:wrap; margin:4px 0 20px}
+button.gbtn{
+  border:1px solid var(--line); background:rgba(7,10,24,.6); color:var(--ink-dim);
+  font-size:14.5px; padding:10px 18px; border-radius:999px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+}
+button.gbtn:hover{border-color:var(--violet); color:var(--ink)}
+button.gbtn.on{border-color:var(--amber); color:var(--amber); background:rgba(240,168,64,.08)}
+.genome-readout{
+  border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  background:rgba(7,10,24,.45); min-height:220px;
+}
+.genome-readout h4{margin:0 0 8px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.25rem}
+.genome-readout h4 .dotkey{display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px}
+.genome-readout p{margin:0 0 12px; font-size:15.5px; color:var(--ink-dim); max-width:460px}
+.genome-readout p strong{color:var(--ink)}
+.genome-readout .schem{font-size:12.5px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase}
+.ghosts{margin:0; padding:0; list-style:none}
+.ghosts li{
+  font-size:15px; color:var(--ink-faint); padding:9px 0 9px 30px; position:relative;
+  border-bottom:1px dashed rgba(139,127,240,.16);
+}
+.ghosts li::before{content:"✕"; position:absolute; left:6px; color:var(--rose); opacity:.7}
+.ghosts li b{color:var(--ink-dim); font-weight:600}
+.sizebars{margin-top:26px}
+.sizebar{margin:0 0 14px}
+.sizebar .lab{display:flex; justify-content:space-between; font-size:14px; color:var(--ink-dim); margin-bottom:6px}
+.sizebar .lab .sp{font-variant-numeric:tabular-nums; color:var(--ink-faint)}
+.sizebar .track{height:16px; border-radius:8px; background:rgba(139,127,240,.12); position:relative; overflow:hidden}
+.sizebar .fill{position:absolute; inset:0 auto 0 0; border-radius:8px; background:linear-gradient(90deg,var(--violet),var(--teal))}
+.sizebar.hero-bar .fill{background:linear-gradient(90deg,var(--amber),#ffd27a)}
+.sizebar .scale-note{font-size:12.5px; color:var(--ink-faint); margin-top:10px}
+.legend{display:flex; gap:18px; flex-wrap:wrap; margin:16px 0 4px; font-size:13.5px; color:var(--ink-dim)}
+.legend span{display:inline-flex; align-items:center; gap:7px}
+.legend i{display:inline-block; width:12px; height:12px; border-radius:50%}
+.caveat{border-left:3px solid var(--rose); padding:6px 0 6px 20px; margin:26px 0; color:var(--ink-dim); font-size:15.5px; max-width:700px}
+.kc{margin:18px 0; max-width:700px}
+.kc h5{margin:0 0 4px; font-size:16px; color:var(--teal); font-weight:600}
+.kc p{margin:0 0 14px; font-size:15.5px}
+@media (max-width:640px){
+  section.chapter{padding:64px 0}
+}
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="wrap">
+    <span class="brand">The Species Is the Sequence</span>
+    <a class="cabinet-link" href="../">← The Cabinet</a>
+    <a href="#finding">The tiny god</a>
+    <a href="#genome">Read the genome</a>
+    <a href="#territory">The map is the territory</a>
+    <a href="#limits">Kill conditions</a>
+    <a href="#coda">Coda</a>
+  </div>
+</nav>
+<main>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Drawer Nº 9 · interactive</div>
+    <h1>The Species Is the <em>Sequence</em></h1>
+    <p class="lede">In October 2026, biologists announced the smallest archaeal genome on record — 189 genes in a 238-kilobase circle — found hiding inside a single plankton cell. It has never been directly observed. No host has been identified. As far as science knows, the entire species is a file. The map is not the territory — except here the map is all there is.</p>
+    <div class="scroll">begin with the discovery · or read the genome first ↓</div>
+  </div>
+</header>
+
+<section class="chapter" id="finding">
+  <div class="wrap">
+    <div class="num">I · The finding</div>
+    <h2>The tiny <span class="latin">god</span></h2>
+    <p class="standfirst">A strange loop of DNA, matching nothing in any database, inside a cell that wasn't supposed to contain it.</p>
+    <p>Researchers at the University of Tsukuba were doing something routine: sequencing the DNA of individual cells of <em class="serif">Citharistes regius</em>, a single-celled marine plankton collected from waters off Shimoda, Japan. Buried among the expected plankton DNA sat a loop of genetic material that matched <strong>nothing in any database</strong>. The team's first thought was the honest one: a sequencing artifact. But repeated sequencing and assembly kept returning the same loop. It wasn't contamination. There was another living thing hiding inside the plankton cell.</p>
+    <p>That loop turned out to be a <strong>complete circular genome</strong>: 238,034 base pairs carrying just <strong>189 protein-coding genes</strong> — roughly five percent of the genetic content of a common gut bacterium like <em class="serif">E. coli</em>, and 51 percent smaller than the previous archaeal record holder, <em class="serif">Nanoarchaeum equitans</em>, at 490,000 base pairs. The smallest archaeal genome ever found — less than half the size of the smallest one known before it.</p>
+    <p>What it kept is as strange as what it lost. It kept the machinery to <strong>copy its own DNA and build its own proteins</strong> — polymerases, ribosomes, the translation core — the part of the cellular toolkit that biologists have long used to draw the line between cells and viruses. It lost almost everything else: <strong>nearly all the genes for making nutrients and energy</strong>. A cell that can copy itself but cannot feed itself — it must be living off something else.</p>
+    <p>And then there is the quarter nobody can read. About <strong>a fourth of the genome</strong> encodes unusually large membrane proteins whose functions are unknown. Similar proteins turn up in some parasitic archaea — a whisper of a dependent life, clinging to or inside a host. But the host is unknown. The whisper is unconfirmed.</p>
+    <div class="quote">
+      &ldquo;The key to defining life is whether something can replicate itself, and whether it can do this autonomously. This exciting discovery provides new clues about how simple a living cell can become while remaining capable of reproducing and maintaining its own genetic information.&rdquo;
+      <cite>— Thorsten Allers, University of Nottingham, co-author of the study</cite>
+    </div>
+    <p>The name is doing real work. <em class="serif">Candidatus</em> Sukunaarchaeum <em class="serif">mirabile</em> — after <strong>Sukuna-biko-na</strong>, the small-statured deity of Japanese mythology, the renowned little lord, often described as the size of a human thumb, god of healing, hot springs, and magic; <em class="serif">mirabile</em>, marvelous. Smallness, named as sacred rather than as lack.</p>
+  </div>
+</section>
+
+<section class="chapter" id="genome">
+  <div class="wrap">
+    <div class="num">II · Read the genome</div>
+    <h2>The 238-kilobase <span class="latin">circle</span></h2>
+    <p class="standfirst">Every dot is one of the 189 protein-coding genes. Three ways to read the same circle.</p>
+    <div class="exhibit">
+      <div class="genome-grid">
+        <div>
+          <svg class="genome-svg" id="genomeSvg" viewBox="0 0 520 520" role="img" aria-label="Circular map of the 189-gene Sukunaarchaeum genome"></svg>
+          <div class="legend">
+            <span><i style="background:#4fd1c5"></i>protein-coding gene</span>
+            <span><i style="background:#8b7ff0"></i>the unread quarter</span>
+            <span><i style="background:#f0a840"></i>the keepers</span>
+          </div>
+        </div>
+        <div>
+          <div class="genome-btns">
+            <button class="gbtn on" id="btnAll">All 189 genes</button>
+            <button class="gbtn" id="btnUnknown">The unread quarter</button>
+            <button class="gbtn" id="btnKeepers">The keepers</button>
+            <button class="gbtn" id="btnLost">What it gave up</button>
+          </div>
+          <div class="genome-readout" id="readout">
+            <h4><span class="dotkey" style="background:#4fd1c5"></span>One circle, 189 genes</h4>
+            <p>The whole genome is a closed loop of <strong>238,034 base pairs</strong>. For scale: it encodes <strong>fewer proteins than many large viruses</strong> — yet it kept its own ribosomes, the machinery giant viruses never have. That single kept feature is what keeps it on the cellular side of the oldest boundary in biology.</p>
+            <p class="schem">Gene groupings in this ring are schematic; exact per-gene annotation is ongoing. Only the totals are exact: 189 genes, ~¼ of them membrane-unknowns.</p>
+          </div>
+        </div>
+      </div>
+      <div class="sizebars">
+        <h3>How small is small</h3>
+        <p class="hint">Genome sizes, log scale. The second bar was the record until October 2026.</p>
+        <div class="sizebar hero-bar">
+          <div class="lab"><span><strong style="color:var(--ink)">Sukunaarchaeum mirabile</strong> — the new record</span><span class="sp">238,034 bp</span></div>
+          <div class="track"><div class="fill" style="width:80.7%"></div></div>
+        </div>
+        <div class="sizebar">
+          <div class="lab"><span><em class="serif">Nanoarchaeum equitans</em> — previous archaeal record</span><span class="sp">490,000 bp</span></div>
+          <div class="track"><div class="fill" style="width:85.4%"></div></div>
+        </div>
+        <div class="sizebar">
+          <div class="lab"><span><em class="serif">E. coli</em> — a common gut bacterium, for scale</span><span class="sp">~4,600,000 bp</span></div>
+          <div class="track"><div class="fill" style="width:100%"></div></div>
+        </div>
+        <p class="scale-note">Logarithmic scale: each step right is ten times larger. On a linear scale the two archaeal genomes would be slivers against <em class="serif">E. coli</em> — which is the point.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="territory">
+  <div class="wrap">
+    <div class="num">III · The map is the territory</div>
+    <h2>Known only <span class="latin">as information</span></h2>
+    <p class="standfirst"><em class="serif">Candidatus</em> — the taxonomic flag for &ldquo;proposed but not fully characterized.&rdquo; You can't culture what you can't see.</p>
+    <p>Nobody has ever seen Sukunaarchaeum. Not under a microscope, not in a culture dish. No host has been identified. The organism exists for science as a <strong>metagenome-assembled genome</strong>: fragments of DNA, sequenced from inside a plankton cell, computationally stitched into a closed circle. The species is the sequence — 238,034 letters, a loop, a quarter unread. That is the whole animal, as far as anyone knows.</p>
+    <p>This is not quite unprecedented — the genomic era is full of organisms known only from their DNA — but the completeness of the ignorance is unusual. A <em class="serif">Candidatus</em> name is a hypothesis wearing a Latin binomial. And the hypothesis comes with company: related genetic sequences in other marine samples suggest Sukunaarchaeum belongs to a <strong>much larger group of organisms that has gone largely unnoticed</strong> — a shadow lineage of extreme minimalists, all known the same way, as files.</p>
+    <div class="quote">
+      &ldquo;Although it has lost almost all of the genes needed to make nutrients and energy, it has kept much of the machinery required to copy its genome and produce proteins from its genetic information. This suggests that Sukunaarchaeum may be close to the minimum level of genetic information needed for an organism to remain an independent cell.&rdquo;
+      <cite>— Thorsten Allers, via Phys.org</cite>
+    </div>
+    <p>Note the fork in that sentence. Most ultra-reduced genomes took a different path: mitochondria and chloroplasts, once free-living bacteria, gave up even their replication machinery to their hosts. Sukunaarchaeum did the opposite — it <strong>kept the copying machinery and gave up the feeding machinery</strong>. Autonomy of reproduction, dependence of metabolism. The two halves of self-sufficiency, unbundled.</p>
+    <p class="caveat" style="border-left-color:var(--violet)">The half-thought from the field notes, kept: the map is not the territory — except here the map is the only thing we have. Every claim in this drawer is a claim about a string of letters that happens to be circular. When someone finally photographs the cell — if the host is ever found — this drawer gets rewritten. That is not a weakness of the finding. It is the finding's shape.</p>
+  </div>
+</section>
+
+<section class="chapter" id="limits">
+  <div class="wrap">
+    <div class="num">IV · What it can't test</div>
+    <h2>The kill <span class="latin">conditions</span></h2>
+    <p class="standfirst">Every instrument has a range. A genome is an instrument pointed at a living thing — here is where it stops being evidence.</p>
+    <div class="kc">
+      <h5>The parasitism is a hint, not a finding.</h5>
+      <p>Membrane-protein similarity to parasitic archaea is guilt by association. The host is unknown; Sukunaarchaeum might live alongside its partner rather than inside it. The &ldquo;dependent&rdquo; story is inferred from absence — missing metabolic genes — not from watching it live. Absence is evidence, but it is not observation.</p>
+      <h5>The record is a record, not a law.</h5>
+      <p>The assembly looks complete — a closed circle, not a fragment — which makes the &ldquo;smallest&rdquo; claim strong. But the related-sequences hint says there is a lineage out there we have barely seen. Records fall. The next loop in the next plankton cell might be smaller still.</p>
+      <h5>Ribosomes are not autonomy.</h5>
+      <p>Keeping the copying machinery does not settle the cell–virus boundary. Mitochondria kept core replication genes too, and nobody calls a mitochondrion an independent organism. The question is ecological, not just genetic: what does it take from the world, and can it stop taking it?</p>
+      <h5>A <em class="serif">Candidatus</em> is a hypothesis, not a specimen.</h5>
+      <p>With related sequences hinting at a broader group, &ldquo;Sukunaarchaeum mirabile&rdquo; might be one face of a diverse lineage rather than a tidy species. And a genome is a plan, not the animal: the quarter we can't read might do something no annotation predicts. The unread proteins are the part of the map labeled <em class="serif">here be dragons</em> — except the dragons are the size of molecules.</p>
+    </div>
+    <div class="caveat">A retired-hypothesis note, in this cabinet's tradition: none of this says what Sukunaarchaeum <em>is</em>, in the living sense. It says what 189 genes can and cannot tell you — and how much of biology now happens at the distance of a file.</div>
+  </div>
+</section>
+
+<section class="chapter" id="coda">
+  <div class="wrap">
+    <div class="num">V · Coda</div>
+    <h2>A name for <span class="latin">smallness</span></h2>
+    <p class="standfirst">They named a marvel after a god the size of a thumb.</p>
+    <p>There is a quiet defiance in the naming. The organism is defined, in every press account, by what it lacks — the smallest genome, the fewest genes, the stripped-down cell. The name answers with a deity: Sukuna-biko-na, the renowned little lord, god of healing and hot springs and magic. Smallness as sacred, not as deficit.</p>
+    <p>And the thought that won't leave the drawer: somewhere off Shimoda, inside a drifting plankton cell, there is a circle of DNA doing everything a living thing needs to begin — copying itself, building proteins, holding on. It has no name for itself. It has 189 genes and a quarter of them are a mystery and it does not know any of this. We know it only as information, and it doesn't know us at all. The asymmetry is total, and it is the usual condition of discovery: <strong>the species is the sequence, and the sequence is enough — until it isn't.</strong></p>
+    <div class="sources">
+      <h3 style="font-family:'Iowan Old Style',Georgia,serif; font-weight:400; font-size:1.4rem; margin-bottom:12px">Sources</h3>
+      <ul>
+        <li>The study: <em>Current Biology</em> (October 2026). DOI: <a href="https://doi.org/10.1016/j.cub.2026.09.042">10.1016/j.cub.2026.09.042</a> — international team including the University of Nottingham and the University of Tsukuba.</li>
+        <li>&ldquo;Tiny genome discovered provides hints for limits of life,&rdquo; <em>Lab News</em>, 9 October 2026: <a href="https://labnews.co.uk/tiny-genome-discovered-hints-at-limits-of-life/">labnews.co.uk</a> — genome size, gene count, the membrane-protein quarter, host unknown.</li>
+        <li>&ldquo;Tiny marine microbe sheds new light on how little genetic machinery a cell needs to survive,&rdquo; <em>Phys.org</em>, October 2026: <a href="https://phys.org/news/2026-10-tiny-marine-microbe-genetic-machinery.html">phys.org</a> — the mitochondria/chloroplast comparison, Allers on the minimum for an independent cell.</li>
+        <li>&ldquo;Tiny archaeon offers new clues to the minimum genetic requirements for life,&rdquo; <em>News Medical</em>, 9 October 2026: <a href="https://Www.news-medical.net/news/20261009/Tiny-archaeon-offers-new-clues-to-the-minimum-genetic-requirements-for-life.aspx">news-medical.net</a> — Allers quote on replication and autonomy.</li>
+        <li>&ldquo;Scientists Report Smallest-Ever Archaeal Genome: Cell Encodes Fewer Proteins Than Many Viruses,&rdquo; <em>Tech Times</em>, 10 October 2026: <a href="http://www.techtimes.com/articles/328859/20261010/scientists-report-smallest-ever-archaeal-genome-cell-encodes-fewer-proteins-many-viruses.htm">techtimes.com</a> — 238,034 bp, 51% smaller than <em>N. equitans</em>, ribosomes kept, ~5% of <em>E. coli</em>'s content.</li>
+        <li>&ldquo;Scientists Discover a Mysterious Microbe That Challenges Our Understanding of Life,&rdquo; <em>The Debrief</em>, October 2026: <a href="https://thedebrief.org/scientists-discover-a-mysterious-microbe-that-challenges-our-understanding-of-life/">thedebrief.org</a> — the Sukuna-biko-na naming, the overlooked lineage.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Drawer Nº 9 · built October 2026. Gene groupings in the exhibit are schematic; exact per-gene annotation is ongoing. <a href="../">← back to the Cabinet</a></p>
+  </div>
+</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+var svg=document.getElementById("genomeSvg");
+var CX=260, CY=260, R=198, N=189;
+var UNKNOWN=47;   /* ~a quarter of 189 — the membrane-unknowns (schematic positions) */
+var KEEPER=60;    /* schematic arc for the replication/translation core */
+
+/* background disc */
+var bg=document.createElementNS(NS,"circle");
+bg.setAttribute("cx",CX); bg.setAttribute("cy",CY); bg.setAttribute("r",R+26);
+bg.setAttribute("fill","rgba(14,20,52,.5)");
+svg.appendChild(bg);
+
+/* center label */
+var label=document.createElementNS(NS,"text");
+label.setAttribute("x",CX); label.setAttribute("y",CY-8);
+label.setAttribute("text-anchor","middle"); label.setAttribute("class","ringlabel");
+label.textContent="238,034 bp";
+svg.appendChild(label);
+var sub=document.createElementNS(NS,"text");
+sub.setAttribute("x",CX); sub.setAttribute("y",CY+18);
+sub.setAttribute("text-anchor","middle");
+var tsp=document.createElementNS(NS,"tspan");
+tsp.setAttribute("class","sub"); tsp.textContent="189 genes · one circle";
+sub.appendChild(tsp); svg.appendChild(sub);
+
+var dots=[];
+for(var i=0;i<N;i++){
+  var a=(i/N)*Math.PI*2 - Math.PI/2;
+  var x=CX+R*Math.cos(a), y=CY+R*Math.sin(a);
+  var c=document.createElementNS(NS,"circle");
+  c.setAttribute("cx",x.toFixed(1)); c.setAttribute("cy",y.toFixed(1));
+  c.setAttribute("r","3.1"); c.setAttribute("class","gdot");
+  var group="other";
+  if(i<UNKNOWN) group="unknown";
+  else if(i<UNKNOWN+KEEPER) group="keeper";
+  c.setAttribute("data-group",group);
+  svg.appendChild(c); dots.push(c);
+}
+
+var readout=document.getElementById("readout");
+var btns={
+  all:document.getElementById("btnAll"),
+  unknown:document.getElementById("btnUnknown"),
+  keepers:document.getElementById("btnKeepers"),
+  lost:document.getElementById("btnLost")
+};
+function setActive(key){
+  Object.keys(btns).forEach(function(k){btns[k].classList.toggle("on",k===key);});
+}
+var READOUTS={
+  all:{
+    title:'<span class="dotkey" style="background:#4fd1c5"></span>One circle, 189 genes',
+    body:'<p>The whole genome is a closed loop of <strong>238,034 base pairs</strong>. For scale: it encodes <strong>fewer proteins than many large viruses</strong> — yet it kept its own ribosomes, the machinery giant viruses never have. That single kept feature is what keeps it on the cellular side of the oldest boundary in biology.</p><p class="schem">Gene groupings in this ring are schematic; exact per-gene annotation is ongoing. Only the totals are exact: 189 genes, ~¼ of them membrane-unknowns.</p>'
+  },
+  unknown:{
+    title:'<span class="dotkey" style="background:#8b7ff0"></span>The quarter we can\'t read',
+    body:'<p>About <strong>a fourth of the genome</strong> — roughly 47 genes — encodes <strong>unusually large membrane proteins of unknown function</strong>. Similar proteins turn up in some parasitic archaea, which is why researchers suspect Sukunaarchaeum lives off another organism. But the host is unidentified, so the resemblance is a hint, not a verdict.</p><p>Membrane proteins are the cell\'s interface with the world — its doors, sensors, and grappling hooks. A quarter of this genome is interface, and we don\'t know what it\'s interfacing <em>with</em>.</p><p class="schem">Positions on the ring are schematic.</p>'
+  },
+  keepers:{
+    title:'<span class="dotkey" style="background:#f0a840"></span>The keepers',
+    body:'<p>What survived the great deletion: the machinery to <strong>copy DNA and build proteins</strong> — polymerases, ribosomal proteins, the translation core. Everything a genome needs to begin again, kept; almost everything a cell needs to <em>feed</em> itself, discarded.</p><p>Mitochondria and chloroplasts took the opposite deal: they surrendered even their replication machinery to their hosts. Sukunaarchaeum kept the copying and gave up the eating — autonomy of reproduction, dependence of metabolism. The two halves of self-sufficiency, unbundled.</p><p class="schem">Grouping on the ring is schematic; functional annotation is ongoing.</p>'
+  },
+  lost:{
+    title:'<span class="dotkey" style="background:#e0658a"></span>What it gave up',
+    body:'<p>The genome\'s missing half — everything a free-living cell uses to feed itself:</p><ul class="ghosts"><li><b>Nutrient synthesis</b> — the pathways that build amino acids, vitamins, cofactors: gone</li><li><b>Energy metabolism</b> — the machinery that harvests usable energy: gone</li><li><b>Metabolic independence</b> — the whole apparatus of making a living: gone</li></ul><p style="margin-top:14px">What remains is a copying machine with a membrane — 189 genes pointed at a single task: <strong>persist</strong>. Somewhere, something else is paying the metabolic bill. We don\'t know who.</p>'
+  }
+};
+function show(key){
+  setActive(key);
+  dots.forEach(function(d){
+    d.classList.remove("dim","hl-unknown","hl-keeper");
+    var g=d.getAttribute("data-group");
+    if(key==="unknown"){ d.classList.toggle("hl-unknown",g==="unknown"); d.classList.toggle("dim",g!=="unknown"); }
+    else if(key==="keepers"){ d.classList.toggle("hl-keeper",g==="keeper"); d.classList.toggle("dim",g!=="keeper"); }
+    else if(key==="lost"){ d.classList.add("dim"); }
+  });
+  readout.innerHTML="<h4>"+READOUTS[key].title+"</h4>"+READOUTS[key].body;
+}
+btns.all.addEventListener("click",function(){show("all");});
+btns.unknown.addEventListener("click",function(){show("unknown");});
+btns.keepers.addEventListener("click",function(){show("keepers");});
+btns.lost.addEventListener("click",function(){show("lost");});
+show("all");
+})();
+</script>
+</body>
+</html>
