@@ -112,6 +112,8 @@ button.xbtn.on{border-color:var(--amber); color:var(--amber); background:rgba(24
 .ladder .mark:hover .tick, .ladder .mark.sel .tick{background:var(--amber); height:20px; margin-top:46px}
 .ladder .mark.sel .lab{color:var(--ink)}
 .ladder .mark.above .lab{color:var(--amber)}
+.ladder .mark.up{padding:0 1px; z-index:2}
+.ladder .mark.up .lab{position:absolute; top:6px; left:50%; transform:translateX(-50%)}
 .ladder-readout{font-size:15px; color:var(--ink-dim); min-height:64px; margin-top:14px}
 .ladder-readout strong{color:var(--ink)}
 .lognote{font-size:12.5px; color:var(--ink-faint); margin-top:10px; letter-spacing:.04em}
@@ -228,7 +230,7 @@ button.xbtn.on{border-color:var(--amber); color:var(--amber); background:rgba(24
         <div class="mark" style="left:2.5%" data-name="The Moon" data-d="384,400 km" data-t="Our local reference. The comet is about 3,400 Moon-distances away."><div class="tick"></div><div class="lab">Moon<span class="d">384k km</span></div></div>
         <div class="mark" style="left:53.5%" data-name="Mars (closest approach)" data-d="~54.6 million km" data-t="As close as Mars ever gets. The comet is 24 times farther than that."><div class="tick"></div><div class="lab">Mars<span class="d">~55M km</span></div></div>
         <div class="mark" style="left:80.9%" data-name="Jupiter (mean distance)" data-d="778.5 million km" data-t="The largest planet. The comet was found roughly a Jupiter-distance and a half out."><div class="tick"></div><div class="lab">Jupiter<span class="d">779M km</span></div></div>
-        <div class="mark above sel" style="left:86.1%" data-name="C/2026 S1 (Euclid), Oct 2026" data-d="~1.3 billion km" data-t="Between the orbits of Jupiter and Saturn — but seen from the Sun, hanging almost directly above the solar system, arcing over the planetary plane. The 'straight up' part is the strange part."><div class="tick"></div><div class="lab">C/2026 S1<span class="d">1.3B km</span></div></div>
+        <div class="mark above sel up" style="left:86.1%" data-name="C/2026 S1 (Euclid), Oct 2026" data-d="~1.3 billion km" data-t="Between the orbits of Jupiter and Saturn — but seen from the Sun, hanging almost directly above the solar system, arcing over the planetary plane. The 'straight up' part is the strange part."><div class="tick"></div><div class="lab">C/2026 S1<span class="d">1.3B km</span></div></div>
         <div class="mark" style="left:87.1%" data-name="Saturn (mean distance)" data-d="1.43 billion km" data-t="Just beyond the comet — if you forget about altitude. The comet is a similar distance from the Sun, on a wildly different road."><div class="tick"></div><div class="lab">Saturn<span class="d">1.43B km</span></div></div>
         <div class="mark" style="left:98.9%" data-name="Neptune (mean distance)" data-d="4.5 billion km" data-t="The edge of the planetary census. The comet hangs well inside Neptune's orbit — far, but reachable territory."><div class="tick"></div><div class="lab">Neptune<span class="d">4.5B km</span></div></div>
       </div>
