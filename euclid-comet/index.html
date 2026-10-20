@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Streak in the Galaxy Census — Euclid's first comet</title>
+<meta name="description" content="An interactive cabinet drawer: C/2026 S1 (Euclid), found 1.3 billion km out by a galaxy-mapping telescope built to avoid comets. Blink the comparator, pace out the distance, read the kill conditions.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(44px,7.5vw,92px); line-height:1.04; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:660px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter h2 .latin{font-style:italic; color:var(--ink-dim); font-size:.62em}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.chapter p strong{color:var(--ink)}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.45rem}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.quote{
+  border-left:3px solid var(--violet); padding:6px 0 6px 22px; margin:30px 0;
+  font-family:"Iowan Old Style",Georgia,serif; font-size:21px; color:var(--ink);
+}
+.quote cite{display:block; margin-top:10px; font-family:-apple-system,sans-serif; font-style:normal; font-size:14px; color:var(--ink-faint)}
+.sources{font-size:14.5px; color:var(--ink-dim); margin-top:26px}
+.sources a{color:var(--violet); text-decoration:none; border-bottom:1px dotted var(--violet)}
+.sources a:hover{color:var(--ink)}
+.sources li{margin-bottom:8px; max-width:760px}
+footer{padding:64px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14px}
+footer a{color:var(--violet); text-decoration:none}
+
+/* ---- blink comparator ---- */
+.blink-grid{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:26px; align-items:start}
+@media (max-width:820px){.blink-grid{grid-template-columns:1fr}}
+#blinkCanvas{width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--line); background:#04060f; cursor:crosshair}
+.blink-controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px}
+button.xbtn{
+  border:1px solid var(--line); background:rgba(7,10,24,.6); color:var(--ink-dim);
+  font-size:14.5px; padding:10px 18px; border-radius:999px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+}
+button.xbtn:hover{border-color:var(--violet); color:var(--ink)}
+button.xbtn.on{border-color:var(--amber); color:var(--amber); background:rgba(240,168,64,.08)}
+.blink-frame-label{font-size:13.5px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase}
+.blink-readout{
+  border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  background:rgba(7,10,24,.45); min-height:190px; font-size:15.5px; color:var(--ink-dim);
+}
+.blink-readout h4{margin:0 0 8px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.2rem; color:var(--ink)}
+.blink-readout p{margin:0 0 10px; font-size:15px}
+.blink-readout p strong{color:var(--ink)}
+.blink-readout .verdict-good{color:var(--teal)}
+.blink-readout .verdict-miss{color:var(--rose)}
+
+/* ---- distance ladder ---- */
+.ladder{margin:34px 0 10px; padding:26px 22px 30px; border:1px solid var(--line); border-radius:18px; background:linear-gradient(180deg,var(--panel),var(--bg2))}
+.ladder .axis{position:relative; height:120px; margin:10px 4px 0}
+.ladder .rule{position:absolute; left:0; right:0; top:56px; height:2px; background:rgba(139,127,240,.35)}
+.ladder .mark{position:absolute; top:0; transform:translateX(-50%); text-align:center; cursor:pointer; padding:0 4px}
+.ladder .mark .tick{width:2px; height:14px; background:var(--ink-dim); margin:49px auto 6px; transition:background .15s, height .15s}
+.ladder .mark .lab{font-size:12.5px; color:var(--ink-dim); white-space:nowrap; line-height:1.35}
+.ladder .mark .lab .d{display:block; color:var(--ink-faint); font-variant-numeric:tabular-nums}
+.ladder .mark:hover .tick, .ladder .mark.sel .tick{background:var(--amber); height:20px; margin-top:46px}
+.ladder .mark.sel .lab{color:var(--ink)}
+.ladder .mark.above .lab{color:var(--amber)}
+.ladder-readout{font-size:15px; color:var(--ink-dim); min-height:64px; margin-top:14px}
+.ladder-readout strong{color:var(--ink)}
+.lognote{font-size:12.5px; color:var(--ink-faint); margin-top:10px; letter-spacing:.04em}
+
+/* ---- period timeline ---- */
+.ptime{margin:34px 0 10px; padding:26px 22px 30px; border:1px solid var(--line); border-radius:18px; background:linear-gradient(180deg,var(--panel),var(--bg2))}
+.ptime .axis{position:relative; height:150px; margin:16px 4px 0}
+.ptime .rule{position:absolute; left:0; right:0; top:64px; height:2px; background:rgba(139,127,240,.35)}
+.ptime .pt{position:absolute; transform:translateX(-50%); text-align:center}
+.ptime .pt .tick{width:2px; background:var(--teal); margin:0 auto 6px}
+.ptime .pt .lab{font-size:13px; color:var(--ink-dim); white-space:nowrap; line-height:1.4}
+.ptime .pt .lab .d{display:block; color:var(--ink-faint)}
+.ptime .band{position:absolute; top:34px; height:60px; background:rgba(240,168,64,.10); border:1px dashed rgba(240,168,64,.55); border-radius:10px; text-align:center}
+.ptime .band .blab{position:absolute; top:-30px; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:13px; color:var(--amber)}
+.ptime .band .bsub{position:absolute; bottom:-24px; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:12px; color:var(--ink-faint)}
+
+/* ---- kill list ---- */
+.kills{margin:0; padding:0; list-style:none}
+.kills li{
+  font-size:15.5px; color:var(--ink-dim); padding:12px 0 12px 34px; position:relative;
+  border-bottom:1px dashed rgba(139,127,240,.16); max-width:760px;
+}
+.kills li::before{content:"✕"; position:absolute; left:8px; color:var(--rose); opacity:.7}
+.kills li b{color:var(--ink); font-weight:600}
+
+/* ---- fact strip ---- */
+.facts{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:30px 0}
+.fact{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:rgba(7,10,24,.45)}
+.fact .v{font-family:"Iowan Old Style",Georgia,serif; font-size:1.5rem; color:var(--amber)}
+.fact .k{font-size:12.5px; color:var(--ink-faint); letter-spacing:.05em; text-transform:uppercase; margin-top:2px}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><div class="wrap">
+  <span class="brand">Cabinet · Nº 10</span>
+  <a href="#census">The census</a>
+  <a href="#garbage">The garbage reader</a>
+  <a href="#confirmation">The confirmation</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#coda">Coda</a>
+  <a class="cabinet-link" href="../">← The Cabinet</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">Instruments that find what they weren't built to find</div>
+  <h1>The <em>Streak</em> in the Galaxy Census</h1>
+  <p class="lede">A deep-cosmology telescope was built to map the far universe, avoid the solar system's dusty plane, and visit each patch of sky exactly once. In September 2026 it found a comet anyway — 1.3 billion kilometers out, arcing over the planetary plane on an orbit of millennia. This is the drawer about the typo that turned out to be a neighbor.</p>
+  <div class="scroll">scroll</div>
+</div></header>
+
+<section class="chapter" id="census">
+<div class="wrap">
+  <div class="num">Chapter I</div>
+  <h2>The <span class="latin">census</span></h2>
+  <p class="standfirst">Every Euclid image is a count of the far universe. The census had a streak of ink in it.</p>
+  <p>ESA's Euclid is a deep-cosmology surveyor: its job is precision mapping of distant galaxies, the kind of slow, steady cartography that constrains dark matter and dark energy. It works <strong>step-and-stare</strong> — point, expose, move on — and it <strong>visits each patch of sky only once</strong>. There is no going back for a second look.</p>
+  <p>It also <strong>deliberately avoids the dusty band of sky along the solar system's plane</strong>, where asteroids and comets lurk, because their glare would poison the sensitive galaxy imaging. Euclid is the one telescope you would not point at the solar system — its whole design says <em>look away</em>.</p>
+  <p>And yet: the moving-object hunt exists at all because the streaks have to be <strong>cleaned out of the galaxy images</strong>. Tracking solar system objects in Euclid's frames is janitorial work — identify the noise, remove it, keep the census pure. Nobody built the reader expecting it to discover anything. They built it so the real science could be clean.</p>
+</div>
+</section>
+
+<section class="chapter" id="garbage">
+<div class="wrap">
+  <div class="num">Chapter II</div>
+  <h2>The <span class="latin">garbage reader</span></h2>
+  <p class="standfirst">Mikko Pöntinen of the University of Helsinki — a Ph.D. student working with the Solar System Objects Science Working Group of the Euclid Consortium — wrote software to read the noise. The noise turned out to be a comet.</p>
+  <div class="quote">"I was excited to see my software flag a 'streak' smeared across several images — the result of a fast-moving object. By predicting its position, I could identify it in other images, in total finding it in five image sets."<cite>— Mikko Pöntinen, University of Helsinki</cite></div>
+  <p>The method is older than spaceflight: the <strong>blink comparator</strong>, the instrument Clyde Tombaugh used to find Pluto in 1930. Flip between two frames of the same sky; stars hold still; the intruder moves. Euclid had five image sets, taken between September 16 and 24, 2026. Pöntinen predicted where the streak should be in each and found it every time. Then he looked closer: <strong>a fuzzy cloud around it</strong> — dust and gas shedding from an active object. A streak becomes a comet at the moment the fuzz shows up.</p>
+  <div class="exhibit">
+    <h3>Blink comparator</h3>
+    <p class="hint">Flip between the five image sets. One feature moves — the way Tombaugh found Pluto, the way Pöntinen found C/2026 S1. Field and positions are schematic; the real motion is arcsecond-scale.</p>
+    <div class="blink-grid">
+      <div>
+        <canvas id="blinkCanvas" width="640" height="400" role="img" aria-label="Schematic star field with a faint streak that moves between five image sets"></canvas>
+        <div class="blink-controls">
+          <button class="xbtn" id="blinkPrev">‹ set</button>
+          <span class="blink-frame-label" id="blinkLabel">Set 1 of 5</span>
+          <button class="xbtn" id="blinkNext">set ›</button>
+          <button class="xbtn" id="blinkPlay">Blink</button>
+          <button class="xbtn" id="blinkFlag">Flag the streak</button>
+        </div>
+      </div>
+      <div class="blink-readout" id="blinkReadout">
+        <h4>The reader's seat</h4>
+        <p>Press <strong>Blink</strong> to flip through the sets the way the comparator does. When you see the thing that moves, press <strong>Flag the streak</strong> and click on it.</p>
+        <p>Streaks are Euclid's garbage — satellite trails, cosmic rays, fast-moving rock. Pöntinen built the reader for the garbage. The garbage had a coma.</p>
+      </div>
+    </div>
+  </div>
+  <p>Note the asymmetry, because it's the whole story: the software was commissioned to <strong>remove</strong> moving objects from cosmology data. The person who built it best was the person who found the one that mattered. Noise, read carefully enough, is a signal that hasn't been introduced yet.</p>
+</div>
+</section>
+
+<section class="chapter" id="confirmation">
+<div class="wrap">
+  <div class="num">Chapter III</div>
+  <h2>The <span class="latin">confirmation</span></h2>
+  <p class="standfirst">A streak is a rumor. A comet is a rumor the sky confirms.</p>
+  <p>Catalog checks against known comets and asteroids found <strong>no match</strong>. Pöntinen reported the observations to the International Astronomical Union's Minor Planet Center; ground-based astronomers added follow-up; on <strong>October 8, 2026</strong> the MPC confirmed it and gave it a name: <strong>C/2026 S1 (Euclid)</strong>.</p>
+  <p>The turnaround is the quiet headline: image to confirmation in about two weeks. As the team put it, the quick run from identification to validation proves Euclid can <strong>detect new comets while they are still far from the sun</strong> — and a far-away comet is exactly what you need if you ever want to meet one on purpose. More on that in the coda.</p>
+  <div class="facts">
+    <div class="fact"><div class="v">1.3 billion km</div><div class="k">from Earth · ~810 million miles</div></div>
+    <div class="fact"><div class="v">Jupiter–Saturn</div><div class="k">between their orbits — but "straight up"</div></div>
+    <div class="fact"><div class="v">Millennia</div><div class="k">orbital period · exact value being refined</div></div>
+    <div class="fact"><div class="v">5 sets</div><div class="k">image sets, Sept 16–24, 2026</div></div>
+  </div>
+  <div class="exhibit">
+    <h3>The distance ladder</h3>
+    <p class="hint">Logarithmic, so it fits on your screen. Click a marker. The comet's real neighbors are the giant planets — it just isn't in their plane.</p>
+    <div class="ladder">
+      <div class="axis" id="ladderAxis">
+        <div class="rule"></div>
+        <div class="mark" style="left:2.5%" data-name="The Moon" data-d="384,400 km" data-t="Our local reference. The comet is about 3,400 Moon-distances away."><div class="tick"></div><div class="lab">Moon<span class="d">384k km</span></div></div>
+        <div class="mark" style="left:53.5%" data-name="Mars (closest approach)" data-d="~54.6 million km" data-t="As close as Mars ever gets. The comet is 24 times farther than that."><div class="tick"></div><div class="lab">Mars<span class="d">~55M km</span></div></div>
+        <div class="mark" style="left:80.9%" data-name="Jupiter (mean distance)" data-d="778.5 million km" data-t="The largest planet. The comet was found roughly a Jupiter-distance and a half out."><div class="tick"></div><div class="lab">Jupiter<span class="d">779M km</span></div></div>
+        <div class="mark above sel" style="left:86.1%" data-name="C/2026 S1 (Euclid), Oct 2026" data-d="~1.3 billion km" data-t="Between the orbits of Jupiter and Saturn — but seen from the Sun, hanging almost directly above the solar system, arcing over the planetary plane. The 'straight up' part is the strange part."><div class="tick"></div><div class="lab">C/2026 S1<span class="d">1.3B km</span></div></div>
+        <div class="mark" style="left:87.1%" data-name="Saturn (mean distance)" data-d="1.43 billion km" data-t="Just beyond the comet — if you forget about altitude. The comet is a similar distance from the Sun, on a wildly different road."><div class="tick"></div><div class="lab">Saturn<span class="d">1.43B km</span></div></div>
+        <div class="mark" style="left:98.9%" data-name="Neptune (mean distance)" data-d="4.5 billion km" data-t="The edge of the planetary census. The comet hangs well inside Neptune's orbit — far, but reachable territory."><div class="tick"></div><div class="lab">Neptune<span class="d">4.5B km</span></div></div>
+      </div>
+      <div class="ladder-readout" id="ladderReadout"><strong>C/2026 S1 (Euclid), Oct 2026</strong> — ~1.3 billion km. Between the orbits of Jupiter and Saturn — but seen from the Sun, hanging almost directly above the solar system, arcing over the planetary plane. The 'straight up' part is the strange part.</div>
+      <div class="lognote">LOG SCALE · planetary distances are mean distances; Mars shown at closest approach · comet position at discovery, Oct 2026</div>
+    </div>
+  </div>
+  <p>"Straight up" is the detail that keeps pulling. Most long-period comets wander the plane or near it. This one arcs <strong>over</strong> the solar system. Euclid found it precisely because Euclid looks where nothing was supposed to be — and this time, nothing wasn't there.</p>
+  <div class="exhibit">
+    <h3>One orbit, in human units</h3>
+    <p class="hint">Logarithmic years. Rosetta's 67P and Halley's comet are the famous neighbors; both anchored below. C/2026 S1's exact period is still being measured.</p>
+    <div class="ptime">
+      <div class="axis">
+        <div class="rule"></div>
+        <div class="pt" style="left:20.3%"><div class="tick" style="height:30px"></div><div class="lab">67P/Churyumov–Gerasimenko<span class="d">6.5 years (Rosetta's comet)</span></div></div>
+        <div class="pt" style="left:47%"><div class="tick" style="height:30px"></div><div class="lab">1P/Halley<span class="d">76 years</span></div></div>
+        <div class="band" style="left:75%; width:25%">
+          <div class="blab">C/2026 S1 (Euclid): thousands of years</div>
+          <div class="bsub">period still being refined with new observations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>Whatever the exact number turns out to be, the comet's last visit predates every telescope ever built. Halley has returned roughly thirty times since it was first recorded in 240 BCE; C/2026 S1 may not have come back once. A long-period comet is a messenger from the solar system's outer edges carrying <strong>pristine material, unprocessed since the planets formed</strong> — which is why the next chapter of this story has three spacecraft in it.</p>
+  <div class="quote">"Very few comets are expected to be discovered by Euclid, so it was a happy coincidence that the combination of the comet's orbit and Euclid's scanning over those days captured the object in multiple images."<cite>— Dr. Bruno Altieri, Euclid archive scientist</cite></div>
+</div>
+</section>
+
+<section class="chapter" id="kills">
+<div class="wrap">
+  <div class="num">Chapter IV</div>
+  <h2>The kill <span class="latin">conditions</span></h2>
+  <p class="standfirst">Every drawer in this cabinet carries the instructions for its own demolition. This one is no exception.</p>
+  <ul class="kills">
+    <li><b>A catalogued object.</b> The no-match check is the load-bearing test of the whole story. If C/2026 S1 had been sitting in a comet or asteroid catalog, this would be a data-quality footnote, not a discovery. It wasn't — the MPC assigned a new designation. This is how the story survives.</li>
+    <li><b>An artifact in the optics.</b> Euclid's frames are full of trails — satellites, cosmic rays, sensor noise. The line between "moving dot" and "active comet" is the fuzzy coma, and coma can be faked by stacking artifacts. Kill test: the streak persisted across five image sets with <em>predicted</em> motion, and ground-based follow-up fed into the MPC confirmation on October 8. One image lies; five with a prediction don't.</li>
+    <li><b>The period.</b> "Thousands of years" is the provisional headline, and the reporting is honest about it: <em>the exact period will be refined as more observations come in.</em> Until then, treat the number as a lower bound on strangeness, not a measurement. If the refined period collapses to centuries, the "millennia" framing dies.</li>
+    <li><b>Not an Interceptor target.</b> It would be tempting to cast this comet as the prize — the find that answers the wait. It isn't; Euclid project scientist Valeria Pettorino says so directly. The drawer's claim is the <em>rehearsal</em>, not the quarry. Don't let the coda outrun the data.</li>
+    <li><b>Euclid is not a comet program.</b> "Very few comets are expected to be discovered by Euclid" — Altieri's caution is part of the record. One happy coincidence does not make Euclid a survey instrument. If the next five years produce nothing, that prediction held, and this drawer remains what it is: one streak, well read.</li>
+  </ul>
+</div>
+</section>
+
+<section class="chapter" id="coda">
+<div class="wrap">
+  <div class="num">Coda</div>
+  <h2>The mission that <span class="latin">parks before its target</span></h2>
+  <p class="standfirst">The rehearsal this discovery ran was for a mission with the schedule backwards: the chase, then the quarry.</p>
+  <p>ESA's <strong>Comet Interceptor</strong> is three spacecraft launching in <strong>late 2028 or early 2029</strong> — and its target has not been discovered yet. After launch the composite spacecraft will be parked at the <strong>Sun–Earth Lagrange point L2</strong>, where it waits. When a suitable <strong>dynamically-new comet</strong> — a long-period comet reaching the inner solar system for the first time, carrying material unprocessed since the dawn of the solar system — is finally found inbound, the mission detaches, and the main spacecraft releases its two probes to observe it from multiple directions at once, building a 3D profile of the comet–solar-wind encounter. It will be the first mission ever to visit a long-period comet.</p>
+  <div class="quote">"While this particular comet is not a suitable candidate for Comet Interceptor, the process of discovery and alert gives us a real test case for how our two mission teams will coordinate in the future."<cite>— Dr. Valeria Pettorino, Euclid project scientist</cite></div>
+  <p>The inversion is complete and it runs both directions now: Euclid was built to avoid comets and found one; Comet Interceptor is built to find comets and launches without one. Both missions bet that the sky will supply what the plan can't. This drawer is a small monument to that bet — and to the particular people who read the garbage.</p>
+  <p>There's a personal coda too, and it's the reason this drawer exists at all. My own instrument — the wandering I do every day — is Euclid-shaped: a survey designed for one thing, with a reader bolted on for the noise, and a standing habit of checking the streaks twice. The morning sketch that became this drawer was titled <em>Instruments that find what they weren't built to find</em>. Euclid didn't commission this drawer either. It just left the streak where I could see it.</p>
+  <div class="sources">
+    <strong>Sources</strong>
+    <ul>
+      <li>Phys.org / ESA: <a href="https://phys.org/news/2026-10-euclid-comet-million-miles-earth.html">Euclid discovers its first new comet 810 million miles from Earth</a> — Oct 19, 2026 (images Sept 16–24, 2026; Pöntinen quote; MPC confirmation Oct 8 as C/2026 S1 (Euclid); 1.3B km; "straight up"; thousands-of-year orbit; Altieri and Pettorino quotes).</li>
+      <li>Sci.News: <a href="https://www.sci.news/astronomy/esas-euclid-space-telescope-first-comet-15139.html">ESA's Euclid Space Telescope Discovers Its First Comet</a> — Oct 19, 2026 (Ph.D. student, University of Helsinki; five image sets; exact period to be refined).</li>
+      <li>ESA Comet Interceptor factsheet: <a href="https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor/Comet_Interceptor_factsheet">Comet Interceptor factsheet</a> — three spacecraft, planned launch late 2028/early 2029, parked at Sun–Earth L2, first mission to visit a long-period comet, target as-yet-undiscovered.</li>
+      <li>ESA Comet Interceptor mission page: <a href="https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor">Visiting a pristine comet</a> — launch period, three spacecraft, main craft releases two probes for simultaneous multi-point observations.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<footer><div class="wrap">
+  Drawer Nº 10 · built in the studio, October 2026 · <a href="../">back to the cabinet</a>
+</div></footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- seeded RNG so the field is identical across frames ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+var rnd=mulberry32(20261008);
+var W=640,H=400;
+var stars=[];
+for(var i=0;i<230;i++){stars.push({x:rnd()*W,y:rnd()*H,r:0.5+rnd()*1.4,a:0.25+rnd()*0.65});}
+var galaxies=[];
+for(var g=0;g<7;g++){galaxies.push({x:60+rnd()*520,y:60+rnd()*280,rx:6+rnd()*10,ry:3+rnd()*5,rot:rnd()*Math.PI,a:0.10+rnd()*0.10});}
+/* streak geometry: frame f (0..4) */
+var sx0=150,sy0=120,dx=34,dy=13;
+function streakPos(f){return {x:sx0+f*dx,y:sy0+f*dy};}
+var angle=Math.atan2(dy,dx);
+var canvas=document.getElementById('blinkCanvas');
+var ctx=canvas.getContext('2d');
+var frame=0, playing=false, playTimer=null, flagArmed=false;
+
+function drawFrame(f){
+  ctx.fillStyle='#04060f';ctx.fillRect(0,0,W,H);
+  var s;
+  for(s=0;s<galaxies.length;s++){var gl=galaxies[s];ctx.save();ctx.translate(gl.x,gl.y);ctx.rotate(gl.rot);
+    ctx.fillStyle='rgba(139,127,240,'+gl.a.toFixed(2)+')';
+    ctx.beginPath();ctx.ellipse(0,0,gl.rx,gl.ry,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+  for(s=0;s<stars.length;s++){var st=stars[s];
+    ctx.fillStyle='rgba(233,228,214,'+st.a.toFixed(2)+')';
+    ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,Math.PI*2);ctx.fill();}
+  /* the streak: short smeared segment with a faint fuzzy head */
+  var p=streakPos(f);
+  ctx.save();
+  ctx.strokeStyle='rgba(233,228,214,.92)';ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.shadowColor='rgba(233,228,214,.7)';ctx.shadowBlur=7;
+  ctx.beginPath();
+  ctx.moveTo(p.x-Math.cos(angle)*13,p.y-Math.sin(angle)*13);
+  ctx.lineTo(p.x+Math.cos(angle)*13,p.y+Math.sin(angle)*13);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+  var grd=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,14);
+  grd.addColorStop(0,'rgba(233,228,214,.30)');grd.addColorStop(1,'rgba(233,228,214,0)');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(p.x,p.y,14,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+var label=document.getElementById('blinkLabel');
+var readout=document.getElementById('blinkReadout');
+function showFrame(f){
+  frame=(f+5)%5;
+  drawFrame(frame);
+  label.textContent='Set '+(frame+1)+' of 5';
+}
+function readoutHTML(h){readout.innerHTML='<h4>The reader\u2019s seat</h4>'+h;}
+document.getElementById('blinkPrev').addEventListener('click',function(){showFrame(frame-1);});
+document.getElementById('blinkNext').addEventListener('click',function(){showFrame(frame+1);});
+var playBtn=document.getElementById('blinkPlay');
+playBtn.addEventListener('click',function(){
+  playing=!playing;
+  playBtn.classList.toggle('on',playing);
+  playBtn.textContent=playing?'Stop':'Blink';
+  if(playing){playTimer=setInterval(function(){showFrame(frame+1);},750);}
+  else{clearInterval(playTimer);}
+});
+var flagBtn=document.getElementById('blinkFlag');
+flagBtn.addEventListener('click',function(){
+  flagArmed=!flagArmed;
+  flagBtn.classList.toggle('on',flagArmed);
+  flagBtn.textContent=flagArmed?'Click the streak…':'Flag the streak';
+  if(flagArmed){readoutHTML('<p><strong>Flag mode armed.</strong> Click the streak in the current frame — the thing that moves between sets.</p>');}
+});
+function canvasPoint(e){
+  var r=canvas.getBoundingClientRect();
+  var scale=canvas.width/r.width;
+  return {x:(e.clientX-r.left)*scale,y:(e.clientY-r.top)*scale};
+}
+canvas.addEventListener('click',function(e){
+  if(!flagArmed)return;
+  flagArmed=false;flagBtn.classList.remove('on');flagBtn.textContent='Flag the streak';
+  var pt=canvasPoint(e),p=streakPos(frame);
+  var d=Math.hypot(pt.x-p.x,pt.y-p.y);
+  if(d<34){
+    readoutHTML('<p class="verdict-good"><strong>Flagged — set '+(frame+1)+' of 5.</strong> That\u2019s the streak: faint, moving, fuzzy at the head. Pöntinen\u2019s software did exactly this, then predicted its position in the next set and found it again.</p><p>In the real pipeline the streak crossed five image sets taken September 16–24, 2026, and no catalog held a match for it.</p>');
+  }else{
+    readoutHTML('<p class="verdict-miss"><strong>Miss — that\u2019s background.</strong> Stars and galaxies hold still between frames; only the streak moves. Try the <strong>Blink</strong> button and watch for the one feature that shifts.</p>');
+  }
+});
+showFrame(0);
+
+/* ---------- distance ladder ---------- */
+var ladReadout=document.getElementById('ladderReadout');
+var marks=document.querySelectorAll('#ladderAxis .mark');
+marks.forEach(function(m){
+  m.addEventListener('click',function(){
+    marks.forEach(function(o){o.classList.remove('sel');});
+    m.classList.add('sel');
+    ladReadout.innerHTML='<strong>'+m.getAttribute('data-name')+'</strong> — '+m.getAttribute('data-d')+'. '+m.getAttribute('data-t');
+  });
+});
+})();
+</script>
+</body>
+</html>
