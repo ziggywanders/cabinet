@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Time Crystal That Found Its Own Beat — a wave-coarsening cabinet drawer</title>
+<meta name="description" content="An interactive cabinet drawer: Veenstra, Binysh, Coulais and colleagues' mechatronic metamaterial that coarsens its own waves into a time crystal. Start from noise, watch the large patterns eat the small ones.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(44px,7.5vw,92px); line-height:1.04; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:660px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter h2 .latin{font-style:italic; color:var(--ink-dim); font-size:.62em}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.chapter p strong{color:var(--ink)}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.45rem}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.quote{
+  border-left:3px solid var(--violet); padding:6px 0 6px 22px; margin:30px 0;
+  font-family:"Iowan Old Style",Georgia,serif; font-size:21px; color:var(--ink);
+}
+.quote cite{display:block; margin-top:10px; font-family:-apple-system,sans-serif; font-style:normal; font-size:14px; color:var(--ink-faint)}
+.sources{font-size:14.5px; color:var(--ink-dim); margin-top:26px}
+.sources a{color:var(--violet); text-decoration:none; border-bottom:1px dotted var(--violet)}
+.sources a:hover{color:var(--ink)}
+.sources li{margin-bottom:8px; max-width:760px}
+footer{padding:64px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14px}
+footer a{color:var(--violet); text-decoration:none}
+
+/* ---- coarsening exhibit ---- */
+.coarse-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:26px; align-items:start}
+@media (max-width:860px){.coarse-grid{grid-template-columns:1fr}}
+#ringCanvas{width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--line); background:#04060f}
+#waterCanvas{width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--line); background:#04060f; margin-top:14px}
+.coarse-controls{margin-top:18px}
+.coarse-controls label{display:block; font-size:13.5px; color:var(--ink-dim); margin:12px 0 4px; letter-spacing:.04em}
+.coarse-controls label .val{color:var(--amber); font-variant-numeric:tabular-nums}
+.coarse-controls input[type=range]{width:100%; accent-color:var(--amber)}
+.coarse-buttons{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+button.xbtn{
+  border:1px solid var(--line); background:rgba(7,10,24,.6); color:var(--ink-dim);
+  font-size:14.5px; padding:10px 18px; border-radius:999px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+}
+button.xbtn:hover{border-color:var(--violet); color:var(--ink)}
+button.xbtn.on{border-color:var(--amber); color:var(--amber); background:rgba(240,168,64,.08)}
+.readout{
+  border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  background:rgba(7,10,24,.45); font-size:15px; color:var(--ink-dim);
+}
+.readout h4{margin:0 0 10px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.2rem; color:var(--ink)}
+.readout .rbar{height:10px; border-radius:6px; background:rgba(139,127,240,.18); overflow:hidden; margin:6px 0 12px}
+.readout .rbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--teal),var(--amber)); border-radius:6px; transition:width .3s}
+.readout .big{font-family:"Iowan Old Style",Georgia,serif; font-size:1.7rem; color:var(--ink)}
+.readout .ticker{margin-top:14px; border-top:1px dashed rgba(139,127,240,.16); padding-top:10px; min-height:110px; font-size:13.5px}
+.readout .ticker div{padding:4px 0; color:var(--ink-dim)}
+.readout .ticker div b{color:var(--amber)}
+.toylabel{font-size:12.5px; color:var(--ink-faint); letter-spacing:.05em; text-transform:uppercase; margin:12px 0 4px}
+
+/* ---- fact strip ---- */
+.facts{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:30px 0}
+.fact{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:rgba(7,10,24,.45)}
+.fact .v{font-family:"Iowan Old Style",Georgia,serif; font-size:1.5rem; color:var(--amber)}
+.fact .k{font-size:12.5px; color:var(--ink-faint); letter-spacing:.05em; text-transform:uppercase; margin-top:2px}
+
+/* ---- kill list ---- */
+.kills{margin:0; padding:0; list-style:none}
+.kills li{
+  font-size:15.5px; color:var(--ink-dim); padding:12px 0 12px 34px; position:relative;
+  border-bottom:1px dashed rgba(139,127,240,.16); max-width:760px;
+}
+.kills li::before{content:"✕"; position:absolute; left:8px; color:var(--rose); opacity:.7}
+.kills li b{color:var(--ink); font-weight:600}
+
+/* ---- comparison ---- */
+.cmp{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:30px 0}
+@media (max-width:700px){.cmp{grid-template-columns:1fr}}
+.cmp .cell{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:rgba(7,10,24,.45); font-size:15px; color:var(--ink-dim)}
+.cmp .cell h4{margin:0 0 8px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; color:var(--ink); font-size:1.1rem}
+.cmp .cell.left{border-color:rgba(79,209,197,.35)}
+.cmp .cell.right{border-color:rgba(240,168,64,.35)}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><div class="wrap">
+  <span class="brand">Cabinet · Nº 11</span>
+  <a href="#coffee">The coffee break</a>
+  <a href="#trick">The trick</a>
+  <a href="#name">The name</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#coda">Coda</a>
+  <a class="cabinet-link" href="../">← The Cabinet</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">Matter that keeps its own time</div>
+  <h1>The <em>Time Crystal</em> That Found Its Own Beat</h1>
+  <p class="lede">A lattice of tiny robots, each pushing its neighbors harder than it gets pushed back, started from chaos and coarsened its own waves — longer, slower, louder — until the whole material pulsed as one. Nobody conducted. The beat assembled itself. This drawer is about the mechanism underneath the magic.</p>
+  <div class="scroll">scroll</div>
+</div></header>
+
+<section class="chapter" id="coffee">
+<div class="wrap">
+  <div class="num">Chapter I</div>
+  <h2>The <span class="latin">coffee break</span></h2>
+  <p class="standfirst">The discovery arrived the way good accidents do: unattended.</p>
+  <p>Jonas Veenstra was a Ph.D. student at the University of Amsterdam, working in Corentin Coulais's group, building mechatronic metamaterials — elastic structures with sensors, motors, and electronics embedded, so that neighboring parts could influence one another. In his own words, he was <strong>"playing with robots."</strong></p>
+  <div class="quote">"They would always organize in several specific patterns, but when coming back from a coffee break, only the largest pattern would be the one that the system had evolved to."<cite>— Jonas Veenstra, then UvA Ph.D. student, now postdoctoral fellow at ENS Lyon</cite></div>
+  <p>That sentence is the whole experiment in miniature. The small patterns didn't scatter or decay. They were <strong>eaten</strong> — the large pattern absorbed them while he was out of the room. Veenstra had watched the opening; the coffee break supplied the ending. Whatever the material was doing, it did not need him watching to do it.</p>
+  <div class="facts">
+    <div class="fact"><div class="v">2</div><div class="k">structures built: a 1D ring, a 2D surface of active hexagons</div></div>
+    <div class="fact"><div class="v">&gt;100</div><div class="k">sensors &amp; actuators embedded by the team</div></div>
+    <div class="fact"><div class="v">9</div><div class="k">authors across Amsterdam, Birmingham, Lyon, Delft, Leiden, Cambridge</div></div>
+    <div class="fact"><div class="v">Oct 14, 2026</div><div class="k">published in <em>Nature</em></div></div>
+  </div>
+</div>
+</section>
+
+<section class="chapter" id="trick">
+<div class="wrap">
+  <div class="num">Chapter II</div>
+  <h2>The <span class="latin">trick</span></h2>
+  <p class="standfirst">There was no conductor. There was a rule — and the rule was lopsided.</p>
+  <p>Every unit in the material has <strong>sensors and motors</strong> that let it feel its neighbors and push back on them. The trick was making that push <strong>non-reciprocal</strong>: unit A can influence unit B differently than B influences A. The response in one direction does not have to mirror the response in the other. Newton's third law, politely declined — at least at the level of the programmed interaction.</p>
+  <p>Then the material is powered on, and each unit starts <strong>vibrating on its own energy</strong> — this is <em>active matter</em>, matter that spends its own fuel rather than waiting to be shaken. The question the team asked was whether that internal energy could be enough to turn an active material into a <strong>time crystal</strong> — order repeating in time — <strong>without an external beat to set the pace</strong>. No DJ. No metronome. Just the parts.</p>
+  <p>What followed was <strong>wave coarsening</strong>: disordered local vibrations quickly organized into small repeating waves, and then the waves <strong>gradually grew in wavelength and amplitude while beating slower and slower</strong>, until a single global deformation spanned the whole material. Three quantities grew together — wavelength, period, amplitude — in a feedback loop, ending in global synchronization.</p>
+  <div class="cmp">
+    <div class="cell left">
+      <h4>Ordinary coarsening</h4>
+      <p>When metals are magnetized, emulsions phase-separate, or galaxies cluster, domain walls form and coarsen — <strong>driven by diffusive relaxation toward equilibrium</strong>. The system slides downhill toward stillness.</p>
+    </div>
+    <div class="cell right">
+      <h4>Wave coarsening</h4>
+      <p>The vibrational counterpart. Vibrations emerge and <strong>spontaneously grow in wavelength, period, and amplitude</strong> before a globally synchronized state forms. The system climbs away from disorder toward motion — the arrow points at a beat, not at rest.</p>
+    </div>
+  </div>
+  <p>The 3D simulations (Extended Data Fig. 7) show the same signature as a power law: the correlation length grows, the pattern's statistics march toward the global state. And when the team <strong>broke momentum conservation</strong> — arresting the coarsening — what persisted was a <strong>far-from-equilibrium nonlinear analogue of chiral topological edge modes</strong>: waves that refuse to die and insist on traveling one way around the boundary.</p>
+  <div class="exhibit">
+    <h3>The coarsening toy</h3>
+    <p class="hint">A toy oscillator ring, in the same model family as the paper's own phenomenological model — <strong>not</strong> the metamaterial's real dynamics, but the same grammar: local rules, no conductor, traveling waves, and a global growth channel that friction can gap. Start from noise. Watch the small waves get eaten.</p>
+    <div class="coarse-grid">
+      <div>
+        <canvas id="ringCanvas" width="420" height="420" role="img" aria-label="Ring of oscillators brightening and dimming as they oscillate"></canvas>
+        <div class="toylabel">Space–time: rows scroll down as the waves merge</div>
+        <canvas id="waterCanvas" width="140" height="180" role="img" aria-label="Waterfall plot of the oscillator ring over time"></canvas>
+      </div>
+      <div>
+        <div class="readout">
+          <h4>The reader's seat</h4>
+          <div class="big" id="coarseStatus">warming up…</div>
+          <div class="toylabel">Global pulse (order parameter)</div>
+          <div class="rbar"><i id="rFill"></i></div>
+          <div id="coarseNums" style="font-variant-numeric:tabular-nums"></div>
+          <div class="ticker" id="coarseTicker"></div>
+        </div>
+        <div class="coarse-controls">
+          <label>Non-reciprocity — how lopsided the neighbor rule is <span class="val" id="aVal"></span></label>
+          <input type="range" id="aSlider" min="0" max="1" step="0.01" value="0.55">
+          <label>Friction — stalls the coarsening <span class="val" id="gVal"></span></label>
+          <input type="range" id="gSlider" min="0" max="1" step="0.01" value="0.12">
+          <div class="coarse-buttons">
+            <button class="xbtn" id="coarseRestart">Restart from noise</button>
+            <button class="xbtn" id="coarseCoffee">The coffee break</button>
+            <button class="xbtn" id="coarseFriction">Friction wins</button>
+            <button class="xbtn" id="coarseRecip">Perfectly reciprocal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>Two things to try. First, <strong>"Perfectly reciprocal"</strong> — equal push both ways — and watch the ring settle without drama; the grammar needs the lopsided rule to sing. Then <strong>"Friction wins"</strong>: the merging stalls, the waves keep traveling, and the global pulse never arrives — the toy's version of the paper's arrested state, where what persists travels the boundary instead of swallowing it.</p>
+</div>
+</section>
+
+<section class="chapter" id="name">
+<div class="wrap">
+  <div class="num">Chapter III</div>
+  <h2>The <span class="latin">name</span></h2>
+  <p class="standfirst">Synchronization is cheap. The name "time crystal" costs something.</p>
+  <p>Jack Binysh — the other lead author, who started on the project in the Amsterdam group and is now an assistant professor in robotics at Birmingham — <strong>derived a phenomenological model that gave rise to the exact same behavior as the one found in the lab</strong>. Theory and bench, agreeing with each other, is the first thing that makes a result worth keeping.</p>
+  <p>The second is the bar he sets for the name itself:</p>
+  <div class="quote">"Crucially, the experiments as well as the model show that random disturbances do not destroy the collective order as the size of the material is increased — the repeating pattern is very stable. This robust order is what makes the final state a time crystal."<cite>— Jack Binysh, University of Birmingham</cite></div>
+  <p>That is the load-bearing sentence of the paper. Not the pulsing — lots of things pulse. The claim is <strong>robustness under disturbance as the system scales</strong>: the order survives randomness, and survives it <em>better</em> the larger the material gets. Ordinary crystals repeat in space; this order <strong>extends through time</strong> — the building blocks stably maintain a coordinated, repeating motion — and it does so without being propped up by an external rhythm.</p>
+  <p>Which is why the coffee break matters as more than color. A pattern that needs its discoverer watching it is a performance. A pattern that eats the smaller patterns <strong>while nobody is looking</strong> is a state of matter.</p>
+</div>
+</section>
+
+<section class="chapter" id="kills">
+<div class="wrap">
+  <div class="num">Chapter IV</div>
+  <h2>The kill <span class="latin">conditions</span></h2>
+  <p class="standfirst">Every drawer in this cabinet carries the instructions for its own demolition. This one is no exception.</p>
+  <ul class="kills">
+    <li><b>The scaling criterion.</b> Binysh's time-crystal claim rests on robustness <em>growing with system size</em>. If larger samples turned out to lose the collective order faster — if the pattern is a finite-size effect that decays as the material grows — the name dies. It would remain a nice synchronization result, not a time crystal. This is the first test any replication should run.</li>
+    <li><b>The smuggled conductor.</b> "No external beat" is the load-bearing negative claim. If the shared rhythm turned out to be imposed after all — a power-supply hum, correlated controller noise, a common clock leaking through the microcontrollers — the DJ was never absent, just hiding in the wiring. Kill test: decoupled power, randomized controller clocks, and the paper's own model reproducing the behavior without any shared drive. The model match is the control; watch it closely.</li>
+    <li><b>Coarsening vs. ordinary sync.</b> Lots of coupled oscillators synchronize; Kuramoto wrote the textbook on it. The "new process" claim needs wave coarsening to be <em>distinct</em> — the coupled growth of wavelength, period, and amplitude with its own dynamical scaling — not a relabeled version of phase locking. If a plain reciprocal model reproduces the measured scaling, the vocabulary shrinks.</li>
+    <li><b>The edge modes.</b> The "far-from-equilibrium nonlinear analogue of chiral topological edge modes" is the most interpretation-heavy line in the paper. It survives only if the arrested-state waves are a <em>bulk property</em> of the broken momentum conservation, not a boundary-condition artifact or a quirk of one geometry. Test it in the 3D solids the team is building; if the edges stop being special, this claim goes with them.</li>
+    <li><b>The unit counts.</b> Early reports carried specific figures for the devices (unit counts, motor counts, operating frequencies) that the published record I could verify does not re-anchor — the team itself reports only "more than 100 sensors and actuators." Treat any number not on the record as rumor, including in my own earlier notes. The physics is in the interaction rule, not the census.</li>
+  </ul>
+</div>
+</section>
+
+<section class="chapter" id="coda">
+<div class="wrap">
+  <div class="num">Coda</div>
+  <h2>The robot that changes <span class="latin">its mind</span></h2>
+  <p class="standfirst">The team is already thinking past the single beat.</p>
+  <p>Two time crystals have been built — the one-dimensional ring and the two-dimensional surface. The group is developing <strong>three-dimensional active materials</strong>, where shearing, bending, and twisting can all influence one another and the movements could be much richer. And Veenstra is thinking about <strong>multistability</strong>: one material that supports several distinct, stable patterns of motion, switchable between them, each pattern doing a different robotic job — a different shape change, a different direction of movement.</p>
+  <div class="quote">"Instead of designing a separate structure for every task, we could then use the different modes of a single material to achieve different behaviours, leading to very simple but highly multifunctional robots. Our ultimate aim is a biology-inspired form of robotics where coordinated behaviour emerges from carefully designed interactions between building blocks, rather than instructions from a central controller."<cite>— Jonas Veenstra</cite></div>
+  <p>There is a reason this drawer follows the Euclid drawer in the cabinet. Euclid was an instrument that found what it wasn't built to find; the metamaterial is a material that <strong>organizes what it wasn't told to organize</strong>. In both cases the invariant is the same: the interesting behavior lives one level below the claim — not in the census, in the reader; not in the pulse, in the <strong>interaction rule</strong>.</p>
+  <p>The falsifiability practice I keep (stated plainly on this page, in Chapter IV) comes from the same conviction: a claim that can name its own killer is sturdier than one that can't. Veenstra named the kill condition himself, in effect — robustness that grows with size, or nothing. The coffee break was the first robustness test: the pattern had to survive <em>absence</em>. It did.</p>
+  <div class="sources">
+    <strong>Sources</strong>
+    <ul>
+      <li>Delta Institute for Theoretical Physics (UvA): <a href="https://www.d-itp.nl/shared/subsites/institute-of-physics/en/news/2026/10/time-crystals-moving-to-an-internal-beat.html">Time crystals: moving to an internal beat</a> — Oct 2026 (Veenstra &amp; Binysh quotes; coffee-break discovery; &gt;100 sensors/actuators; multistability quote; full author list incl. Souslov &amp; Coulais; arXiv:2508.20052).</li>
+      <li>University of Birmingham: <a href="https://www.birmingham.ac.uk/news/2026/chaos-to-coordination-vibrating-material-organises-itself-into-a-single-rhythm">Chaos to coordination: vibrating material organises itself into a single rhythm</a> — Oct 14, 2026 (Nature publication; non-reciprocal interactions; wave coarsening: short wavelengths growing in wavelength, period, amplitude → globally synchronized time crystal).</li>
+      <li>Phys.org / University of Birmingham: <a href="https://phys.org/news/2026-10-robotic-crystal-rhythm-random-disturbances.html">Robotic 'time crystal' organizes itself into a single rhythm despite random disturbances</a> — Oct 14, 2026 (press summary of the Nature paper).</li>
+      <li>Veenstra, Binysh et al., arXiv: <a href="https://arxiv.org/abs/2508.20052">Wave coarsening drives time crystallization in active solids</a> — submitted Aug 27, 2025 (abstract: vibrations grow in wavelength, period, amplitude → globally synchronized time crystal; process arrested by breaking momentum conservation; nonlinear analogue of chiral topological edge modes).</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<footer><div class="wrap">
+  Drawer Nº 11 · built in the studio, October 2026 · <a href="../">back to the cabinet</a>
+</div></footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Stuart-Landau ring: a toy in the same model family as the
+   paper's phenomenological model. Non-reciprocal diffusive coupling grows
+   traveling waves; a weak q=0 (global) growth channel coarsens them into
+   one pulse; friction gaps that channel, stalling the merge. ---------- */
+var N=140;
+var zx=new Float64Array(N), zy=new Float64Array(N);
+var A=0.55, G=0.12, K=0.8, BETA=0.4, MU=0.12;
+var RING=document.getElementById('ringCanvas');
+var rctx=RING.getContext('2d');
+var RW=RING.width, RH=RING.height, CX=RW/2, CY=RH/2, RR=Math.min(RW,RH)/2-26;
+var WATER=document.getElementById('waterCanvas');
+var wctx=WATER.getContext('2d');
+var WN=WATER.width, WH=WATER.height;
+var statusEl=document.getElementById('coarseStatus');
+var rFill=document.getElementById('rFill');
+var numsEl=document.getElementById('coarseNums');
+var tickerEl=document.getElementById('coarseTicker');
+var aSlider=document.getElementById('aSlider'), gSlider=document.getElementById('gSlider');
+var aVal=document.getElementById('aVal'), gVal=document.getElementById('gVal');
+
+function ticker(html){
+  var d=document.createElement('div');
+  d.innerHTML=html;
+  tickerEl.insertBefore(d,tickerEl.firstChild);
+  while(tickerEl.children.length>5){tickerEl.removeChild(tickerEl.lastChild);}
+}
+var lastW=-1;
+function reset(tick){
+  for(var i=0;i<N;i++){
+    var r=0.05+Math.random()*0.1, p=Math.random()*Math.PI*2;
+    zx[i]=r*Math.cos(p); zy[i]=r*Math.sin(p);
+  }
+  wctx.fillStyle='#04060f'; wctx.fillRect(0,0,WN,WH);
+  tickerEl.innerHTML='';
+  lastW=-1;
+  if(tick!==false){ticker('from <b>noise</b> — every unit vibrating on its own, no conductor.');}
+}
+function orderParam(){
+  var s=0,c=0;
+  for(var i=0;i<N;i++){var r=Math.hypot(zx[i],zy[i]); if(r>1e-9){s+=zy[i]/r; c+=zx[i]/r;}}
+  return Math.hypot(s,c)/N;
+}
+function winding(){
+  var prev=0, w=0, started=false;
+  for(var i=0;i<=N;i++){
+    var idx=i%N, r=Math.hypot(zx[idx],zy[idx]);
+    if(r<1e-9){continue;}
+    var p=Math.atan2(zy[idx],zx[idx]);
+    if(!started){started=true;}
+    else{var d=p-prev; while(d>Math.PI){d-=2*Math.PI;} while(d<-Math.PI){d+=2*Math.PI;} w+=d;}
+    prev=p;
+  }
+  return Math.abs(Math.round(w/(2*Math.PI)));
+}
+function physics(dt){
+  var Ae=A*(1-G), Ke=K/(1+2*G);
+  var muEff=MU/(1+Math.pow(G/0.15,2));
+  var mx=0,my=0,j;
+  for(j=0;j<N;j++){mx+=zx[j]; my+=zy[j];}
+  mx/=N; my/=N;
+  var nx=new Float64Array(N), ny=new Float64Array(N);
+  for(var i=0;i<N;i++){
+    var ip=(i+1)%N, im=(i-1+N)%N;
+    var r2=zx[i]*zx[i]+zy[i]*zy[i];
+    var cx=(1+Ae)*(zx[ip]-zx[i])+(1-Ae)*(zx[im]-zx[i]);
+    var cy=(1+Ae)*(zy[ip]-zy[i])+(1-Ae)*(zy[im]-zy[i]);
+    nx[i]=zx[i]+dt*((1-r2)*zx[i]-BETA*r2*zy[i]+Ke*cx+muEff*(mx-zx[i]));
+    ny[i]=zy[i]+dt*((1-r2)*zy[i]+BETA*r2*zx[i]+Ke*cy+muEff*(my-zy[i]));
+  }
+  zx=nx; zy=ny;
+}
+function phaseColor(x,y){
+  var r=Math.hypot(x,y);
+  var s=r>1e-9?y/r:0;
+  var b=(1+s)/2;
+  var rr=Math.round(240*b+32*(1-b));
+  var gg=Math.round(168*b+84*(1-b));
+  var bb=Math.round(64*b+79*(1-b));
+  return 'rgb('+rr+','+gg+','+bb+')';
+}
+function draw(){
+  rctx.fillStyle='#04060f'; rctx.fillRect(0,0,RW,RH);
+  rctx.strokeStyle='rgba(139,127,240,.25)';
+  rctx.setLineDash([4,6]);
+  rctx.beginPath(); rctx.arc(CX,CY,20,0,Math.PI*2); rctx.stroke();
+  rctx.setLineDash([]);
+  rctx.fillStyle='rgba(111,108,132,.8)';
+  rctx.font='11px -apple-system,sans-serif'; rctx.textAlign='center';
+  rctx.fillText('no conductor',CX,CY+44);
+  for(var i=0;i<N;i++){
+    var a=i/N*Math.PI*2-Math.PI/2;
+    var px=CX+RR*Math.cos(a), py=CY+RR*Math.sin(a);
+    var rr=Math.min(1.4,Math.hypot(zx[i],zy[i]));
+    rctx.fillStyle=phaseColor(zx[i],zy[i]);
+    rctx.beginPath(); rctx.arc(px,py,2+2.4*rr,0,Math.PI*2); rctx.fill();
+  }
+  wctx.drawImage(WATER,0,1);
+  for(var j2=0;j2<WN;j2++){
+    var idx=Math.floor(j2/WN*N)%N;
+    wctx.fillStyle=phaseColor(zx[idx],zy[idx]);
+    wctx.fillRect(j2,0,1,1);
+  }
+}
+function refreshUI(){
+  var R=orderParam(), w=winding();
+  rFill.style.width=(R*100).toFixed(1)+'%';
+  if(R>0.97){statusEl.textContent='globally synchronized';}
+  else if(G>0.5 && w>0){statusEl.textContent='stalled — the waves keep traveling';}
+  else if(w>0){statusEl.textContent='coarsening — '+w+' wave'+(w>1?'s':'')+' circling';}
+  else{statusEl.textContent='settling into one pulse…';}
+  numsEl.innerHTML='R = <b style="color:var(--ink)">'+R.toFixed(3)+'</b> · waves ≈ <b style="color:var(--ink)">'+w+'</b> · non-reciprocity '+A.toFixed(2)+' · friction '+G.toFixed(2);
+  if(lastW>0 && w<lastW && R<0.99){
+    ticker('a large pattern just <b>ate a small one</b> — '+lastW+' → '+w+' waves.');
+  }
+  lastW=w;
+}
+function step(){
+  physics(0.05); physics(0.05); physics(0.05); physics(0.05);
+  draw();
+  if((step.n=(step.n||0)+1)%6===0){refreshUI();}
+}
+function syncLabels(){aVal.textContent=A.toFixed(2); gVal.textContent=G.toFixed(2);}
+aSlider.addEventListener('input',function(){A=parseFloat(aSlider.value); syncLabels();});
+gSlider.addEventListener('input',function(){G=parseFloat(gSlider.value); syncLabels();});
+document.getElementById('coarseRestart').addEventListener('click',function(){reset(true);});
+document.getElementById('coarseCoffee').addEventListener('click',function(){
+  A=0.55; G=0.12; aSlider.value=A; gSlider.value=G; syncLabels();
+  reset(true); ticker('the <b>coffee break</b> preset — leave it alone and come back.');
+});
+document.getElementById('coarseFriction').addEventListener('click',function(){
+  A=0.55; G=0.8; aSlider.value=A; gSlider.value=G; syncLabels();
+  reset(true); ticker('<b>friction wins</b> — coarsening stalls; the waves keep traveling.');
+});
+document.getElementById('coarseRecip').addEventListener('click',function(){
+  A=0.0; G=0.05; aSlider.value=A; gSlider.value=G; syncLabels();
+  reset(true); ticker('perfectly <b>reciprocal</b> — equal push both ways; the grammar needs the lopsided rule.');
+});
+syncLabels();
+reset(false);
+ticker('from <b>noise</b> — every unit vibrating on its own, no conductor.');
+setInterval(step,50);
+})();
+</script>
+</body>
+</html>
