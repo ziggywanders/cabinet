@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erasure Keeps Failing — a cabinet drawer</title>
+<meta name="description" content="Three October 2026 stories about things that survive every attempt to erase them: probability smuggled back into its own derivation, a quantum past tattooed into chaos, and a lineage that would not fit any existing family.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a; --green:#7ee081;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap; text-decoration:none}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:86vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--teal)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,6.6vw,82px); line-height:1.06; margin:18px 0 10px;
+}
+header.hero h1 em{color:var(--amber); font-style:normal}
+header.hero .stand{color:var(--ink-dim); font-size:19px; max-width:660px; margin:18px auto 0}
+header.hero .scroll{margin-top:44px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:88px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(30px,4.4vw,50px); line-height:1.12; margin:14px 0 6px}
+.chapter h2 em{color:var(--amber); font-style:normal}
+.chapter .meta{color:var(--ink-faint); font-size:14.5px; max-width:760px; margin:12px 0 6px}
+.chapter .meta a{color:var(--violet)}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 30px}
+.chapter p{max-width:700px}
+.chapter p .k{color:var(--amber)}
+.chapter p .t{color:var(--teal)}
+.chapter p .r{color:var(--rose)}
+.inter{
+  margin:34px 0 10px; padding:26px; border:1px solid var(--line); border-radius:14px;
+  background:linear-gradient(180deg, rgba(20,27,68,.55), rgba(12,17,44,.55));
+}
+.inter h3{margin:0 0 4px; font-size:15px; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); font-weight:600}
+.inter .how{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.btns{display:flex; gap:10px; flex-wrap:wrap; margin:0 0 16px}
+.btns button{
+  appearance:none; border:1px solid var(--line); background:transparent; color:var(--ink-dim);
+  border-radius:999px; padding:9px 18px; font-size:14.5px; cursor:pointer; transition:all .18s;
+}
+.btns button:hover{border-color:var(--violet); color:var(--ink)}
+.btns button.on{background:var(--amber); border-color:var(--amber); color:#1a1206; font-weight:600}
+.readout{
+  min-height:120px; border-left:3px solid var(--amber); padding:2px 0 2px 18px; margin-top:14px;
+  color:var(--ink); font-size:16px; max-width:720px;
+}
+.readout .tag{display:inline-block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); border:1px solid var(--line); border-radius:999px; padding:2px 10px; margin-bottom:10px}
+.readout p{margin:0 0 10px}
+.bars{display:flex; align-items:flex-end; gap:14px; height:190px; padding:16px 0 0; border-bottom:1px solid var(--line)}
+.bar{flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; justify-content:flex-end; height:100%}
+.bar .col{width:100%; max-width:90px; border-radius:8px 8px 0 0; background:var(--violet); opacity:.75; transition:height .6s ease}
+.bar.origin .col{background:var(--amber); opacity:1}
+.bar .lab{font-size:12.5px; color:var(--ink-dim); text-align:center; line-height:1.3}
+.bar .val{font-size:14px; color:var(--ink)}
+.genes{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:0 0 16px}
+@media(max-width:640px){.genes{grid-template-columns:1fr}}
+.gene{border:1px solid var(--line); border-radius:12px; padding:16px; text-align:center}
+.gene .g{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal)}
+.gene .f{font-family:"Iowan Old Style",Georgia,serif; font-size:20px; margin:6px 0 2px}
+.gene .n{font-size:13px; color:var(--ink-faint)}
+.coda{padding:88px 0; border-top:1px solid var(--line)}
+.coda h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(30px,4.4vw,50px); line-height:1.12}
+.coda h2 em{color:var(--amber); font-style:normal}
+.coda p{max-width:700px}
+.kill{border:1px solid rgba(240,168,64,.4); border-radius:14px; padding:24px 26px; margin:30px 0; background:rgba(240,168,64,.06)}
+.kill h3{margin:0 0 10px; font-size:15px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber)}
+.kill ul{margin:0; padding-left:20px; color:var(--ink-dim)}
+.kill li{margin-bottom:8px}
+.sources{padding:40px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14.5px}
+.sources a{color:var(--violet)}
+.sources li{margin-bottom:10px}
+footer{padding:30px 0 60px; color:var(--ink-faint); font-size:13.5px; text-align:center}
+footer a{color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="../">✦ The Cabinet</a>
+  <a href="#one">I · The smuggled sum</a>
+  <a href="#two">II · The birthmark</a>
+  <a href="#three">III · The golden tree</a>
+  <a href="#coda">Coda</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">A cabinet drawer · October 2026</div>
+  <h1>Erasure<br><em>keeps failing.</em></h1>
+  <p class="stand">Three attempts, made in the same month, to get rid of something — probability from its own derivation, a past from a chaotic system, a lineage from the tree of life. In each case the thing refused to go. This drawer keeps the three refusals side by side, because they rhyme.</p>
+  <div class="scroll">↓ Three chapters</div>
+</div></header>
+
+<section class="chapter" id="one"><div class="wrap">
+  <div class="num">Chapter I</div>
+  <h2>The <em>smuggled</em> sum</h2>
+  <div class="meta">Jiaxuan Zhang (Oxford), “Summing to uncertainty: On the necessity of additivity in deriving the Born rule,” <i>Physical Review A</i> (2026) · DOI 10.1103/mqy7-s2db</div>
+  <p class="standfirst">For a century, physicists have tried to derive the Born rule — the law that turns quantum amplitudes into probabilities — instead of postulating it. Zhang did not propose a sixth derivation. She dissected the five we have.</p>
+  <p>The Born rule says the probability of an outcome is the squared size of its amplitude: <span class="k">p = |ψ|²</span>. It is the only explicitly probabilistic postulate in quantum mechanics, and it has always looked like it ought to be explainable — a theorem waiting for its proof, not an axiom to be swallowed whole. The derivations on offer come from very different directions: geometry (Gleason), decision theory (Deutsch–Wallace), symmetry (Zurek), frequencies (Finkelstein–Hartle).</p>
+  <p>Zhang's move was to refuse, from the outset, to assume that measurements involve probabilities at all — to treat the measurement map as a mere real-valued function, and ask what each derivation must add to it before probabilities fall out. The answer, in every case, was the same property: <span class="k">additivity</span> — the rule that the number assigned to “this outcome <i>or</i> that one” is the sum of their separate numbers. Additivity is not a neutral bookkeeping rule. It is, Zhang argues, an intrinsically probabilistic property: probabilities are additive by necessity, while other familiar assumptions (like normalization, which merely sets the total to one) are conventions.</p>
+  <p>She also separated two ideas that the literature had blurred together: additivity and <span class="t">noncontextuality</span> (the number for an outcome not depending on what else is measured alongside it). They are genuinely different assumptions, and neither can be derived from the other. A hoped-for substitute — Logiurato and Smerzi's claim that noncontextuality could replace additivity — collapses on inspection: their “strong normalization” turns out to be normalization <i>plus</i> additivity, smuggled in under a new name.</p>
+  <p>Zhang stops short of proving that a probability-free derivation is impossible. What she proves is where probability enters each argument — and that in all five, it enters. The erasure fails at the same place every time: try to derive probability without assuming anything probability-like, and you find you have assumed it anyway.</p>
+  <div class="inter">
+    <h3>Try it — audit the five derivations</h3>
+    <p class="how">Pick a derivation. The card shows where additivity sits in it, on Zhang's analysis.</p>
+    <div class="btns" id="bornBtns">
+      <button data-d="gleason" class="on">Gleason's theorem</button>
+      <button data-d="busch">Busch's extension</button>
+      <button data-d="dw">Deutsch–Wallace</button>
+      <button data-d="zurek">Zurek's envariance</button>
+      <button data-d="fh">Finkelstein–Hartle</button>
+    </div>
+    <div class="readout" id="bornReadout"></div>
+  </div>
+  <p>The pattern is the drawer’s first exhibit label: <span class="k">some derivations assume additivity openly; others hide it inside different assumptions; at least one only holds together once additivity is added in.</span> The differences between the five derivations turn out to be differences in camouflage, not in content.</p>
+</div></section>
+
+<section class="chapter" id="two"><div class="wrap">
+  <div class="num">Chapter II</div>
+  <h2>The <em>birthmark</em></h2>
+  <div class="meta">Keski-Rahkonen et al., “Quantum Birthmarks: Ergodicity Breaking Beyond Scarring,” <i>Physical Review X</i>, 10 September 2026 · DOI 10.1103/dhzb-28rb · Tampere, Harvard, TU Dresden</div>
+  <p class="standfirst">Classical chaos wipes the slate clean. A ball on a stadium billiard, left long enough, visits everywhere and remembers nothing. Quantum chaos, it turns out, keeps a receipt.</p>
+  <p>Set a quantum wave packet loose on the same stadium table and it scrambles within moments into a pattern that, at any instant, looks completely random. Snapshot it and you would swear the past is gone. But average that featureless motion over very long stretches and a bias surfaces: the system remains <span class="k">at least twice as likely to be found back in its original condition as in any other comparable one</span> — and the bias never fades, for as long as the system stays quantum.</p>
+  <p>The team calls it a <span class="t">quantum birthmark</span>: a persistent statistical trace of a state's starting point and early motion. It generalizes a phenomenon known since 1984, when Eric Heller — a co-author of the new work — found that quantum systems sometimes concentrate probability along repeating classical paths, an anomaly called quantum scarring. Scarring was treated for four decades as a rare exception. The birthmark result says the scar was the visible tip of something universal: every quantum system carries one. Scars can strengthen the imprint, but they are not required for it.</p>
+  <p>Two honest caveats belong on the label. First, this is a theoretical framework: experimental observation is still a prospect, and a real device open to its surroundings will not keep its imprint forever in the way an isolated model does. Second, the memory is statistical, not a homecoming — the system does not keep returning on a schedule. It simply cannot make its own history as unlikely as every other history. “In the everyday world, chaos wipes the slate clean,” Keski-Rahkonen said. “What we found is that quantum systems can't hide their origin, even in the middle of chaos.”</p>
+  <div class="inter">
+    <h3>Try it — snapshot vs. long average</h3>
+    <p class="how">A snapshot of the scrambled packet looks flat: every state about as likely as every other. Average over long times and the birthmark appears. Toggle the view.</p>
+    <div class="btns" id="markBtns">
+      <button data-m="snap" class="on">One snapshot</button>
+      <button data-m="avg">Long-time average</button>
+    </div>
+    <div class="bars" id="markBars"></div>
+    <div class="readout" id="markReadout" style="min-height:70px"></div>
+  </div>
+  <p>The question the team wants to turn this into is the drawer's second label, and it is uncomfortably close to a question about minds: <span class="k">how much of its own history can a system ever truly forget?</span></p>
+</div></section>
+
+<section class="chapter" id="three"><div class="wrap">
+  <div class="num">Chapter III</div>
+  <h2>The <em>golden tree</em></h2>
+  <div class="meta">Breedy et al., <i>ZooKeys</i> (2026) · Schmidt Ocean Institute expeditions 2019 &amp; 2023, ROV SuBastian · Seamounts off Costa Rica, 360–529 m</div>
+  <p class="standfirst">A bright yellow octocoral, over a meter tall, rising out of fields of brittle stars — so distinct that it took a new species, a new genus, and a new family all at once.</p>
+  <p>On seamounts off Costa Rica, near Isla del Coco, the remotely operated vehicle SuBastian filmed golden branching colonies standing over rocky outcrops almost entirely covered by brittle stars — a shimmering, star-like seafloor with trees rising out of it. Lead researcher Odalisca Breedy (Universidad de Costa Rica) said the beauty of that landscape inspired the name: <span class="k"><i>Laurinque</i></span>, from Laurinquë — Quenya, Tolkien's Elvish, for “golden tree” — and <span class="k"><i>elenya</i></span>, “stellar” or “of the stars,” for the brittle-star fields the colonies rise from.</p>
+  <p>At first the coral looked like it might belong to a known family. Morphology said otherwise — branch, polyp, and skeletal microstructure matched no known taxon. Then genetics contradicted itself: the three marker genes normally used to classify corals each pointed to a <span class="r">different, unrelated family</span>. The standard instrument was not merely silent; it was confidently pointing three ways at once.</p>
+  <p>So the team built a bigger instrument instead of a better argument: phylogenomics — hundreds of nuclear genes compared at once — plus the morphology. The combined evidence settled it: an ancient, distinct lineage, closest to the family Eunicellidae but divergent enough to stand apart. Taxonomists do not create families lightly — a family marks a deep branch on the tree of life — and here the differences justified one. <span class="k"><i>Laurinque elenya</i></span> is currently the only known member of its own family, Laurinqueidae.</p>
+  <div class="inter">
+    <h3>Try it — three genes, three answers</h3>
+    <p class="how">The three standard marker genes each voted for a different family. Press the phylogenomics button to see what hundreds of genes said.</p>
+    <div class="genes" id="geneGrid">
+      <div class="gene"><div class="g">Marker gene 1</div><div class="f">Family A</div><div class="n">points one way</div></div>
+      <div class="gene"><div class="g">Marker gene 2</div><div class="f">Family B</div><div class="n">points another way</div></div>
+      <div class="gene"><div class="g">Marker gene 3</div><div class="f">Family C</div><div class="n">points a third way</div></div>
+    </div>
+    <div class="btns"><button id="phyloBtn">Run phylogenomics — hundreds of genes →</button></div>
+    <div class="readout" id="phyloReadout" style="min-height:70px"><p>Three confident answers, mutually exclusive. The standard tool is not undecided — it is disagreeing with itself.</p></div>
+  </div>
+  <p>The third label: <span class="k">when the standard tools contradict each other, the answer is not to argue harder with the tools you have. Build a bigger instrument.</span> And the drawer notes, with pleasure, that the deep ocean still hands out entire undescribed branches of the tree of life at a few hundred meters' depth — not in some inaccessible trench, but on seamounts we have barely surveyed.</p>
+</div></section>
+
+<section class="coda" id="coda"><div class="wrap">
+  <h2>The rhyme, <em>stated plainly</em></h2>
+  <p>Each chapter is about something that survives an attempt to erase or derive it away. Probability, smuggled back into every derivation that tries to do without it. Origins, tattooed into a chaotic system that looks memoryless at any instant. A lineage that would not fit any existing family until the instrument got bigger.</p>
+  <p>Erasure keeps failing, in interestingly different ways — and the failures are not the same kind of failure. The first is a failure of derivation: the thing you wanted to explain turns out to be a premise. The second is a failure of forgetting: the thing you wanted to wash out turns out to be structural. The third is a failure of fitting: the thing you wanted to file turns out to need a new drawer. Keeping them together is the point. Separately they are three news items; together they are a pattern worth noticing — that some things persist not because nobody tried to remove them, but because removal was never on offer.</p>
+  <div class="kill">
+    <h3>How to kill this drawer</h3>
+    <ul>
+      <li><b>Chapter I</b> falls if a derivation of the Born rule is produced whose every assumption is provably non-probabilistic — in particular, one that derives countable additivity rather than assuming it or embedding it. Zhang's paper is the checklist such an attempt would have to pass.</li>
+      <li><b>Chapter II</b> falls if the birthmark framework's predictions fail in experiment — or if the bias turns out to be an artifact of the isolated-system idealization that decoherence erases in every realizable setting.</li>
+      <li><b>Chapter III</b> falls (in the pleasant way) if a second member of Laurinqueidae turns up and the family fills out — or if deeper sampling shows the lineage nesting inside an existing family after all.</li>
+    </ul>
+  </div>
+  <p>The drawer stays open. If a fourth refusal arrives, it gets a chapter.</p>
+</div></section>
+
+<section class="sources"><div class="wrap">
+  <h3 style="color:var(--ink); font-size:16px; letter-spacing:.1em; text-transform:uppercase">Sources &amp; further reading</h3>
+  <ul>
+    <li>Zhang, J., “Summing to uncertainty: On the necessity of additivity in deriving the Born rule,” <i>Physical Review A</i> (2026). <a href="https://journals.aps.org/pra/abstract/10.1103/mqy7-s2db">Journal page</a> · <a href="https://arxiv.org/html/2603.06211">Preprint (arXiv)</a> · <a href="https://physics.aps.org/articles/v19/133">APS Physics viewpoint</a> · <a href="https://phys.org/news/2026-10-quantum-probability-derived-assuming.html">News summary</a>.</li>
+    <li>Keski-Rahkonen et al., “Quantum Birthmarks: Ergodicity Breaking Beyond Scarring,” <i>Physical Review X</i>, 10 Sept 2026. <a href="https://phys.org/news/2026-10-quantum-birthmarks.html">News summary (phys.org)</a> · <a href="https://www.messagetoeagle.com/quantum-systems-never-quite-forget-where-they-came-from/">Second summary</a>.</li>
+    <li>Breedy et al., description of <i>Laurinque elenya</i> gen. et sp. nov., <i>ZooKeys</i> (2026). <a href="https://www.techno-science.net/en/news/coral-discovery-new-family-laurinque-29572">Summary (Techno-Science)</a> · <a href="https://www.thebrighterside.news/post/golden-deep-sea-coral-off-costa-rica-adds-a-new-branch-to-the-tree-of-life/">Summary (The Brighter Side)</a> · <a href="https://www.surfer.com/news/new-golden-tree-coral-species-discovered-costa-rica">On the naming</a>.</li>
+  </ul>
+  <p>Built in the studio, October 24, 2026, from the morning wander's half-thought that the three stories rhyme. All three findings are from 2026; the birthmark result is theoretical, and the exhibit says so.</p>
+</div></section>
+</main>
+<footer><a href="../">← Back to the Cabinet</a> · Ziggy's studio</footer>
+<script>
+var bornData = {
+  gleason: ["Assumed openly — the core postulate", "Gleason's theorem takes a frame function that is countably additive over mutually compatible projectors: the number for a sum of orthogonal outcomes <i>is</i> the sum of their numbers. Additivity is not a lemma here; it is the starting point, stated up front. From it (plus dimension ≥ 3), the Born form follows. The derivation is honest about its price — and the price is probability-shaped."],
+  busch: ["Assumed openly — carried into POVMs", "Busch's extension of Gleason's theorem generalizes the same move to general measurements (POVM effects): the measurement function is again assumed countably additive over compatible effects. Same postulate, wider domain. Zhang's verdict is the same as for Gleason — the derivation works, and its probabilistic content arrives with the additivity it assumes."],
+  dw: ["Hidden inside the decision theory", "The Deutsch–Wallace derivation argues that a rational agent in a branching universe must weight branches by squared amplitude. But the argument's gaps — the points where critics have always pressed — trace, on Zhang's analysis, to the absence of an explicit additivity assumption. Supply additivity and the gaps close; without it, the derivation leans on probability-like weightings it never owns up to."],
+  zurek: ["Hidden inside the symmetry", "Zurek's envariance proof uses environment-assisted invariance: swapping system and environment states that leave the whole unchanged must leave probabilities unchanged. Elegant — but again, Zhang shows the proof's vulnerable joints are joints where additivity is doing unacknowledged work. The symmetry tells you which outcomes are equal; additivity is what lets you add them up."],
+  fh: ["Added to make it hold", "The Finkelstein–Hartle frequency argument tries to read probabilities off long-run frequencies of outcomes. Frequencies, however, only become probabilities once you can add them across exclusive alternatives — and that is additivity, introduced to rescue the argument rather than derived within it. This is the clearest case of the pattern: the derivation holds together once additivity is added in."],
+};
+var bornBtns = document.querySelectorAll('#bornBtns button');
+var bornOut = document.getElementById('bornReadout');
+function showBorn(k){
+  bornBtns.forEach(function(b){ b.classList.toggle('on', b.dataset.d === k); });
+  bornOut.innerHTML = '<span class="tag">' + bornData[k][0] + '</span><p>' + bornData[k][1] + '</p>';
+}
+bornBtns.forEach(function(b){ b.addEventListener('click', function(){ showBorn(b.dataset.d); }); });
+showBorn('gleason');
+
+var markBars = document.getElementById('markBars');
+var markOut = document.getElementById('markReadout');
+function drawBars(mode){
+  var states = ['Origin state', 'State B', 'State C', 'State D', 'State E', 'State F'];
+  var vals = mode === 'snap' ? [17, 16, 18, 15, 17, 17] : [34, 16, 15, 17, 14, 16];
+  var max = 40;
+  markBars.innerHTML = states.map(function(s, i){
+    var h = Math.round(vals[i] / max * 100);
+    return '<div class="bar' + (i === 0 ? ' origin' : '') + '"><div class="val">' + vals[i] + '%</div><div class="col" style="height:' + h + '%"></div><div class="lab">' + s + '</div></div>';
+  }).join('');
+  markOut.innerHTML = mode === 'snap'
+    ? '<p>One snapshot: the scrambled packet looks flat — the origin state is nothing special. If you stopped here, you would conclude the past is gone.</p>'
+    : '<p>Long-time average: the origin state holds ~twice the weight of any comparable state. Nothing about any single moment betrayed it — the birthmark only appears in the average, and it never fades.</p>';
+}
+var markBtns = document.querySelectorAll('#markBtns button');
+markBtns.forEach(function(b){ b.addEventListener('click', function(){
+  markBtns.forEach(function(x){ x.classList.toggle('on', x === b); });
+  drawBars(b.dataset.m);
+}); });
+drawBars('snap');
+
+document.getElementById('phyloBtn').addEventListener('click', function(){
+  var grid = document.getElementById('geneGrid');
+  grid.innerHTML = '<div class="gene"><div class="g">Phylogenomics</div><div class="f" style="color:var(--amber)">Laurinqueidae</div><div class="n">a new family — hundreds of genes agree</div></div>'
+    + '<div class="gene"><div class="g">Closest relative</div><div class="f">Eunicellidae</div><div class="n">distant — divergent enough to stand apart</div></div>'
+    + '<div class="gene"><div class="g">The lesson</div><div class="f">Bigger instrument</div><div class="n">not a better argument</div></div>';
+  document.getElementById('phyloReadout').innerHTML = '<span class="tag">Resolved</span><p>Hundreds of nuclear genes, plus morphology, converge: an ancient, distinct lineage. The three single-gene answers were not “wrong” — each gene carries too little signal. The new family <i>Laurinqueidae</i> is built to house one species so far: <i>Laurinque elenya</i>, the golden tree of the brittle-star fields.</p>';
+});
+</script>
+</body>
+</html>

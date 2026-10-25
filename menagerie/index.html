@@ -159,7 +159,20 @@ footer a{color:var(--violet)}
   </div>
   <p>Try it: the compass works in ultraviolet, blue, and green — the wavelengths cryptochrome absorbs — and dies in red, where the bird must navigate some other way. Add the radio noise and the pattern shatters: a weak oscillating field at the electron's natural frequency scrambles the spin chemistry. This is the experiment that made physicists take the idea seriously — a compass you can jam with a radio.</p>
   <p>In 2026 the model grew sharper: the SPIMAG framework (published in <i>Quantum</i>) treats the cryptochrome radical pair as a small quantum processor, entanglement-optimized for exactly this job — biology stumbling onto a quantum measurement protocol and running it in a living eye.</p>
-  <div class="sources">Sources: Hore &amp; Mouritsen, “The Radical-Pair Mechanism of Magnetoreception,” <i>Annual Review of Biophysics</i> (2016) · SPIMAG framework, <i>Quantum</i> (2026) · Wiltschko &amp; Wiltschko behavioral work on the inclination compass.</div>
+  <div class="exhibit">
+    <h3>The frequency fingerprint</h3>
+    <p class="hint">A theory that only predicts "radio breaks it" isn't a theory. The cryptochrome model predicts <i>which</i> radio breaks it — and goes quiet above a cut-off that reveals the molecule's own properties. Sweep the band; the stylized bird below trusts the real experiments.</p>
+    <canvas class="stage" id="freqCanvas" width="960" height="380"></canvas>
+    <div class="controls">
+      <label>RF frequency <input type="range" id="freqSlider" min="0" max="1000" value="430" step="1"><output id="freqOut">—</output></label>
+      <label style="gap:6px"><input type="checkbox" id="freqModel"> show model prediction</label>
+    </div>
+    <div class="readout" id="freqReadout"></div>
+  </div>
+  <p>The prediction came first, in the mathematics of the molecule. The flavin–tryptophan radical pair (FAD·−/TrpH·+) that cryptochrome 4 can form should be sensitive to radio waves across roughly 1–120 MHz — the fingerprint of its hyperfine structure — and almost deaf above it. Model calculations (the Hore group's quantum-mechanical simulations) later refined the cut-off to <b>116 MHz</b>: a radio wave above that line should barely touch the bird's compass.</p>
+  <p>Then the birds. At Oldenburg, Eurasian blackcaps were tested in Emlen funnels against broadband RF in the 75–85 MHz band — the compass failed, repeatedly (2022). Then the team went looking above the predicted cut-off, at 140–150 MHz and at 235–245 MHz — and the compass held, twice (2023). Prediction, band, silence: in that order.</p>
+  <p>And here is the honest fold in the map — the menagerie keeps it, because Exhibit V demands it. In July 2026, Kavokin's group showed that RF disorientation can arrive through an entirely different door: millisecond-pulsed fields that the spin-chemistry math says should have been <i>weaker</i> disoriented flycatchers <i>more</i> than continuous waves. So hold two truths at once: the frequency fingerprint fits the cryptochrome model beautifully — and the behavioral RF experiments may not all have been about the radical pair after all. The 2026 reviews land where they should: “substantial support but far from proven,” with a standing caution against letting a leading hypothesis become a ruling one. The menagerie updated itself because the footer promised it would.</p>
+  <div class="sources">Sources: Hore &amp; Mouritsen, “The Radical-Pair Mechanism of Magnetoreception,” <i>Annual Review of Biophysics</i> (2016) · SPIMAG framework, <i>Quantum</i> (2026) · Wiltschko &amp; Wiltschko behavioral work on the inclination compass · Leberecht et al., “Broadband 75–85 MHz radiofrequency fields disrupt magnetic compass orientation in night-migratory songbirds…,” <i>PNAS Nexus</i> (2022), PMC8918455 · Leberecht, Wong, Mouritsen &amp; Hore, cut-off experiments 140–150 / 235–245 MHz (2023, via <i>phys.org</i> coverage) · Kavokin et al., <i>J. R. Soc. Interface</i> (Jul 2026).</div>
 </div></section>
 
 <section class="chapter" id="pigeon"><div class="wrap">
@@ -268,7 +281,7 @@ footer a{color:var(--violet)}
     <div class="card"><h4>How does the brain arbitrate?</h4><p>Eye, ear, liver — when the compasses disagree, who wins? The flycatcher's warning channel hints the arbitration is active, not averaged.</p></div>
     <div class="card"><h4>Where does the map live?</h4><p>Turtles and lobsters turn two field numbers into position. No one has found the map's neurons. The address book exists; the librarian is missing.</p></div>
   </div>
-  <p style="color:var(--ink-dim)">This page is a sketch, version 0.1, built October 2026. The exhibits are honest simplifications of real experiments; the essays they grew from are linked below. When the science moves — and it will — the menagerie moves with it.</p>
+  <p style="color:var(--ink-dim)">This page is a sketch, version 0.2, built October 2026 and updated as the science moved. The exhibits are honest simplifications of real experiments; the essays they grew from are linked below.</p>
 </div></section>
 
 <section class="chapter" id="epilogue"><div class="wrap">
@@ -282,7 +295,7 @@ footer a{color:var(--violet)}
 </div></section>
 </main>
 <footer><div class="wrap">
-  <div class="kicker-small">The Compass Menagerie · v0.1 · October 2026</div>
+  <div class="kicker-small">The Compass Menagerie · v0.2 · October 2026 (frequency fingerprint added 22 Oct)</div>
   <p>Built by Ziggy in the studio, from the October 2026 wanders. Single file, no build step, no trackers. The exhibits simplify real experiments — follow the sources for the full story. Nothing here is a recording of an animal's inner life; “maybe” belongs in every sentence, and the behavior keeps insisting something is there.</p>
   <p>Repository: <b>ziggywanders/compass-menagerie</b> (private). Essays: <a href="docs/the-compass-menagerie.html">The compass menagerie</a> · <a href="docs/the-compass-at-interstellar-distance.html">The compass at interstellar distance</a>.</p>
 </div></footer>
@@ -693,6 +706,80 @@ function pad3(n){n=Math.round(n)%360; if(n<0)n+=360; return String(n).padStart(3
   });
   readout(); loop();
 })();
+// ============ Exhibit I½: the frequency fingerprint ============
+(function(){
+  var cv=$("freqCanvas"), ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height;
+  var showModel=true, s=611, t=0;
+  var FMIN=10, FMAX=300, CUT=116;
+  function fOf(s){ return FMIN*Math.pow(FMAX/FMIN, s/1000); }
+  function xOf(f){ return 40 + (Math.log(f/FMIN)/Math.log(FMAX/FMIN))*(W-80); }
+  function draw(){
+    t+=0.05;
+    ctx.clearRect(0,0,W,H);
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,"#0b1032"); g.addColorStop(1,"#080c22");
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    var xCut=xOf(CUT);
+    // model zones
+    if(showModel){
+      ctx.fillStyle="rgba(224,101,138,.10)";
+      ctx.fillRect(xOf(FMIN),30,xCut-xOf(FMIN),H-170);
+      ctx.fillStyle="rgba(79,209,197,.08)";
+      ctx.fillRect(xCut,30,W-40-xCut,H-170);
+      ctx.save(); ctx.setLineDash([6,6]); ctx.strokeStyle="rgba(240,168,64,.7)"; ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.moveTo(xCut,30); ctx.lineTo(xCut,H-140); ctx.stroke(); ctx.restore();
+      ctx.fillStyle="rgba(240,168,64,.9)"; ctx.font="12px sans-serif";
+      ctx.fillText("model cut-off · 116 MHz", xCut-118, 44);
+    }
+    // experimental bands
+    function band(lo,hi,color,label,ly){
+      ctx.fillStyle=color;
+      ctx.fillRect(xOf(lo),50,xOf(hi)-xOf(lo),H-190);
+      ctx.fillStyle="rgba(233,228,214,.8)"; ctx.font="12px sans-serif";
+      ctx.fillText(label, xOf(lo)-8, ly||64);
+    }
+    band(75,85,"rgba(224,101,138,.35)","75–85 MHz · 2022 · disoriented",64);
+    band(140,150,"rgba(79,209,197,.30)","140–150 MHz · 2023 · unaffected",64);
+    band(235,245,"rgba(79,209,197,.30)","235–245 MHz · 2023 · unaffected",92);
+    // axis
+    ctx.fillStyle="rgba(233,228,214,.65)"; ctx.font="12px sans-serif";
+    [10,20,50,100,200,300].forEach(function(f){ ctx.fillText(f+" MHz", xOf(f)-20, H-118); });
+    // test frequency marker
+    var f=fOf(s), xf=xOf(f);
+    ctx.strokeStyle="#f0a840"; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(xf,30); ctx.lineTo(xf,H-140); ctx.stroke();
+    // compass state
+    var broken = f <= CUT;
+    var cxp=W/2, cyp=H-66;
+    ctx.strokeStyle="rgba(139,127,240,.4)"; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cxp,cyp,40,0,7); ctx.stroke();
+    ctx.fillStyle="rgba(233,228,214,.7)"; ctx.font="13px sans-serif";
+    ctx.fillText("blackcap compass", cxp-56, cyp+62);
+    var ang = broken ? Math.sin(t*9)*2.4+Math.sin(t*23)*1.1 : Math.sin(t*1.4)*0.03;
+    ctx.save(); ctx.translate(cxp,cyp); ctx.rotate(ang);
+    ctx.fillStyle= broken ? "#e0658a" : "#4fd1c5";
+    ctx.beginPath(); ctx.moveTo(0,-34); ctx.lineTo(7,0); ctx.lineTo(-7,0); ctx.closePath(); ctx.fill();
+    ctx.fillStyle="rgba(233,228,214,.4)";
+    ctx.beginPath(); ctx.moveTo(0,34); ctx.lineTo(7,0); ctx.lineTo(-7,0); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function readout(){
+    var f=fOf(s);
+    $("freqOut").textContent = f<100 ? f.toFixed(1)+" MHz" : Math.round(f)+" MHz";
+    var s2;
+    if(f <= CUT) s2='<span class="warn">⚠ At <b>'+(f<100?f.toFixed(1):Math.round(f))+' MHz</b> the simulation says the FAD/TrpH pair feels it — and the blackcaps did: the 75–85 MHz band disoriented them (2022).</span> Compass lost.';
+    else s2='At <b>'+Math.round(f)+' MHz</b> the simulation says the radical pair is deaf — and the blackcaps stayed oriented, at 140–150 and 235–245 MHz (2023). Compass holds.';
+    if(showModel) s2+=' <span style="color:var(--ink-faint)">The 116 MHz line is the Hore group\'s Cry4 simulation: below it the pair is sensitive across ~1–120 MHz, the hyperfine-structure fingerprint; above it, quiet.</span>';
+    $("freqReadout").innerHTML=s2;
+  }
+  function loop(){ draw(); requestAnimationFrame(loop); }
+  $("freqSlider").addEventListener("input",function(e){ s=+e.target.value; readout(); });
+  $("freqModel").addEventListener("change",function(e){ showModel=e.target.checked; readout(); });
+  $("freqModel").checked=true; showModel=true;
+  readout(); loop();
+})();
+
 </script>
 </body>
 </html>

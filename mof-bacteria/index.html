@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Seafloor Invented Metal–Organic Frameworks — a cabinet drawer</title>
+<meta name="description" content="An interactive cabinet drawer: the cable bacterium Candidatus Electrothrix gigas builds nickel-dithiolene metal–organic framework nanoribbons with near-metal conductivity — the first biogenic MOF, 600 million years before chemists.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter h2 .latin{font-style:italic; color:var(--ink-dim); font-size:.62em}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.chapter p strong{color:var(--ink)}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.45rem}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.quote{
+  border-left:3px solid var(--violet); padding:6px 0 6px 22px; margin:30px 0;
+  font-family:"Iowan Old Style",Georgia,serif; font-size:21px; color:var(--ink);
+}
+.quote cite{display:block; margin-top:10px; font-family:-apple-system,sans-serif; font-style:normal; font-size:14px; color:var(--ink-faint)}
+.sources{font-size:14.5px; color:var(--ink-dim); margin-top:26px}
+.sources a{color:var(--violet); text-decoration:none; border-bottom:1px dotted var(--violet)}
+.sources a:hover{color:var(--ink)}
+.sources li{margin-bottom:8px; max-width:760px}
+footer{padding:64px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14px}
+footer a{color:var(--violet); text-decoration:none}
+
+/* ---- fact strip ---- */
+.facts{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:30px 0}
+.fact{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:rgba(7,10,24,.45)}
+.fact .v{font-family:"Iowan Old Style",Georgia,serif; font-size:1.5rem; color:var(--amber)}
+.fact .k{font-size:12.5px; color:var(--ink-faint); letter-spacing:.05em; text-transform:uppercase; margin-top:2px}
+
+/* ---- kill list ---- */
+.kills{margin:0; padding:0; list-style:none}
+.kills li{
+  font-size:15.5px; color:var(--ink-dim); padding:12px 0 12px 34px; position:relative;
+  border-bottom:1px dashed rgba(139,127,240,.16); max-width:760px;
+}
+.kills li::before{content:"✕"; position:absolute; left:8px; color:var(--rose); opacity:.7}
+.kills li b{color:var(--ink); font-weight:600}
+
+/* ---- shared toy bits ---- */
+.toy-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:26px; align-items:start}
+@media (max-width:860px){.toy-grid{grid-template-columns:1fr}}
+canvas.toy{width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--line); background:#04060f}
+.toy-controls{margin-top:18px}
+.toy-controls label{display:block; font-size:13.5px; color:var(--ink-dim); margin:12px 0 4px; letter-spacing:.04em}
+.toy-controls label .val{color:var(--amber); font-variant-numeric:tabular-nums}
+.toy-controls input[type=range]{width:100%; accent-color:var(--amber)}
+.toy-buttons{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+button.xbtn{
+  border:1px solid var(--line); background:rgba(7,10,24,.6); color:var(--ink-dim);
+  font-size:14.5px; padding:10px 18px; border-radius:999px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+}
+button.xbtn:hover{border-color:var(--violet); color:var(--ink)}
+button.xbtn.on{border-color:var(--amber); color:var(--amber); background:rgba(240,168,64,.08)}
+button.xbtn.danger.on{border-color:var(--rose); color:var(--rose); background:rgba(224,101,138,.08)}
+.readout{
+  border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  background:rgba(7,10,24,.45); font-size:15px; color:var(--ink-dim);
+}
+.readout h4{margin:0 0 10px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:1.2rem; color:var(--ink)}
+.readout .big{font-family:"Iowan Old Style",Georgia,serif; font-size:1.7rem; color:var(--ink)}
+.readout .ticker{margin-top:14px; border-top:1px dashed rgba(139,127,240,.16); padding-top:10px; min-height:96px; font-size:13.5px}
+.readout .ticker div{padding:4px 0; color:var(--ink-dim)}
+.readout .ticker div b{color:var(--amber)}
+.toylabel{font-size:12.5px; color:var(--ink-faint); letter-spacing:.05em; text-transform:uppercase; margin:12px 0 4px}
+
+/* ---- conductivity ladder ---- */
+.ladder{margin:8px 0 4px}
+.ladder .row{border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin:10px 0; background:rgba(7,10,24,.45); cursor:pointer; transition:border-color .15s}
+.ladder .row:hover{border-color:var(--violet)}
+.ladder .row.sel{border-color:var(--amber)}
+.ladder .row .name{font-size:14.5px; color:var(--ink); margin-bottom:8px}
+.ladder .row .name .badge{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); border:1px solid var(--line); border-radius:999px; padding:2px 9px; margin-left:8px}
+.ladder .bar-track{position:relative; height:14px; border-radius:7px; background:rgba(139,127,240,.14)}
+.ladder .bar{position:absolute; top:0; bottom:0; border-radius:7px; background:linear-gradient(90deg,var(--teal),var(--amber))}
+.ladder .bar.amber{background:linear-gradient(90deg,var(--amber),#ffd27a)}
+.ladder .scale{display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-faint); margin-top:6px; font-variant-numeric:tabular-nums}
+#ladderReadout{min-height:120px}
+
+/* ---- deep time ---- */
+#timeCanvas{width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--line); background:#04060f}
+#timeReadout .big{font-size:2rem}
+.era-mark{font-size:13px; color:var(--ink-faint)}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><div class="wrap">
+  <span class="brand">Cabinet · Nº 12</span>
+  <a href="#wire">The commute</a>
+  <a href="#material">The material</a>
+  <a href="#family">The family</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#coda">Coda</a>
+  <a class="cabinet-link" href="../">← The Cabinet</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">The first metal–organic framework ever found made by biology</div>
+  <h1>The <em>Seafloor</em> Invented Metal–Organic Frameworks</h1>
+  <p class="lede">On the seafloor, a bacterium braids nickel atoms and sulfur-rich molecules into ribbons with near-metal conductivity — and runs its metabolism across centimeters, ten thousand body lengths, on the current they carry. Chemists named metal–organic frameworks in the 1990s. Biology has been making them for 600 million years.</p>
+  <div class="scroll">scroll</div>
+</div></header>
+<section class="chapter" id="wire">
+<div class="wrap">
+  <div class="num">Chapter I</div>
+  <h2>The <span class="latin">commute</span></h2>
+  <p class="standfirst">Dinner is two centimeters away. There is no delivery service. So the bacterium built one.</p>
+  <p>Cable bacteria are <strong>multicellular filaments</strong> — chains of cells, up to ten thousand in a row, stretching centimeters through seafloor sediment. Each filament lives a split existence: buried deep is <strong>sulfide</strong>, the electron donor; up at the surface is <strong>oxygen</strong>, the electron acceptor. No single cell can touch both. The redox partners of its metabolism are separated by centimeters — roughly <strong>ten thousand times the length of one cell</strong>.</p>
+  <p>The solution runs through the cell envelope: about <strong>sixty conductive fibers per filament</strong>, each some fifty nanometers thick and longer than ten millimeters — a powerline network wired the full length of the chain. Electrons stripped from sulfide oxidation ride the fibers upward to oxygen. Without the wires, in the words of biomaterials researcher Aitziber Cortajarena, a primary organic function of the bacterium <strong>"would turn out to be impossible."</strong></p>
+  <div class="facts">
+    <div class="fact"><div class="v">&gt;10,000</div><div class="k">cells in a single filament</div></div>
+    <div class="fact"><div class="v">~60</div><div class="k">conductive fibers per cell envelope</div></div>
+    <div class="fact"><div class="v">~50 nm</div><div class="k">fiber diameter</div></div>
+    <div class="fact"><div class="v">10,000×</div><div class="k">body length: donor to acceptor</div></div>
+  </div>
+  <div class="exhibit">
+    <h3>Ride the wire</h3>
+    <p class="hint">A toy cross-section of the sediment. Electrons harvested from sulfide ride the filament up to oxygen — then try cutting the wire and watch what the metabolism does without its commute. Distances are to scale: the filament shown is two centimeters long.</p>
+    <div class="toy-grid">
+      <div>
+        <canvas class="toy" id="commuteCanvas" width="460" height="430" role="img" aria-label="Animated cross-section: electrons traveling up a bacterial filament from sulfide to oxygen"></canvas>
+      </div>
+      <div>
+        <div class="readout">
+          <h4>The electron's commute</h4>
+          <div class="big" id="commuteStatus">circuit live</div>
+          <div class="toylabel">Electrons delivered to oxygen</div>
+          <div class="big" id="commuteCount" style="font-variant-numeric:tabular-nums">0</div>
+          <div class="toylabel">Longest single trip</div>
+          <div id="commuteDist" style="font-variant-numeric:tabular-nums">—</div>
+          <div class="ticker" id="commuteTicker"></div>
+        </div>
+        <div class="toy-controls">
+          <label>Current — electrons per second <span class="val" id="curVal"></span></label>
+          <input type="range" id="curSlider" min="2" max="30" step="1" value="10">
+          <div class="toy-buttons">
+            <button class="xbtn danger" id="cutBtn">Cut the wire</button>
+            <button class="xbtn" id="fixBtn">Restore the wire</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>Two things the toy is honest about. First, the commute is the whole metabolism: the filament is not sensing the field or hunting — it is <strong>breathing through a wire</strong>, inhaling sulfide at the bottom and exhaling at oxygen two centimeters up. Second, the wire is load-bearing in the strong sense: sever it and the redox reaction has no path. The donors and acceptors do not move. Nothing else carries the charge.</p>
+</div>
+</section>
+
+<section class="chapter" id="material">
+<div class="wrap">
+  <div class="num">Chapter II</div>
+  <h2>The <span class="latin">material</span></h2>
+  <p class="standfirst">The same atoms a chemist would reach for. An architecture nobody has.</p>
+  <p>What are the fibers made of? Bundles of <strong>intertwined metal–organic framework nanoribbons</strong>: nickel centers joined by organic dithiolene ligands into plates, the plates stacked into ribbons, the ribbons braided into bundles — <strong>"like the braided copper wiring used in home electronics today."</strong> Filip Meysman, who led the work at the University of Antwerp, calls it "a whole new type of [bio]molecular structure": the building blocks are strikingly similar to what chemists use, but <strong>the resulting supramolecular structure is unseen in human-made materials</strong>.</p>
+  <p>The architecture is the conductivity. Conjugation and delocalisation across the nickel-dithiolene network create, in Meysman's words, an excellent electronic environment for electron transport <strong>"over extremely long distances."</strong> The measured result: conductivity that <strong>approaches that of metals</strong>, exceeding most synthetic MOFs and matching the very best artificial conductive polymers. Cortajarena, an independent expert in biomaterials, calls it the <strong>first report of a MOF of biological origin</strong> — "a new set of [bio]tools to create conductive structures" — noting the complex closely resembles conductive polymers.</p>
+  <div class="quote">"Effectively, the cable bacteria turn out to be excellent chemists."<cite>— Filip Meysman, University of Antwerp</cite></div>
+  <p>One honest caveat belongs here: Raman microscopy and modeling point to a nickel <em>bis</em>(dithiolene)-like framework, but the exact molecular structure is still being pinned down. The highest conductivity figures are <strong>inferred</strong> for the nanoribbon network alone; what was <strong>measured</strong> on extracted fiber bundles is lower. The ladder below keeps the two apart.</p>
+  <div class="exhibit">
+    <h3>The conductivity ladder</h3>
+    <p class="hint">Log scale, siemens per centimeter. Click a row to read what the number is and where it came from — measured and inferred are labeled as such.</p>
+    <div class="ladder" id="ladder"></div>
+    <div class="scale" style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-faint); margin-top:6px; font-variant-numeric:tabular-nums">
+      <span>10⁻²</span><span>10⁰</span><span>10²</span><span>10⁴</span><span>10⁶</span>
+      <span style="color:var(--ink-dim)">S/cm</span>
+    </div>
+    <div class="readout" id="ladderReadout" style="margin-top:18px">
+      <h4>Read the number</h4>
+      <div id="ladderText">Click any row above.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="chapter" id="family">
+<div class="wrap">
+  <div class="num">Chapter III</div>
+  <h2>The <span class="latin">family</span></h2>
+  <p class="standfirst">Same signature, ninety times over — ocean to freshwater.</p>
+  <p>The team reports the same spectroscopic signature in <strong>ninety cable-bacteria species</strong> from different environments — two genera, <em>Candidatus</em> Electrothrix and <em>Candidatus</em> Electronema — suggesting the nickel-dithiolene architecture is <strong>family-wide</strong>, not a one-species trick. And the family is old: cable bacteria originated <strong>about 600 million years ago</strong>, and have, in Meysman's words, probably been making MOFs ever since. Land plants showed up 130 million years later. Meysman's group is already preparing a startup to commercialize the wires.</p>
+  <div class="exhibit">
+    <h3>Deep time, log scale</h3>
+    <p class="hint">Scrub from the origin of cable bacteria to today. Time runs logarithmically — the last hundred years are a sliver at the right edge.</p>
+    <canvas id="timeCanvas" width="940" height="300" role="img" aria-label="Logarithmic timeline from 600 million years ago to today"></canvas>
+    <div class="toy-controls">
+      <label>Years before present <span class="val" id="timeVal"></span></label>
+      <input type="range" id="timeSlider" min="0" max="1000" step="1" value="0">
+    </div>
+    <div class="readout" id="timeReadout" style="margin-top:14px">
+      <h4 id="timeEra">600 million years ago</h4>
+      <div class="big" id="timeBig">The wires switch on</div>
+      <div id="timeText" style="margin-top:8px">Cable bacteria originate — and, the evidence suggests, start making metal–organic frameworks. Probably.</div>
+    </div>
+  </div>
+</div>
+</section>
+<section class="chapter" id="kills">
+<div class="wrap">
+  <div class="num">Chapter IV</div>
+  <h2>The kill <span class="latin">conditions</span></h2>
+  <p class="standfirst">Every drawer in this cabinet carries the instructions for its own demolition. This one is no exception.</p>
+  <ul class="kills">
+    <li><b>The MOF identity.</b> A metal–organic framework is an extended structure joined by coordination bonds — that is what the "F" promises. If higher-resolution structure shows the ribbons are aggregates rather than a true framework — nickel-rich deposits on an organic scaffold the cell merely templates — the "first biogenic MOF" headline dies. The conductivity stays; the name goes.</li>
+    <li><b>The transport mechanism.</b> Conjugation and delocalisation are invoked, but the charge-transport mechanism in these fibers has been called enigmatic before. If band-structure or temperature-dependence measurements show ordinary multi-site hopping instead of delocalised transport, the "excellent electronic environment" claim weakens. The wire would still work; the explanation would change.</li>
+    <li><b>The ninety species.</b> One spectroscopic signature across ninety species is the team's report. If broader sampling — more species, more environments — fails to find it, "family-wide" shrinks to "<em>Electrothrix gigas</em> and friends." Watch the replications, not the press release.</li>
+    <li><b>The biosynthesis.</b> "Synthesising" is the strong word in the headline. If the assembly turns out to be passive — nickel and ligands precipitating on a template the cell merely provides — then the bacterium is a landlord, not a chemist. Test: knock out the candidate assembly machinery and see whether the ribbons still form.</li>
+    <li><b>The adaptive story.</b> The wires are claimed as an evolutionary benefit: without them, the metabolism is impossible. If wire-depleted filaments survive fine in natural sediment — finding some other way to close the redox circuit — the benefit story needs revision. This is the depletion experiment the field should run.</li>
+  </ul>
+</div>
+</section>
+
+<section class="chapter" id="coda">
+<div class="wrap">
+  <div class="num">Coda</div>
+  <h2>Twice in <span class="latin">one week</span></h2>
+  <p class="standfirst">The molecules of life keep showing up inside condensed-matter physics.</p>
+  <p>Three days before this drawer, a UCLA team led by Xiangfeng Duan and Yu Huang reported in <em>Nature Chemistry</em> that interleaving layers of 1T-tantalum disulfide with <strong>arginine</strong> — two layers of amino acid sandwiched between single layers of crystal — holds the material's commensurate charge-density wave stable up to <strong>330 kelvin, about 135°F</strong>. That quantum phase used to collapse above cryogenic cold. Two other amino acids were tried; neither worked. Arginine, the team found, fits into the crystal matrix <strong>"like a puzzle piece."</strong> The discovery was a happy accident, surfaced in later analysis of a screen of more than fifty carbon-based molecules.</p>
+  <p>Two sightings in three days of the molecules of life doing condensed-matter physics: one <strong>invented by evolution</strong> over six hundred million years, one <strong>borrowed by chemists</strong> last week. The gap between the appearance of understanding and the real thing is running the other direction here — we thought metal–organic frameworks were a human invention. The seafloor had them first, and probably better ones.</p>
+  <div class="sources">
+    <strong>Sources</strong>
+    <ul>
+      <li>Chemistry World: <a href="https://www.chemistryworld.com/news/bacteria-discovered-to-be-synthesising-metal-organic-frameworks-with-extraordinary-conductivity/4024399.article">Bacteria discovered to be synthesising metal–organic frameworks with 'extraordinary conductivity'</a> — Oct 22, 2026 (Meysman quotes: "whole new type of [bio]molecular structure", "approaches the conductivity of metals", ~600 Myr origin; Cortajarena: first MOF of biological origin, "just like the very best artificial polymers and exceeding most [synthetic] MOFs"; ~60 fibers, redox partners separated over centimetres, ~10,000× single cell).</li>
+      <li>ESRF: <a href="https://www.esrf.fr/cms/live/live/en/sites/www/home/news/general/content-news/general/unveiling-the-structure-of-living-electronics-produced-by-bacteria.html">Unveiling the structure of 'living electronics' produced by bacteria</a> (nanoribbon network alone: 150–15,000 S/cm, "among the highest values reported for any metal-organic material"; Meysman: "the cable bacteria turn out to be excellent chemists"). Primary paper: Meysman, F.J.R. et al., "Highly efficient long-range conduction through a biosynthetic nickel-organic framework," <em>Nature Communications</em> 17, 8814 (2026), DOI 10.1038/s41467-026-76989-0.</li>
+      <li>UCLA Newsroom: <a href="https://newsroom.ucla.edu/releases/amino-acid-extends-quantum-properties-above-room-temperature">Amino acid extends quantum properties above room temperature</a> — Oct 20, 2026 (Duan &amp; Huang; arginine + 1T-TaS₂ → CCDW stable to ~135°F; two other amino acids failed; "like a puzzle piece").</li>
+      <li>Phys.org: <a href="https://phys.org/news/2026-10-amino-acid-stabilizes-material-quantum.html">Amino acid stabilizes material's quantum state above room temperature</a> — Oct 2026 (screen of 50+ carbon-based molecules; happy accident; computer simulations of arginine's fit).</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<footer><div class="wrap">
+  Drawer Nº 12 · built in the studio, October 2026 · <a href="../">back to the cabinet</a>
+</div></footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ helpers ============ */
+function el(id){ return document.getElementById(id); }
+function ticker(box, html){
+  var d=document.createElement('div'); d.innerHTML=html;
+  box.insertBefore(d, box.firstChild);
+  while(box.children.length>5){ box.removeChild(box.lastChild); }
+}
+
+/* ============ Toy 1: the commute ============ */
+(function(){
+  var cv=el('commuteCanvas'), ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height, FX=W/2;
+  var TOP_Y=20, BOT_Y=400, CUT_Y=205;
+  var cut=false, delivered=0, speed=10, spawnAcc=0, last=0, stallsNoted=0;
+  var electrons=[];
+  var statusEl=el('commuteStatus'), countEl=el('commuteCount'), distEl=el('commuteDist');
+  var tickBox=el('commuteTicker'), curSlider=el('curSlider'), curVal=el('curVal');
+
+  function fmt(n){ return n.toLocaleString('en-US'); }
+
+  function band(y0,y1,color,label,lcolor){
+    ctx.fillStyle=color; ctx.fillRect(0,y0,W,y1-y0);
+    ctx.fillStyle=lcolor; ctx.font='11px -apple-system,sans-serif'; ctx.textAlign='left';
+    ctx.fillText(label,12,y0+20);
+  }
+  function drawWire(t){
+    ctx.lineWidth=5; ctx.strokeStyle='rgba(240,168,64,.9)';
+    for(var s=-1;s<=1;s+=2){
+      ctx.beginPath();
+      var pen=false;
+      for(var y=TOP_Y;y<=BOT_Y;y+=6){
+        var x=FX+s*4*Math.sin(y*0.045+t*0.6);
+        if(cut && Math.abs(y-CUT_Y)<10){ pen=false; continue; }
+        if(!pen){ ctx.moveTo(x,y); pen=true; } else { ctx.lineTo(x,y); }
+      }
+      ctx.stroke();
+    }
+    if(cut){
+      ctx.fillStyle='#e0658a'; ctx.font='11px -apple-system,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('— wire cut —',FX,CUT_Y-16);
+    }
+  }
+  function draw(t){
+    ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    band(0,110,'rgba(79,209,197,.07)','oxic — oxygen here','rgba(79,209,197,.75)');
+    band(110,300,'rgba(111,108,132,.05)','suboxic — no partner either way','rgba(111,108,132,.8)');
+    band(300,H,'rgba(240,168,64,.08)','sulfidic — electron donors here','rgba(240,168,64,.8)');
+    drawWire(t);
+    for(var i=0;i<electrons.length;i++){
+      var e=electrons[i];
+      var a=e.stuck?0.35:Math.max(0,1-(TOP_Y+40-e.y)/220);
+      ctx.fillStyle=e.stuck?'rgba(224,101,138,'+a+')':'rgba(79,209,197,'+Math.max(a,0.15)+')';
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.stuck?3:3.4,0,Math.PI*2); ctx.fill();
+    }
+  }
+  function step(ts){
+    var dt=Math.min(0.1,(ts-last)/1000||0.016); last=ts;
+    var t=ts/1000;
+    if(!cut){
+      spawnAcc+=speed*dt;
+      while(spawnAcc>=1){
+        spawnAcc-=1;
+        electrons.push({y:BOT_Y+4, x:FX, v:60+Math.random()*40, stuck:false});
+      }
+    }
+    for(var i=electrons.length-1;i>=0;i--){
+      var e=electrons[i];
+      if(cut && e.y<=CUT_Y+4 && !e.stuck && e.y>CUT_Y-60){
+        e.stuck=true; e.stuckT=0;
+        if(stallsNoted<3){
+          stallsNoted++;
+          ticker(tickBox,'an electron stalls at the break — <b>nowhere to go</b>.');
+        }
+      }
+      if(e.stuck){
+        e.stuckT+=dt; e.y+=2*dt;
+        if(e.stuckT>2.5){ electrons.splice(i,1); continue; }
+        continue;
+      }
+      e.y-=e.v*dt*(0.6+speed/20);
+      e.x=FX+6*Math.sin(e.y*0.05+t*2);
+      if(e.y<=TOP_Y+2){
+        electrons.splice(i,1); delivered++;
+        countEl.textContent=fmt(delivered);
+        distEl.textContent='20,000 µm — 10,000 body lengths';
+      }
+      if(e.y<TOP_Y-60){ electrons.splice(i,1); }
+    }
+    if(electrons.length>400){ electrons.splice(0,electrons.length-400); }
+    draw(t);
+    requestAnimationFrame(step);
+  }
+  curSlider.addEventListener('input',function(){
+    speed=parseFloat(curSlider.value); curVal.textContent=speed+'/s';
+  });
+  el('cutBtn').addEventListener('click',function(){
+    if(cut) return; cut=true;
+    statusEl.textContent='circuit broken';
+    this.classList.add('on'); el('fixBtn').classList.remove('on');
+    ticker(tickBox,'<b>wire cut.</b> sulfide below, oxygen above, and nothing between.');
+  });
+  el('fixBtn').addEventListener('click',function(){
+    if(!cut) return; cut=false; stallsNoted=0;
+    statusEl.textContent='circuit live';
+    this.classList.add('on'); el('cutBtn').classList.remove('on');
+    ticker(tickBox,'wire restored — the commute <b>resumes</b>.');
+  });
+  curVal.textContent=speed+'/s';
+  ticker(tickBox,'electrons leave the sulfide zone, riding the filament <b>up</b> to oxygen.');
+  requestAnimationFrame(step);
+})();
+
+/* ============ Toy 2: conductivity ladder ============ */
+(function(){
+  var rows=[
+    {name:'Copper — a real metal, for reference', badge:'measured', lo:596000, hi:596000,
+     text:'<b>5.96×10⁵ S/cm.</b> The reference metal. Meysman says the bacterial wire "approaches the conductivity of metals" — note the honest distance: even the inferred top end of the nanoribbon network sits more than an order of magnitude below copper. "Approaches" is doing real work in that sentence.'},
+    {name:'Bacterial nanoribbon network', badge:'inferred', lo:150, hi:15000, amber:true,
+     text:'<b>150–15,000 S/cm.</b> Inferred for the nanoribbon network alone (ESRF) — "ranking among the highest values reported for any metal-organic material." <b>Inferred, not measured:</b> the estimate assumes the current runs only through the ribbons, which fill a small fraction of the fiber cross-section.'},
+    {name:'Extracted fiber bundles', badge:'measured', lo:564, hi:564,
+     text:'<b>Up to ~564 S/cm</b> measured on extracted fiber bundles — comparable to doped silicon or highly doped organic polymers. This is the number on the record, not the estimate.'},
+    {name:'Best synthetic conductive polymers', badge:'measured', lo:100, hi:1000,
+     text:'The best artificial conductive polymers live around 10²–10³ S/cm. Cortajarena: the bacterial MOF conducts "just like the very best artificial polymers" — and exceeds most synthetic MOFs.'},
+    {name:'Most synthetic MOFs', badge:'measured', lo:0.01, hi:0.01,
+     text:'<b>Insulating to semiconducting</b> — pinned at the left edge because there is nothing to plot. This is why "conductive MOF" was a research program at all. The bacterium skipped the program.'}
+  ];
+  var LMIN=-2, LMAX=6; /* 1e-2 .. 1e6 S/cm */
+  function pct(v){ return (Math.log10(v)-LMIN)/(LMAX-LMIN)*100; }
+  var lad=el('ladder'), read=el('ladderText');
+  rows.forEach(function(r,idx){
+    var d=document.createElement('div'); d.className='row';
+    var left=pct(Math.max(r.lo,0.01)), right=pct(r.hi);
+    var w=Math.max(right-left,0.8);
+    d.innerHTML='<div class="name">'+r.name+'<span class="badge">'+r.badge+'</span></div>'+
+      '<div class="bar-track"><div class="bar'+(r.amber?' amber':'')+'" style="left:'+left.toFixed(2)+'%;width:'+w.toFixed(2)+'%"></div></div>';
+    d.addEventListener('click',function(){
+      var prev=lad.querySelector('.row.sel'); if(prev) prev.classList.remove('sel');
+      d.classList.add('sel');
+      read.innerHTML='<b style="color:var(--ink)">'+r.name+'.</b> '+r.text;
+    });
+    lad.appendChild(d);
+    if(idx===1){ d.click(); }
+  });
+})();
+
+/* ============ Toy 3: deep time ============ */
+(function(){
+  var cv=el('timeCanvas'), ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var markers=[
+    {myr:600,   era:'600 million years ago', big:'The wires switch on',
+     text:'Cable bacteria originate — and, the evidence suggests, start making metal–organic frameworks. Probably. Nobody was there to take notes.'},
+    {myr:470,   era:'470 million years ago', big:'Plants arrive late',
+     text:'The first land plants colonize the continents — 130 million years after the seafloor wired itself for long-distance electron transport.'},
+    {myr:3.1e-5, era:'1995', big:"Chemists name the field",
+     text:'The mid-1990s: chemists coin "metal–organic framework" and start building them on purpose. The seafloor does not send congratulations.'},
+    {myr:1e-9, era:'October 2026', big:'The structure is solved',
+     text:'Meysman et al., Nature Communications: the wire is a biosynthetic nickel-organic framework. Biology had it first — by about 600 million years.'}
+  ];
+  var LMIN=Math.log10(1e-9), LMAX=Math.log10(600);
+  function xOf(myr){ var l=Math.log10(Math.max(myr,1e-9)); return 60+(LMAX-l)/(LMAX-LMIN)*(W-120); }
+  function myrOf(p){ return 600*Math.pow(1e-9/600,p/1000); }
+  function fmtMyr(m){
+    if(m>=100) return Math.round(m)+' million years ago';
+    if(m>=1) return m.toFixed(1)+' million years ago';
+    var y=m*1e6;
+    if(y>=1000) return (y/1000).toFixed(y>=10000?0:1).replace(/\.0$/,'')+' thousand years ago';
+    if(y>=2) return Math.round(y)+' years ago';
+    return 'today';
+  }
+  var slider=el('timeSlider'), valEl=el('timeVal');
+  var eraEl=el('timeEra'), bigEl=el('timeBig'), textEl=el('timeText');
+  function draw(posMyr){
+    ctx.fillStyle='#04060f'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(139,127,240,.25)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(60,150); ctx.lineTo(W-60,150); ctx.stroke();
+    var ticks=[600,100,10,1,0.1,0.01,0.001];
+    ctx.fillStyle='rgba(111,108,132,.85)'; ctx.font='11px -apple-system,sans-serif'; ctx.textAlign='center';
+    ticks.forEach(function(t){
+      var x=xOf(t);
+      ctx.strokeStyle='rgba(139,127,240,.35)';
+      ctx.beginPath(); ctx.moveTo(x,142); ctx.lineTo(x,158); ctx.stroke();
+      ctx.fillText(t>=1?t+' Myr':t+' Myr',x,178);
+    });
+    ctx.fillText('now',W-60,178);
+    markers.forEach(function(m){
+      var x=xOf(m.myr);
+      ctx.fillStyle='#f0a840';
+      ctx.beginPath(); ctx.arc(x,150,6,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(233,228,214,.75)'; ctx.font='11.5px -apple-system,sans-serif';
+      ctx.fillText(m.big,x,120);
+    });
+    var x=xOf(posMyr);
+    ctx.strokeStyle='#4fd1c5'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x,60); ctx.lineTo(x,210); ctx.stroke();
+  }
+  function update(){
+    var p=parseFloat(slider.value);
+    var m=myrOf(p);
+    valEl.textContent=fmtMyr(m);
+    var active=markers[0];
+    for(var i=0;i<markers.length;i++){ if(markers[i].myr>=m){ active=markers[i]; } }
+    eraEl.textContent=active.era;
+    bigEl.textContent=active.big;
+    textEl.textContent=active.text;
+    draw(m);
+  }
+  slider.addEventListener('input',update);
+  update();
+})();
+})();
+</script>
+</body>
+</html>
