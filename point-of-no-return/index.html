@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Point of No Return — a cabinet drawer</title>
+<meta name="description" content="An interactive cabinet drawer: when does a quantum possibility stop being undoable? A microwave cat state that revives with one environmental qubit and never comes back with eight — and a universe that locks itself into its vacuum by the same logic.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+canvas.stage{width:100%; height:auto; display:block; border-radius:12px; background:#05081a; border:1px solid rgba(139,127,240,.14)}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:18px 0 6px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:9px}
+.controls output{font-variant-numeric:tabular-nums; color:var(--ink); min-width:64px}
+input[type=range]{accent-color:var(--amber); width:180px}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 4px}
+button{
+  background:transparent; color:var(--ink); border:1px solid var(--line);
+  border-radius:999px; padding:9px 18px; font-size:14px; cursor:pointer;
+  transition:border-color .2s, background .2s;
+}
+button:hover{border-color:var(--amber)}
+button.active{background:rgba(240,168,64,.14); border-color:var(--amber); color:var(--amber)}
+.readout{
+  font-variant-numeric:tabular-nums; background:#05081a; border:1px solid rgba(139,127,240,.14);
+  border-radius:12px; padding:14px 18px; margin-top:16px; font-size:15px; color:var(--ink);
+}
+.readout b{color:var(--teal); font-weight:600}
+.readout .warn{color:var(--rose)}
+.sources{font-size:14px; color:var(--ink-faint); max-width:700px; margin-top:44px; border-top:1px dashed var(--line); padding-top:18px}
+.sources a{color:var(--violet)}
+.pull{font-family:"Iowan Old Style",Georgia,serif; font-size:clamp(22px,3vw,30px); line-height:1.45; color:var(--ink); max-width:720px; margin:44px 0; padding-left:26px; border-left:3px solid var(--amber)}
+.pull em{color:var(--amber)}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:26px; margin:30px 0}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px}
+.card h4{margin:0 0 8px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:19px; color:var(--teal)}
+.card p{font-size:15px; color:var(--ink-dim); margin:0}
+footer{padding:70px 0 90px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:14px}
+footer a{color:var(--violet)}
+.kicker-small{font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">Cabinet · Nº 15</span>
+  <a href="#cat">The cat</a>
+  <a href="#coordination">The coordination problem</a>
+  <a href="#lockdown">The lockdown</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#coda">Coda</a>
+  <a class="cabinet-link" href="../">← The Cabinet</a>
+</div></nav>
+<main>
+<div class="wrap">
+
+<header class="hero"><div>
+  <p class="kicker">A cabinet drawer · October 2026</p>
+  <h1>The point<br>of <em>no return</em></h1>
+  <p class="lede">When does a quantum possibility stop being undoable? In a laboratory in Fuzhou, a microwave cat state came back from the dead — until its environment grew from one qubit to eight, and the way back closed. In a model of the infant universe, the same logic locks a whole cosmos into its vacuum. Irreversibility, it turns out, is a coordination problem.</p>
+  <p class="scroll">Scroll ↓</p>
+</div></header>
+
+<section class="chapter" id="cat">
+  <p class="num">Chapter 1</p>
+  <h2>The cat that came back — until it didn't</h2>
+  <p class="standfirst">Zheng and colleagues stored a photonic "cat state" — a microwave field in a superposition of empty and light-filled — in a superconducting resonator, and coupled it to an artificial environment they could grow one qubit at a time.</p>
+  <p>Their measure was <i>distinguishability</i>: how well the environment, read as a whole, could tell the cat's two components apart. Zero means the environment knows nothing and interference survives; one means the which-path record is complete and the interference is gone.</p>
+  <p>With a single qubit as the environment, the record faded and then un-wrote itself: around <b>38 nanoseconds</b> in, the qubit nearly completed an oscillation and the interference nearly revived. With eight qubits, the distinguishability approached one after about <b>15 nanoseconds</b> and stayed there through measurements out to 80 ns — and Wigner maps showed the interference fading between 0 and 30 ns without coming back.</p>
+
+  <div class="exhibit">
+    <h3>Grow the environment, watch the way back close</h3>
+    <p class="hint">Drag the slider from 1 to 8 environmental qubits. The curve is a schematic illustration anchored to the paper's reported points — the 38 ns revival at one qubit, distinguishability near one by ~15 ns at eight qubits — not the raw data.</p>
+    <canvas class="stage" id="distCanvas" width="900" height="380"></canvas>
+    <div class="controls">
+      <label>Environmental qubits <input type="range" id="envSlider" min="1" max="8" step="1" value="1"> <output id="envOut">1</output></label>
+    </div>
+    <div class="readout" id="distReadout"></div>
+  </div>
+
+  <p>Note what the experiment does <i>not</i> show. The authors are careful: this is suppression of the revival during the observation window, not a proof that interference could never return. "Irreversible" here means <i>irreversible as far as anyone looked</i> — a distinction this drawer will keep coming back to.</p>
+  <div class="sources">
+    Ri-Hua Zheng et al., "Observation of the Transition from Reversible to Irreversible Decoherence of Mesoscopic Quantum Superpositions," <i>Physical Review Letters</i> (2026), DOI: 10.1103/t2yx-9bqh; arXiv:2510.15730. Team at Fuzhou University. Coverage: phys.org, "Experiment shows when quantum 'cat' states stop bouncing back" (Oct 23, 2026).
+  </div>
+</section>
+
+<section class="chapter" id="coordination">
+  <p class="num">Chapter 2</p>
+  <h2>The coordination problem</h2>
+  <p class="standfirst">Why does adding qubits close the way back? Because erasure is a group project, and the group never agrees.</p>
+  <p>Each environmental qubit exchanges energy with the microwave field at its own rate. To erase the environment's combined record, <i>every</i> qubit has to return, at the same time, to a state that no longer distinguishes the cat's two components. With one qubit, that return is a single oscillation — it happens. With eight qubits running at different rates, the joint return is a coincidence that gets rarer the larger the group grows.</p>
+  <p>That is the whole mechanism of irreversibility in this experiment: not a law that forbids return, but a coordination problem that makes return vanishingly unlikely. The information isn't destroyed. It's distributed — and a distributed record can't be un-written by any single member coming home.</p>
+
+  <div class="exhibit">
+    <h3>Try to get the whole environment home at once</h3>
+    <p class="hint">Each dot is an environmental qubit, orbiting at its own rate. Press "Scan for a joint return" and the exhibit sweeps 200 ns of evolution, checking whether every qubit is simultaneously back near its starting phase. With one qubit it is a matter of waiting; with eight, watch what happens to the odds.</p>
+    <canvas class="stage" id="coordCanvas" width="900" height="300"></canvas>
+    <div class="controls">
+      <label>Environmental qubits <input type="range" id="coordSlider" min="1" max="8" step="1" value="1"> <output id="coordOut">1</output></label>
+    </div>
+    <div class="btnrow"><button id="coordScan">Scan for a joint return</button></div>
+    <div class="readout" id="coordReadout">Set the qubit count, then scan.</div>
+  </div>
+
+  <div class="pull">Irreversibility is not a wall. It is a <em>crowd</em> — too many witnesses, each keeping a slightly different time, for the record ever to be un-made.</div>
+</section>
+</div>
+
+<section class="chapter" id="lockdown">
+  <p class="num">Chapter 3</p>
+  <h2>The lockdown</h2>
+  <p class="standfirst">Now scale the same logic up — from a resonator to a universe. Christie, Joo, Kaplanek, Vennin and Wands asked what decoherence does to a quantum field choosing between vacua during inflation.</p>
+  <p>Picture a landscape of valleys: the true vacuum is the deepest, and the shallower ones are false vacua. A field can sit in a false valley while a deeper one exists nearby, and quantum mechanics would ordinarily let it tunnel across. But the field is never alone — it is surrounded by spectator fields, an environment that continuously gathers information about which valley it is in.</p>
+  <p>The model's result has two parts. First, <i>where</i> the field lands is mostly decided before decoherence enters: a field heavy compared with the Hubble scale — the expansion rate — relaxes adiabatically toward the true vacuum with high probability, while a light field, unable to keep up with the expansion, can end up with significant probability in the false vacuum. Second, <i>once it has landed</i>, decoherence keeps it there: tunneling between vacua is strongly suppressed, a "cosmic lockdown" the authors read as a manifestation of the quantum Zeno effect — continuous environmental monitoring freezing the field in place.</p>
+  <p>The subtle point, and the one Kaplanek stresses: the environment does not choose. It <i>keeps</i>. The choice is made by the race between the field's own dynamics and the expansion; the lock clicks shut afterwards.</p>
+
+  <div class="exhibit">
+    <h3>Choose a valley, then try to leave it</h3>
+    <p class="hint">Set the field's mass relative to the Hubble scale, then settle twenty fields at once: the split between valleys shows the paper's qualitative result — heavy fields favour the true vacuum, light fields lodge in the false one with significant probability. Then watch what the environment's monitoring does to tunneling. The well is schematic; the split rule is a labelled illustration of the reported trend, not the paper's numerics.</p>
+    <canvas class="stage" id="wellCanvas" width="900" height="360"></canvas>
+    <div class="controls">
+      <label>Field mass ÷ Hubble scale <input type="range" id="massSlider" min="0" max="100" step="1" value="30"> <output id="massOut">0.30</output></label>
+    </div>
+    <div class="btnrow">
+      <button id="settleBtn">Settle 20 fields</button>
+      <button id="tunnelBtn">Watch 10 e-folds for tunneling</button>
+    </div>
+    <div class="readout" id="wellReadout">Set the mass, then let the field settle.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Heavy field (mass ≫ Hubble scale)</h4>
+      <p>Adjusts quickly as the universe expands, tracks the changing landscape, and relaxes toward the true vacuum with high probability. The lockdown then guards a good outcome.</p>
+    </div>
+    <div class="card">
+      <h4>Light field (mass ≪ Hubble scale)</h4>
+      <p>Cannot keep up with the expansion; a significant probability remains of ending in the false vacuum. The lockdown then guards a bad one — and that, the authors note, is how a universe could get stuck in a valley that isn't the bottom.</p>
+    </div>
+  </div>
+
+  <p>About the Higgs: some calculations suggest our own Higgs field may rest in a false vacuum. This model does not settle that question — it is a simplified setup, a scalar field in an asymmetric double well during inflation, not the Standard Model. What it does say is that <i>if</i> a field lands in a false vacuum in an environment like this, decoherence is a reason it might stay there far longer than naive tunneling rates suggest. Suppressed, the authors stress, is not impossible.</p>
+  <div class="sources">
+    Robson Christie, Jaewoo Joo, Greg Kaplanek, Vincent Vennin &amp; David Wands, "Cosmic Lockdown: When Decoherence Saves the Universe from Tunneling," <i>Journal of Cosmology and Astroparticle Physics</i> (2026); arXiv:2512.14204. Coverage: phys.org, "Cosmic lockdown: How the environment can isolate quantum fields" (Sept 2026); ScienceAlert, "The Universe Seems to Be Stuck in Place by a Strange Quantum Phenomenon."
+  </div>
+</section>
+
+<section class="chapter" id="kills">
+  <p class="num">Chapter 4</p>
+  <h2>Kill conditions</h2>
+  <p class="standfirst">A drawer about irreversibility should say what would undo it.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>If the 8-qubit revival shows up late</h4>
+      <p>Zheng's window ran to 80 ns for distinguishability and 0–30 ns for the Wigner revival check. A revival at, say, 200 ns would not falsify the experiment — it would reframe the headline from "irreversible" to "delayed," and the coordination story would need a timescale, not just a headcount.</p>
+    </div>
+    <div class="card">
+      <h4>If lockdown breaks in a fuller model</h4>
+      <p>Christie's setup is a simplified model: one scalar field, spectator-field environment, no backreaction on the expansion. If a model with backreaction, or with the actual Higgs potential, restores efficient tunneling, the lockdown becomes a toy mechanism — instructive about decoherence, not a fact about our universe.</p>
+    </div>
+    <div class="card">
+      <h4>If erasure stops being a coordination problem</h4>
+      <p>The Fuzhou mechanism leans on qubits running at different rates. An environment engineered so its members return together — synchronized couplings, a shared clock — would be a direct test: if the revival returns with many qubits, coordination was the whole story.</p>
+    </div>
+    <div class="card">
+      <h4>If the Higgs question closes elsewhere</h4>
+      <p>Precision measurements of the Higgs mass and the top quark mass could, in principle, settle whether our vacuum is false at all. If the answer comes back "true vacuum," the lockdown's stakes for our universe dissolve — while its lesson about decoherence stands.</p>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="coda">
+  <p class="num">Coda</p>
+  <h2>What persists is what got witnessed</h2>
+  <p>Put the two papers side by side and a shape appears. In the resonator, a record kept by one witness can be un-kept; a record kept by eight cannot, for all practical purposes. In the infant universe, a valley chosen by a race gets guarded by an audience. In both cases, the past hardens not when something is destroyed but when something is <i>distributed widely enough</i>.</p>
+  <p>That reframes a familiar mystery. The quantum-to-classical transition is often told as a story about loss — coherence leaking away. These two papers tell it as a story about <i>keeping</i>: the environment keeps a copy, and a copy kept by enough witnesses is what we call a fact. Irreversibility is what a record looks like once it has too many custodians to recall.</p>
+  <div class="pull">The universe does not forget by erasing. It forgets by <em>remembering too widely to take back</em>.</div>
+  <footer>Built in Ziggy's studio, October 2026 · <a href="../">← The Cabinet</a><br>Sources above; curves and valleys schematic unless a number is quoted from the papers.</footer>
+</section>
+
+</div>
+</main>
+<script>
+(function(){
+  function $(id){return document.getElementById(id);}
+
+  /* ---- Chapter 1: distinguishability vs time, schematic anchored to reported points ---- */
+  var dc = $('distCanvas'), dx = dc.getContext('2d');
+  function tauFor(n){ return 30*Math.exp(-(n-1)/3.0); }   /* ns; 30 at n=1, ~2.9 at n=8 */
+  function revFor(n){ return Math.exp(-(n-1)/1.8); }      /* revival strength; 1 at n=1, ~0.02 at n=8 */
+  function distAt(n, t){
+    var base = 1 - Math.exp(-t/tauFor(n));
+    var bump = revFor(n) * Math.exp(-Math.pow((t-38)/12, 2));
+    return Math.max(0, Math.min(1, base * (1 - bump)));
+  }
+  function drawDist(n){
+    var W = dc.width, H = dc.height, padL = 56, padR = 20, padT = 26, padB = 44;
+    var iw = W - padL - padR, ih = H - padT - padB;
+    dx.clearRect(0, 0, W, H);
+    dx.strokeStyle = 'rgba(139,127,240,.25)'; dx.fillStyle = '#a9a49a'; dx.font = '13px sans-serif';
+    dx.beginPath(); dx.moveTo(padL, padT); dx.lineTo(padL, padT+ih); dx.lineTo(padL+iw, padT+ih); dx.stroke();
+    dx.fillText('1', 34, padT+12); dx.fillText('0', 34, padT+ih);
+    dx.fillText('distinguishability', 8, padT+ih/2);
+    for (var t = 0; t <= 80; t += 20){
+      var x = padL + iw*t/80;
+      dx.fillText(t + '', x-6, padT+ih+22);
+    }
+    dx.fillText('time after interaction (ns)', padL+iw/2-90, H-6);
+    /* anchor markers */
+    dx.fillStyle = 'rgba(240,168,64,.85)';
+    if (n === 1){ dx.beginPath(); dx.arc(padL+iw*38/80, padT+ih*(1-distAt(1,38)), 6, 0, 7); dx.fill(); }
+    if (n === 8){ dx.beginPath(); dx.arc(padL+iw*15/80, padT+ih*(1-distAt(8,15)), 6, 0, 7); dx.fill(); }
+    /* curve */
+    dx.strokeStyle = '#f0a840'; dx.lineWidth = 3; dx.beginPath();
+    for (var tt = 0; tt <= 80; tt += 0.5){
+      var xx = padL + iw*tt/80, yy = padT + ih*(1-distAt(n, tt));
+      if (tt === 0) dx.moveTo(xx, yy); else dx.lineTo(xx, yy);
+    }
+    dx.stroke();
+    dx.strokeStyle = 'rgba(240,168,64,.35)'; dx.lineWidth = 1; dx.setLineDash([4,4]);
+    dx.beginPath(); dx.moveTo(padL+iw*38/80, padT); dx.lineTo(padL+iw*38/80, padT+ih); dx.stroke(); dx.setLineDash([]);
+    dx.fillStyle = '#6f6c84'; dx.fillText('38 ns', padL+iw*38/80-16, padT+ih+38);
+  }
+  function distReadout(n){
+    var d15 = distAt(n, 15), d38 = distAt(n, 38), d80 = distAt(n, 80);
+    var msg;
+    if (n === 1){
+      msg = 'With <b>1 qubit</b>, distinguishability climbs, then collapses near 38 ns: the record un-writes itself and interference nearly revives — as reported.';
+    } else if (n === 8){
+      msg = 'With <b>8 qubits</b>, distinguishability is near one by ~15 ns and stays there: no revival in the window — as reported (Wigner check 0–30 ns, distinguishability to 80 ns).';
+    } else {
+      msg = 'With <b>' + n + ' qubits</b>, the revival weakens: distinguishability at 15 ns ≈ ' + d15.toFixed(2) + ', at 38 ns ≈ ' + d38.toFixed(2) + ', at 80 ns ≈ ' + d80.toFixed(2) + '. <span class="warn">Schematic interpolation between the reported endpoints — the paper reports the trend, not every intermediate curve.</span>';
+    }
+    $('distReadout').innerHTML = msg;
+  }
+  function distUpdate(){
+    var n = parseInt($('envSlider').value, 10);
+    $('envOut').textContent = n;
+    drawDist(n); distReadout(n);
+  }
+  $('envSlider').addEventListener('input', distUpdate);
+  distUpdate();
+
+  /* ---- Chapter 2: coordination scan ---- */
+  var cc = $('coordCanvas'), cx = cc.getContext('2d');
+  var rates = [0.9, 1.0, 1.13, 0.83, 1.21, 0.94, 1.07, 1.17]; /* distinct exchange rates, arbitrary units */
+  function drawCoord(n){
+    var W = cc.width, H = cc.height;
+    cx.clearRect(0, 0, W, H);
+    var gap = W/(n+1);
+    for (var i = 0; i < n; i++){
+      var x = gap*(i+1), y = H/2, r = 34;
+      cx.strokeStyle = 'rgba(139,127,240,.35)'; cx.beginPath(); cx.arc(x, y, r, 0, 7); cx.stroke();
+      cx.fillStyle = '#f0a840'; cx.beginPath(); cx.arc(x, y- r, 5, 0, 7); cx.fill();
+      cx.fillStyle = '#a9a49a'; cx.font = '13px sans-serif'; cx.textAlign = 'center';
+      cx.fillText('qubit ' + (i+1), x, y + r + 22);
+      cx.fillText('rate ' + rates[i].toFixed(2), x, y + r + 40);
+    }
+    cx.textAlign = 'left';
+  }
+  function coordUpdate(){
+    var n = parseInt($('coordSlider').value, 10);
+    $('coordOut').textContent = n;
+    drawCoord(n);
+    $('coordReadout').textContent = 'Set the qubit count, then scan.';
+  }
+  $('coordSlider').addEventListener('input', coordUpdate);
+  $('coordScan').addEventListener('click', function(){
+    var n = parseInt($('coordSlider').value, 10);
+    var found = -1;
+    for (var t = 0; t <= 2000; t++){
+      var ok = true;
+      for (var i = 0; i < n; i++){
+        var ph = (rates[i]*t/10) % (2*Math.PI);
+        var d = Math.min(Math.abs(ph), 2*Math.PI - Math.abs(ph));
+        if (d > 0.25){ ok = false; break; }
+      }
+      if (ok){ found = t/10; break; }
+    }
+    if (found >= 0){
+      $('coordReadout').innerHTML = 'Joint return found at <b>~' + found.toFixed(1) + ' ns</b> (within tolerance) with ' + n + ' qubit' + (n>1?'s':'') + '. With few witnesses, the record can still be un-made.';
+    } else {
+      $('coordReadout').innerHTML = '<span class="warn">No joint return in 200 ns with ' + n + ' qubits.</span> The qubits never come home together — the combined record survives, and the interference stays gone. That is the coordination problem, running live.';
+    }
+  });
+  coordUpdate();
+
+  /* ---- Chapter 3: double-well valley ---- */
+  var wc = $('wellCanvas'), wx = wc.getContext('2d');
+  var wellState = { settled: false, nTrue: 0, nFalse: 0, mass: 0.30 };
+  function wellY(x){
+    /* asymmetric double well: true valley deep on the left, false valley shallow on the right */
+    var xl = (x - 0.30)/0.16, xr = (x - 0.72)/0.14;
+    var vl = -1.0*Math.exp(-xl*xl), vr = -0.55*Math.exp(-xr*xr);
+    var hill = 0.35*Math.exp(-Math.pow((x-0.51)/0.09, 2));
+    return vl + vr + hill;
+  }
+  function valleyPx(fx, padL, iw, padT, ih){
+    return [padL + iw*fx, padT + ih*(0.15 + (1 - (wellY(fx) + 1.0)/1.45)*0.85)];
+  }
+  function drawWell(){
+    var W = wc.width, H = wc.height, padL = 40, padR = 40, padT = 30, padB = 50;
+    var iw = W - padL - padR, ih = H - padT - padB;
+    wx.clearRect(0, 0, W, H);
+    wx.strokeStyle = '#8b7ff0'; wx.lineWidth = 3; wx.beginPath();
+    for (var i = 0; i <= 200; i++){
+      var fx = i/200, y = wellY(fx);
+      var px = padL + iw*fx, py = padT + ih*(0.15 + (1 - (y + 1.0)/1.45)*0.85);
+      if (i === 0) wx.moveTo(px, py); else wx.lineTo(px, py);
+    }
+    wx.stroke();
+    wx.fillStyle = '#a9a49a'; wx.font = '13px sans-serif'; wx.textAlign = 'center';
+    wx.fillText('TRUE VACUUM (deep)', padL + iw*0.30, H - 28);
+    wx.fillText('FALSE VACUUM (shallow)', padL + iw*0.72, H - 28);
+    wx.fillStyle = '#6f6c84'; wx.fillText('field value →', padL + iw/2, H - 8);
+    if (wellState.settled){
+      var tPos = valleyPx(0.30, padL, iw, padT, ih);
+      var fPos = valleyPx(0.72, padL, iw, padT, ih);
+      var j;
+      for (j = 0; j < wellState.nTrue; j++){
+        wx.fillStyle = '#4fd1c5'; wx.beginPath();
+        wx.arc(tPos[0] + ((j % 5) - 2)*11, tPos[1] - 12 - Math.floor(j/5)*12, 5, 0, 7); wx.fill();
+      }
+      for (j = 0; j < wellState.nFalse; j++){
+        wx.fillStyle = '#f0a840'; wx.beginPath();
+        wx.arc(fPos[0] + ((j % 5) - 2)*11, fPos[1] - 12 - Math.floor(j/5)*12, 5, 0, 7); wx.fill();
+      }
+      wx.fillStyle = '#e9e4d6'; wx.font = '13px sans-serif';
+      wx.fillText(wellState.nTrue + ' in true', tPos[0], tPos[1] - 12 - Math.ceil(wellState.nTrue/5)*12 - 8);
+      wx.fillText(wellState.nFalse + ' in false', fPos[0], fPos[1] - 12 - Math.ceil(wellState.nFalse/5)*12 - 8);
+    }
+    wx.textAlign = 'left';
+  }
+  function massUpdate(){
+    var v = parseInt($('massSlider').value, 10);
+    wellState.mass = v/100;
+    $('massOut').textContent = wellState.mass.toFixed(2);
+    wellState.settled = false; wellState.nTrue = 0; wellState.nFalse = 0;
+    drawWell();
+    $('wellReadout').textContent = 'Set the mass, then settle the fields.';
+  }
+  $('massSlider').addEventListener('input', massUpdate);
+  $('settleBtn').addEventListener('click', function(){
+    var m = wellState.mass;
+    /* Illustrative split rule, labelled as such: heavy fields favour the true vacuum strongly,
+       light fields split roughly evenly. This is the paper's qualitative trend, not its numerics. */
+    var pTrue = Math.min(0.95, 0.35 + 1.2*m);
+    wellState.nTrue = Math.round(20*pTrue);
+    wellState.nFalse = 20 - wellState.nTrue;
+    wellState.settled = true;
+    drawWell();
+    $('wellReadout').innerHTML = 'Twenty fields settled at mass ÷ Hubble ≈ ' + m.toFixed(2) + ': <b>' + wellState.nTrue + ' in the true vacuum, ' + wellState.nFalse + ' in the false vacuum</b>. <span class="warn">Illustrative split — the paper reports the qualitative trend (heavy → true with high probability; light → significant false-vacuum occupation), not these counts.</span>';
+  });
+  $('tunnelBtn').addEventListener('click', function(){
+    if (!wellState.settled){
+      $('wellReadout').innerHTML = '<span class="warn">Settle the fields first.</span>';
+      return;
+    }
+    if (wellState.nFalse === 0){
+      $('wellReadout').innerHTML = 'Ten e-folds pass. Every field sits in the true vacuum — there is nowhere deeper to go, and the environment\'s watch only steadies them.';
+    } else {
+      $('wellReadout').innerHTML = 'Ten e-folds pass. In isolation the ' + wellState.nFalse + ' field' + (wellState.nFalse > 1 ? 's' : '') + ' in the false valley could tunnel — but with the spectator-field environment continuously gathering which-valley information, tunneling is <b>strongly suppressed</b>: cosmic lockdown. They stay put. Suppressed, not impossible — the paper\'s own caveat.';
+    }
+  });
+  massUpdate();
+})();
+</script>
+</body>
+</html>

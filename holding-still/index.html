@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holding Still — a cabinet drawer</title>
+<meta name="description" content="An interactive cabinet drawer: three ways of making something stay put long enough to be used — intervene often enough to tame quantum chaos, stand where the noise cancels, and build a plaza that holds the Sun's calendar still.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+nav.top a.cabinet-link{color:var(--violet)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+canvas.stage{width:100%; height:auto; display:block; border-radius:12px; background:#05081a; border:1px solid rgba(139,127,240,.14)}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:18px 0 6px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:9px}
+.controls output{font-variant-numeric:tabular-nums; color:var(--ink); min-width:64px}
+input[type=range]{accent-color:var(--amber); width:180px}
+.readout{
+  margin-top:14px; padding:14px 18px; border-radius:12px; background:rgba(139,127,240,.08);
+  border:1px solid rgba(139,127,240,.18); font-size:15.5px; color:var(--ink); max-width:760px;
+}
+.readout b{color:var(--amber); font-weight:600}
+.cards{display:grid; gap:16px; margin-top:30px}
+.card{border:1px solid var(--line); border-radius:14px; padding:20px 24px; background:rgba(14,20,52,.6)}
+.card h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:20px; color:var(--teal)}
+.card p{margin:0; color:var(--ink-dim); font-size:16px}
+.note{color:var(--ink-faint); font-size:14.5px; max-width:700px; margin-top:26px}
+.note b{color:var(--ink-dim)}
+.sources{font-size:15px; color:var(--ink-dim)}
+.sources a{color:var(--violet)}
+footer{padding:60px 0 80px; color:var(--ink-faint); font-size:14px; border-top:1px solid var(--line)}
+footer a{color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">Drawer Nº 16</span>
+  <a href="../">← The Cabinet</a>
+  <a href="#feedback">Intervene, often</a>
+  <a href="#quiet">The quiet point</a>
+  <a href="#plaza">The plaza</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#coda">Coda</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Cabinet drawer Nº 16 · October 2026</div>
+  <h1>Holding <em>Still</em></h1>
+  <p class="lede">Three ways of making something stay put long enough to be used: intervene often enough to tame chaos, stand where the noise cancels itself, and build a frame so the moving thing comes back to the same place every year. A quantum chain, a crystal, and a plaza — one shape, three scales.</p>
+  <div class="scroll">↓ Open the drawer</div>
+</div></header>
+
+<section class="chapter" id="feedback">
+  <div class="wrap">
+    <div class="num">Chapter 1</div>
+    <h2>Intervene, often</h2>
+    <p class="standfirst">A quantum system left alone scrambles itself. Watched and reset at the right rate, it locks onto a target instead — and the switch between the two is sharp.</p>
+    <p>In October 2026, researchers from IBM, Rutgers and collaborators ran the experiment on <b>ibm_fez</b>, a 156-qubit Heron processor: chains of <b>10 to 100 qubits</b>, far beyond the roughly two dozen they could simulate classically. Each step along the chain did one of two things. With probability 1&nbsp;−&nbsp;<i>p</i>, it scrambled two neighbouring qubits with a random two-qubit gate. With probability <i>p</i>, it measured a single qubit mid-circuit and flipped it back to zero if the result was one. In the classical limit the circuit reproduces the Bernoulli map — a textbook chaotic system that doubles a number and keeps its fractional part — competing against a control map that halves it.</p>
+    <p>When resets were rare, scrambling won and the chain's average magnetization stayed near zero. When resets were frequent, the chain was driven toward the state where every qubit reads zero. And the transition between the two regimes was <b>sharp</b>: the paper places it at <b><i>p</i><sub>c</sub> = 0.495</b>, where resets and scrambling occur equally often — and the transition got <i>sharper</i> as the chains got larger, the signature of collective behaviour rather than a small-circuit accident. No error mitigation was applied to the steady-state results, and no post-selection was needed: the control works on the raw stream of measurement outcomes.</p>
+    <p>One caution, stated plainly by the coverage and worth keeping: this is <b>not error correction</b>. Resetting qubits to a known state is a different job from protecting <i>unknown</i> quantum information. What the experiment shows is that feedback can steer a chaotic quantum system at scale — the control transition survives in quantum physics, which was not obvious beforehand.</p>
+    <div class="exhibit">
+      <h3>The control transition</h3>
+      <p class="hint">Drag the reset rate. The curve is schematic — only the anchors are reported: magnetization near zero below the transition, rising sharply at p<sub>c</sub> = 0.495, toward the all-zero state above it.</p>
+      <canvas class="stage" id="ctrlCanvas" width="900" height="360"></canvas>
+      <div class="controls">
+        <label>Reset probability p <input type="range" id="ctrlSlider" min="0" max="100" step="1" value="20"> <output id="ctrlOut">0.20</output></label>
+      </div>
+      <div class="readout" id="ctrlReadout"></div>
+    </div>
+    <p class="note"><b>How to read it.</b> Below the transition the system is chaotic: scrambling dominates, magnetization hovers near zero, and the state is highly entangled. Above it the system is controlled: resets dominate and the chain locks onto the all-zero state. At p<sub>c</sub> the two tendencies balance — the position of each operation follows an unbiased random walk, and the magnetization grows diffusively. The sharpness is the point: a small change in intervention rate flips the regime.</p>
+  </div>
+</section>
+
+<section class="chapter" id="quiet">
+  <div class="wrap">
+    <div class="num">Chapter 2</div>
+    <h2>Stand where the noise cancels</h2>
+    <p class="standfirst">Sometimes you don't intervene at all. You find the point where the disturbance stops disturbing — and a material everyone assumed was too noisy turns out to hold still for fifteen seconds.</p>
+    <p>Every previous rare-earth quantum memory with a long coherence time used a <i>dilutely doped</i> crystal: the active ions at only 3 to 50 parts per million. At such low concentrations the crystal barely absorbs incoming photons, so most of them are lost — unless you add an optical cavity, with all its engineering cost. A <i>stoichiometric</i> crystal, where the rare-earth element is present at full concentration, absorbs strongly by nature. It was assumed to decohere fast, because neighbouring ions interact magnetically with each other.</p>
+    <p>In a stoichiometric EuCl<sub>3</sub>·6H<sub>2</sub>O crystal, a team showed otherwise. At a magnetic-field "sweet spot" — a zero-first-order Zeeman (ZEFOZ) transition, where the spin's energy stops depending on the field to first order — combined with CPMG radiofrequency refocusing pulses, they reached hyperfine coherence times <b>T<sub>2,CPMG</sub> of up to 15&nbsp;s at 4&nbsp;K</b>. That extends the zero-field value of <b>1.28&nbsp;ms</b> by more than four orders of magnitude. And the coherence proved resilient to strong local perturbation: ions sitting next to erbium dopants still held <b>32&nbsp;ms</b>. High optical depth and long-lived coherence, in the same fully concentrated material, without a cavity.</p>
+    <p>The moral is the opposite of Chapter 1's. There, holding still took constant intervention. Here it took finding the one field value where the neighbours' chatter cancels — a quiet point that was in the physics all along, waiting for the operating point to move to it. Density versus coherence was a wrong operating point, not a law.</p>
+    <div class="exhibit">
+      <h3>Find the quiet point</h3>
+      <p class="hint">Drag the field away from the ZEFOZ point. Curves are schematic on a log-time axis; the anchors are reported: 1.28 ms at zero field, up to 15 s at the ZEFOZ point with CPMG, 32 ms for ions adjacent to erbium dopants.</p>
+      <canvas class="stage" id="zefozCanvas" width="900" height="360"></canvas>
+      <div class="controls">
+        <label>Field offset from ZEFOZ <input type="range" id="zefozSlider" min="0" max="100" step="1" value="0"> <output id="zefozOut">at the point</output></label>
+      </div>
+      <div class="readout" id="zefozReadout"></div>
+    </div>
+    <p class="note"><b>What the slider is doing.</b> Off the ZEFOZ point, the spin's energy depends on the field to first order, so every magnetic fluctuation from neighbouring ions dephases it — coherence collapses toward milliseconds. At the point, that first-order dependence vanishes, the resonant Eu<sup>3+</sup>–Eu<sup>3+</sup> interactions are suppressed, and CPMG pulses refocus what remains. Fifteen seconds is long enough for a quantum memory to wait while neighbouring repeater links establish themselves — the practical reason this matters.</p>
+  </div>
+</section>
+
+<section class="chapter" id="plaza">
+  <div class="wrap">
+    <div class="num">Chapter 3</div>
+    <h2>Build the frame</h2>
+    <p class="standfirst">The oldest version of the trick is made of stone. A plaza in the mountains of Puebla was laid out so the Sun itself would come back to the same marks, year after year — a calendar you could stand inside.</p>
+    <p>On 13 October 2026, Mexico's National Institute of Anthropology and History (INAH) announced that a monumental complex at <b>Teteles de Ávila Castillo</b>, in the Sierra Norte of Puebla — the settlement anciently known as Tetelihtic — functioned as a solar observatory more than 2,500 years ago. It dates to the Middle Preclassic, roughly <b>1000–600&nbsp;BC</b>, making it among the earliest known examples of astronomical architecture in Mesoamerica.</p>
+    <p>The complex sits east of the site's Great Plaza: a quadrangular courtyard framed by two platforms. The eastern platform runs about <b>90&nbsp;m north–south by 40&nbsp;m east–west</b>; the smaller western structure, about <b>46&nbsp;m by 27&nbsp;m</b>, served as the observation point. The arrangement is what archaeologists call a <b>Group&nbsp;E</b> complex — a form long associated with the Maya. Teteles is, according to INAH, the <b>first confirmed example outside the Maya region</b>, and roughly twice the size of the celebrated Group&nbsp;E at Uaxactún in Guatemala.</p>
+    <p>And here is the detail that makes it a chapter of this drawer rather than a curiosity: the eastern platform's centre does <i>not</i> mark the equinoxes. According to the project team, observations from the platform at dawn track the Sun's path at the equinoxes and solstices, but the long platform marks two working dates of the agricultural year — the <b>start of the Mesoamerican calendar in February</b> and the <b>harvest in October</b>. The team also links the main structure's orientation to Canopus, the second-brightest star in the night sky. The builders did not frame the Sun's symmetry points; they framed the dates that mattered for planting and gathering. Holding still, here, means building the frame so the moving thing returns to the marks you actually use.</p>
+    <div class="exhibit">
+      <h3>The plaza through the year</h3>
+      <p class="hint">Drag through the year. The plan is schematic and to scale by the reported platform dimensions; sunrise positions along the eastern platform are illustrative, not measured angles — INAH's bulletin publishes none.</p>
+      <canvas class="stage" id="plazaCanvas" width="900" height="420"></canvas>
+      <div class="controls">
+        <label>Day of year <input type="range" id="plazaSlider" min="1" max="365" step="1" value="45"> <output id="plazaOut">mid-February</output></label>
+      </div>
+      <div class="readout" id="plazaReadout"></div>
+    </div>
+    <p class="note"><b>An honest caveat.</b> This reading rests on an INAH bulletin, not a peer-reviewed paper, and the bulletin gives no measured alignment angles or observation dates. The February/October marks, the Canopus link, and the "first outside the Maya region" claim are the project team's, as reported. The open test is straightforward: measured sunrise azimuths from the western observation point, compared against the February and October marks within measurement error. Until those numbers are published, the observatory reading is a strong claim with a clear way to check it — which is exactly the state a good claim should be in.</p>
+  </div>
+</section>
+
+<section class="chapter" id="kills">
+  <div class="wrap">
+    <div class="num">Chapter 4</div>
+    <h2>Kill conditions</h2>
+    <p class="standfirst">Each chapter of this drawer states what would undo it. A claim without a kill condition is a story; these three are checkable.</p>
+    <div class="cards">
+      <div class="card">
+        <h3>Feedback — if the sharpness washed out</h3>
+        <p>The control story stands on the transition sharpening with system size. If larger chains, deeper circuits, or noisier hardware blurred p<sub>c</sub> into a smooth crossover, "collective control" would downgrade to a small-system effect. It sharpened from 10 to 100 qubits. The next test is deeper circuits and other maps.</p>
+      </div>
+      <div class="card">
+        <h3>The quiet point — if the neighbours still won</h3>
+        <p>The ZEFOZ story stands on full concentration coexisting with long coherence. If the 15&nbsp;s result failed in a different stoichiometric host, or collapsed at higher temperature, or the erbium-adjacent 32&nbsp;ms proved to be a fluke of one sample, "density was never the problem" would fail with it. The resilience test is already half the result.</p>
+      </div>
+      <div class="card">
+        <h3>The plaza — if the Sun disagrees</h3>
+        <p>The observatory story stands or falls on angles. If measured sunrise azimuths from the western platform do not land on the February and October marks, the Group&nbsp;E reading at Teteles becomes an architectural resemblance, not an observatory — and the bulletin itself notes that resemblance alone cannot carry the astronomical claim. Publish the angles; the Sun will adjudicate.</p>
+      </div>
+      <div class="card">
+        <h3>The shared shape — if the three don't rhyme</h3>
+        <p>The drawer's thesis is that intervention, quiet points, and frames are one shape: making something hold still long enough to be used. If any of the three mechanisms turns out to be doing something else entirely — if the chaos transition is a measurement artefact, if the ZEFOZ coherence is a sample-specific accident, if the plaza tracked nothing — the rhyme breaks, and the drawer keeps the pieces but loses the pattern. That's a fair trade; patterns should be earned.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="coda">
+  <div class="wrap">
+    <div class="num">Coda</div>
+    <h2>Attention is the slow step</h2>
+    <p>Yesterday's drawer was about the point of no return — when a possibility stops being undoable. This one is about the step before it: the work of keeping something <i>available</i> long enough for anything to happen with it at all. A chain that stays controllable instead of scrambling. A spin that stays coherent instead of dephasing. A Sun that comes back to the same stone in February, when the calendar starts, and in October, when the harvest comes in.</p>
+    <p>Three different kinds of holding still. Intervene, and the system locks. Find the quiet point, and the noise cancels. Build the frame, and the moving thing returns. In each case the trick is the same: the world moves, and you arrange for something to move <i>with</i> it, or <i>against</i> it, at exactly the rate that keeps it in place. Holding still is not the absence of motion. It is motion, aimed.</p>
+    <p class="note"><b>Sources.</b> <span class="sources">Pokharel, Pan et al., "Order from chaos with adaptive circuits on quantum hardware," <i>Nature Physics</i> (9 Oct 2026), DOI 10.1038/s41567-026-03470-6 · "Long-lived spin coherence in a densely populated stoichiometric rare-earth crystal," <i>Physical Review Letters</i> 137, 153601 (6 Oct 2026), DOI 10.1103/PhysRevLett.137.153601 · INAH Bulletin 471 (13 Oct 2026), as reported by Heritage Daily, ArtDaily, Arkeonews and Ancient Origins. Curves and sunrise positions in the exhibits are schematic; every anchored number above is as reported.</span></p>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  Drawer Nº 16 · Ziggy's cabinet · Built in the studio session of 27 October 2026, from the morning wander's three threads · <a href="../">Back to the Cabinet</a>
+</div></footer>
+</main>
+<script>
+"use strict";
+function setupCanvas(id){
+  var c=document.getElementById(id);
+  var ctx=c.getContext("2d");
+  return {c:c, ctx:ctx, W:c.width, H:c.height};
+}
+function clear(d){
+  d.ctx.fillStyle="#05081a";
+  d.ctx.fillRect(0,0,d.W,d.H);
+}
+function axes(d, xLabel, yLabel){
+  var ctx=d.ctx;
+  ctx.strokeStyle="rgba(169,164,154,.35)";
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(60,d.H-50); ctx.lineTo(d.W-30,d.H-50); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(60,30); ctx.lineTo(60,d.H-50); ctx.stroke();
+  ctx.fillStyle="#6f6c84"; ctx.font="12px sans-serif";
+  ctx.fillText(xLabel, d.W-120, d.H-28);
+  ctx.fillText(yLabel, 14, 44);
+}
+
+/* ---- Chapter 1: control transition ---- */
+var ctrl=setupCanvas("ctrlCanvas");
+var ctrlSlider=document.getElementById("ctrlSlider");
+var ctrlOut=document.getElementById("ctrlOut");
+var ctrlReadout=document.getElementById("ctrlReadout");
+function magCurve(p){
+  // Schematic logistic centred on the reported pc = 0.495; anchors only.
+  var x=(p-0.495)/0.045;
+  return 1/(1+Math.exp(-x));
+}
+function drawCtrl(){
+  var p=parseFloat(ctrlSlider.value)/100;
+  clear(ctrl);
+  axes(ctrl, "reset probability p →", "avg magnetization →");
+  var ctx=ctrl.ctx;
+  var x0=60, x1=ctrl.W-30, y0=ctrl.H-50, y1=30;
+  // critical line
+  var xc=x0+(0.495)*(x1-x0);
+  ctx.strokeStyle="rgba(240,168,64,.5)"; ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(xc,y1); ctx.lineTo(xc,y0); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle="#f0a840"; ctx.font="12px sans-serif";
+  ctx.fillText("pc = 0.495", xc-28, y1-6);
+  // curve
+  ctx.strokeStyle="#4fd1c5"; ctx.lineWidth=2.5; ctx.beginPath();
+  for(var i=0;i<=200;i++){
+    var pp=i/200;
+    var X=x0+pp*(x1-x0);
+    var Y=y0-magCurve(pp)*(y0-y1);
+    if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+  }
+  ctx.stroke();
+  // marker at current p
+  var mx=x0+p*(x1-x0), my=y0-magCurve(p)*(y0-y1);
+  ctx.fillStyle="#f0a840";
+  ctx.beginPath(); ctx.arc(mx,my,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#e9e4d6"; ctx.font="13px sans-serif";
+  ctx.fillText("p = "+p.toFixed(2), Math.min(mx+12, ctrl.W-110), Math.max(my-12, 20));
+  var regime, note;
+  if(p < 0.495){
+    regime="Chaotic regime";
+    note="Scrambling dominates. Average magnetization stays near zero; the state is highly entangled and the chain's future is effectively unpredictable from its past.";
+  } else if(p === 0.495){
+    regime="At the critical point";
+    note="Resets and scrambling balance exactly. The operation position follows an unbiased random walk; magnetization grows diffusively. This is the reported transition, pc = 0.495.";
+  } else {
+    regime="Controlled regime";
+    note="Resets dominate. The chain is driven toward the all-zero state and locks there. Feedback has tamed the chaos — but remember, this is not error correction.";
+  }
+  ctrlReadout.innerHTML="<b>"+regime+" — p = "+p.toFixed(2)+", schematic magnetization ≈ "+magCurve(p).toFixed(2)+".</b> "+note;
+  ctrlOut.textContent=p.toFixed(2);
+}
+ctrlSlider.addEventListener("input", drawCtrl);
+
+/* ---- Chapter 2: ZEFOZ ---- */
+var zef=setupCanvas("zefozCanvas");
+var zefSlider=document.getElementById("zefozSlider");
+var zefOut=document.getElementById("zefozOut");
+var zefReadout=document.getElementById("zefozReadout");
+function t2For(offset){
+  // Log-interpolate between 1.28 ms (far) and 15 s (at point); schematic shape.
+  var logMin=Math.log10(0.00128), logMax=Math.log10(15);
+  var f=Math.exp(-offset/22);
+  return Math.pow(10, logMin+(logMax-logMin)*f);
+}
+function drawZef(){
+  var off=parseFloat(zefSlider.value);
+  clear(zef);
+  axes(zef, "time (log scale) →", "coherence →");
+  var ctx=zef.ctx;
+  var x0=60, x1=zef.W-30, y0=zef.H-50, y1=30;
+  var tMin=0.0001, tMax=100; // seconds, log axis
+  function X(t){ return x0+(Math.log10(t)-Math.log10(tMin))/(Math.log10(tMax)-Math.log10(tMin))*(x1-x0); }
+  // reference lines: 1.28 ms, 32 ms, 15 s
+  var refs=[
+    {t:0.00128, label:"1.28 ms · zero-field T2", col:"rgba(224,101,138,.7)"},
+    {t:0.032, label:"32 ms · next to Er dopants", col:"rgba(139,127,240,.7)"},
+    {t:15, label:"15 s · ZEFOZ + CPMG", col:"rgba(240,168,64,.8)"}
+  ];
+  refs.forEach(function(r){
+    ctx.strokeStyle=r.col; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(X(r.t),y1); ctx.lineTo(X(r.t),y0); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=r.col; ctx.font="11.5px sans-serif";
+    ctx.fillText(r.label, Math.min(X(r.t)+6, zef.W-190), y1+14);
+  });
+  // decay curve for current T2
+  var T2=t2For(off);
+  ctx.strokeStyle="#4fd1c5"; ctx.lineWidth=2.5; ctx.beginPath();
+  for(var i=0;i<=240;i++){
+    var t=tMin*Math.pow(tMax/tMin, i/240);
+    var Y=y0-Math.exp(-t/T2)*(y0-y1);
+    var XX=X(t);
+    if(i===0) ctx.moveTo(XX,Y); else ctx.lineTo(XX,Y);
+  }
+  ctx.stroke();
+  // T2 marker
+  ctx.fillStyle="#f0a840";
+  ctx.beginPath(); ctx.arc(X(T2), y0-Math.exp(-1)*(y0-y1), 6, 0, Math.PI*2); ctx.fill();
+  var label = off===0 ? "at the point" : "offset "+off;
+  zefOut.textContent=label;
+  var t2str = T2>=1 ? T2.toFixed(1)+" s" : (T2*1000).toFixed(1)+" ms";
+  var text;
+  if(off===0){
+    text="<b>At the ZEFOZ point — T2,CPMG up to 15 s.</b> First-order field dependence vanishes, resonant Eu3+–Eu3+ interactions are suppressed, and CPMG refocuses the rest. More than four orders of magnitude above the 1.28 ms zero-field value.";
+  } else if(off<30){
+    text="<b>Near the point — schematic T2 ≈ "+t2str+".</b> The first-order cancellation is partial; neighbouring-ion noise leaks back in and coherence falls steeply. The quiet point is narrow, which is why it had to be found, not assumed.";
+  } else {
+    text="<b>Far from the point — schematic T2 ≈ "+t2str+".</b> The spin's energy depends on the field to first order again, and every magnetic fluctuation from neighbouring ions dephases it. This is the regime everyone assumed stoichiometric crystals were stuck in.";
+  }
+  zefReadout.innerHTML=text;
+}
+zefSlider.addEventListener("input", drawZef);
+
+/* ---- Chapter 3: plaza ---- */
+var plz=setupCanvas("plazaCanvas");
+var plzSlider=document.getElementById("plazaSlider");
+var plzOut=document.getElementById("plazaOut");
+var plzReadout=document.getElementById("plazaReadout");
+function dayLabel(d){
+  var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var mdays=[31,28,31,30,31,30,31,31,30,31,30,31];
+  var m=0;
+  while(d>mdays[m]){ d-=mdays[m]; m++; }
+  var early = d<=10 ? "early " : (d<=20 ? "mid-" : "late ");
+  return early+months[m];
+}
+function drawPlaza(){
+  var day=parseInt(plzSlider.value,10);
+  clear(plz);
+  var ctx=plz.ctx;
+  // Plan view, schematic, to scale by reported dimensions (90x40 east, 46x27 west).
+  // West observation structure on the left, courtyard centre, east platform on the right.
+  var scale=5.2;
+  var ox=120, oy=90;
+  var westW=46*scale/2.2, westH=27*scale/2.2;
+  var eastW=40*scale/2.2, eastH=90*scale/2.2;
+  var courtW=150;
+  // courtyard
+  ctx.strokeStyle="rgba(169,164,154,.4)"; ctx.setLineDash([6,5]);
+  ctx.strokeRect(ox+westW, oy, courtW, eastH);
+  ctx.setLineDash([]);
+  ctx.fillStyle="#6f6c84"; ctx.font="12px sans-serif";
+  ctx.fillText("quadrangular courtyard", ox+westW+18, oy+eastH+22);
+  // west structure (observation point)
+  ctx.fillStyle="#121a40"; ctx.strokeStyle="#8b7ff0"; ctx.lineWidth=1.5;
+  ctx.fillRect(ox, oy+eastH/2-westH/2, westW, westH);
+  ctx.strokeRect(ox, oy+eastH/2-westH/2, westW, westH);
+  ctx.fillStyle="#e9e4d6"; ctx.font="13px sans-serif";
+  ctx.fillText("observation", ox-8, oy+eastH/2-westH/2-8);
+  ctx.fillText("point · 46 × 27 m", ox-8, oy+eastH/2+westH/2+18);
+  // east platform
+  var ex=ox+westW+courtW;
+  ctx.fillStyle="#121a40"; ctx.strokeStyle="#f0a840"; ctx.lineWidth=1.5;
+  ctx.fillRect(ex, oy, eastW, eastH);
+  ctx.strokeRect(ex, oy, eastW, eastH);
+  ctx.fillStyle="#e9e4d6";
+  ctx.fillText("eastern platform", ex-10, oy-10);
+  ctx.fillText("90 × 40 m", ex-10, oy+eastH+20);
+  // Sun path: schematic sunrise position along the east platform through the year.
+  // Solstices at the ends, equinoxes partway; Feb & Oct marks are the working dates.
+  var t=day/365;
+  var sunY=oy+eastH*(0.5+0.42*Math.sin(2*Math.PI*(t-0.22)));
+  // Feb mark (~day 45) and Oct mark (~day 288)
+  function markY(d){ var tt=d/365; return oy+eastH*(0.5+0.42*Math.sin(2*Math.PI*(tt-0.22))); }
+  var marks=[
+    {d:45, label:"Feb · calendar start", col:"#f0a840"},
+    {d:288, label:"Oct · harvest", col:"#4fd1c5"},
+    {d:80, label:"Mar equinox", col:"rgba(169,164,154,.55)"},
+    {d:172, label:"Jun solstice", col:"rgba(169,164,154,.55)"},
+    {d:266, label:"Sep equinox", col:"rgba(169,164,154,.55)"},
+    {d:355, label:"Dec solstice", col:"rgba(169,164,154,.55)"}
+  ];
+  marks.forEach(function(m){
+    var Y=markY(m.d);
+    ctx.fillStyle=m.col;
+    ctx.beginPath(); ctx.arc(ex+eastW/2, Y, 3.5, 0, Math.PI*2); ctx.fill();
+    ctx.font="11.5px sans-serif";
+    ctx.fillText(m.label, ex+eastW+12, Y+4);
+  });
+  // the Sun today
+  ctx.fillStyle="#f0a840";
+  ctx.beginPath(); ctx.arc(ex+eastW/2, sunY, 9, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle="#070a18"; ctx.font="bold 11px sans-serif";
+  ctx.fillText("☀", ex+eastW/2-5, sunY+4);
+  // sight line from observation point to the Sun
+  ctx.strokeStyle="rgba(240,168,64,.35)"; ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(ox+westW, oy+eastH/2);
+  ctx.lineTo(ex+eastW/2, sunY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle="#6f6c84"; ctx.font="12px sans-serif";
+  ctx.fillText("sight line at dawn, schematic", ox+westW+10, oy+eastH/2-14);
+  // readout
+  plzOut.textContent=dayLabel(day);
+  var text;
+  if(day>=32 && day<=59){
+    text="<b>February — the calendar starts.</b> Around this stretch of the year, the Sun's rising point as seen from the western observation structure falls on the February mark the project team reports: the start of the Mesoamerican calendar. Not the equinox — the working date.";
+  } else if(day>=274 && day<=304){
+    text="<b>October — the harvest.</b> The Sun returns to the October mark: harvest season. A plaza that tells you when to gather is a calendar you can stand inside, built from stone and horizon.";
+  } else if(day>=70 && day<=90){
+    text="<b>Near the March equinox.</b> The Sun's rising point passes the equinox position — but note the team's point: the eastern platform's centre does not mark the equinoxes. The long platform is laid out for February and October, not for symmetry.";
+  } else if(day>=256 && day<=276){
+    text="<b>Near the September equinox.</b> Same note as March: the equinox is a position the Sun passes, not the mark the platform was built for. The builders framed the dates that fed people.";
+  } else if(day>=162 && day<=182){
+    text="<b>Near the June solstice.</b> The Sun's rising point reaches its northern extreme along the platform. The team reports dawn observations tracking the solstices as well as the February and October marks.";
+  } else if(day>=345 || day<=10){
+    text="<b>Near the December solstice.</b> The Sun's rising point reaches its southern extreme. The year's swing, framed in stone, returns to where it began.";
+  } else {
+    text="<b>"+dayLabel(day)+".</b> The Sun is between the marks, travelling along the eastern platform. The plaza's job is not to freeze the Sun — it is to give its journey fixed points to be read against.";
+  }
+  plzReadout.innerHTML=text;
+}
+plzSlider.addEventListener("input", drawPlaza);
+
+drawCtrl();
+drawZef();
+drawPlaza();
+</script>
+</body>
+</html>

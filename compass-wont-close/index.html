@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Compass That Won't Close — a cabinet drawer</title>
+<meta name="description" content="An interactive cabinet drawer: a bird's compass that demonstrably works, a model that demonstrably can't explain its own best evidence, a cutoff frequency that fought back, and a brand-new challenger. Two ledgers — observed vs explained — and the work that lives in the gap.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+canvas.stage{width:100%; height:auto; display:block; border-radius:12px; background:#05081a; border:1px solid rgba(139,127,240,.14)}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:18px 0 6px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:9px}
+.controls output{font-variant-numeric:tabular-nums; color:var(--ink); min-width:64px}
+input[type=range]{accent-color:var(--amber); width:180px}
+input[type=checkbox]{accent-color:var(--amber); width:18px; height:18px}
+.readout{
+  margin-top:14px; padding:14px 18px; border-radius:12px; background:rgba(139,127,240,.08);
+  border:1px solid rgba(139,127,240,.18); font-size:15.5px; color:var(--ink); max-width:760px;
+}
+.readout b{color:var(--amber); font-weight:600}
+.cards{display:grid; gap:16px; margin-top:30px}
+.card{border:1px solid var(--line); border-radius:14px; padding:20px 24px; background:rgba(14,20,52,.6)}
+.card h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:20px; color:var(--teal)}
+.card p{margin:0; color:var(--ink-dim); font-size:16px}
+.note{color:var(--ink-faint); font-size:14.5px; max-width:700px; margin-top:26px}
+.note b{color:var(--ink-dim)}
+.sources{font-size:15px; color:var(--ink-dim)}
+.sources a{color:var(--violet)}
+footer{padding:60px 0 80px; color:var(--ink-faint); font-size:14px; border-top:1px solid var(--line)}
+footer a{color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">Drawer Nº 17</span>
+  <a href="../">← The Cabinet</a>
+  <a href="#measurement">The measurement</a>
+  <a href="#gap">The gap</a>
+  <a href="#cutoff">The cutoff</a>
+  <a href="#challenger">The challenger</a>
+  <a href="#kills">Kill conditions</a>
+  <a href="#coda">Coda</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Cabinet drawer Nº 17 · October 2026</div>
+  <h1>The Compass That <em>Won't Close</em></h1>
+  <p class="lede">A bird's compass that demonstrably works. A model that demonstrably can't explain its own best evidence. A cutoff frequency that fought back. And a challenger published three weeks ago. Two ledgers — observed vs explained — and the work that lives in the gap between them.</p>
+  <div class="scroll">↓ Open the drawer</div>
+</div></header>
+
+<section class="chapter" id="measurement">
+  <div class="wrap">
+    <div class="num">Chapter 1</div>
+    <h2>The measurement</h2>
+    <p class="standfirst">Put a night-migrating songbird in a featureless cage and it still picks its season's direction. Rotate the magnetic field around it and its heading rotates with the field. That is the observed ledger — and it is not in doubt.</p>
+    <p>The compass is an <b>inclination compass</b>, not a polarity compass: the bird reads the angle at which the field lines strike the Earth — steepening toward the poles, levelling toward the equator — rather than north versus south. It works on both hemispheres without recalibration, which is part of why it looks so well designed and so hard to explain.</p>
+    <p>And the compass is fragile in one very specific way. Expose the bird to a weak, oscillating radiofrequency field and the compass stops working — while the field is on, and not after. That fragility is the thread this whole drawer pulls on, because it is, in Peter Hore's words, <i>"arguably the best evidence we have"</i> for the leading explanation. Keep that sentence in mind. It matters in the next chapter.</p>
+    <div class="exhibit">
+      <h3>The orientation cage</h3>
+      <p class="hint">Drag the field direction. The bird's heading follows it — until you switch the radiofrequency field on.</p>
+      <canvas class="stage" id="cageCanvas" width="900" height="380"></canvas>
+      <div class="controls">
+        <label>Field direction <input type="range" id="cageSlider" min="0" max="360" step="1" value="20"> <output id="cageOut">20°</output></label>
+        <label><input type="checkbox" id="cageRF"> Radiofrequency field on</label>
+      </div>
+      <div class="readout" id="cageReadout"></div>
+    </div>
+    <p class="note"><b>What the toy shows, and what it doesn't.</b> The heading-follows-field behaviour and the RF disruption are both reported experimental facts. The scatter of headings under RF is schematic — real orientation data is a cloud of individual hops, not one bird flying in a circle.</p>
+  </div>
+</section>
+
+<section class="chapter" id="gap">
+  <div class="wrap">
+    <div class="num">Chapter 2</div>
+    <h2>The model that can't close</h2>
+    <p class="standfirst">The leading explanation is the radical-pair mechanism: blue light excites cryptochrome in the retina, a flavin–tryptophan radical pair is born with correlated electron spins, and Earth's feeble field nudges the spin evolution just enough to change the chemical output. Physically real chemistry. But in 2017, Oxford's own computation said the current form of the model is not sensitive enough to explain the RF-disruption results.</p>
+    <p>The paper, in <i>Biophysical Journal</i>, used a newly developed computational approach to run biologically plausible radicals through the radiofrequency fields from the behavioural experiments, and concluded the model <b>cannot reproduce what the birds do</b>. The shortfall is not a rounding error: under most reaction conditions the model predicts an effect far too small to scramble a compass, and the RF disruption is the evidence the model most needs to explain. Hore, the senior author, kept the framing honest: <i>"The radical-pair mechanism of magnetoreception is still just a hypothesis."</i></p>
+    <p>One caution about dates, stated plainly because it matters: this paper is from <b>October 2017</b>. It recirculated in October 2026 write-ups, and it is easy to misread as new. It is not new. It is nine years old, and it has not been closed in the meantime — which is itself part of the story.</p>
+    <div class="exhibit">
+      <h3>The sensitivity shortfall</h3>
+      <p class="hint">Schematic only — the bars show the shape of the problem, not measured numbers: the model's predicted RF effect sits far below the disruption the birds actually show.</p>
+      <canvas class="stage" id="gapCanvas" width="900" height="360"></canvas>
+      <div class="controls">
+        <label>Model refinement <input type="range" id="gapSlider" min="0" max="100" step="1" value="50"> <output id="gapOut">50%</output></label>
+      </div>
+      <div class="readout" id="gapReadout"></div>
+    </div>
+    <p>The paper's own escape hatch was an unknown amplifier: <i>assuming</i> some mechanism amplifies the predicted effects, the authors suggested experimental conditions that could distinguish the two families of radical pairs then postulated as sensors. An assumed amplifier is not a result. It is a promissory note, and it is still outstanding.</p>
+  </div>
+</section>
+
+<section class="chapter" id="cutoff">
+  <div class="wrap">
+    <div class="num">Chapter 3</div>
+    <h2>The cutoff that fought back</h2>
+    <p class="standfirst">If the radical-pair story is right, there should be a frequency above which radio waves stop mattering — a cutoff set by the chemistry itself. In 2023, Leberecht, Wong, Mouritsen and Hore went looking for it, and the chemistry answered.</p>
+    <p>Their earlier work had shown that waves at <b>75–85&nbsp;MHz</b> knock out the compass of Eurasian blackcaps. The 2023 experiments tested two higher bands — <b>140–150&nbsp;MHz</b> and <b>235–245&nbsp;MHz</b> — and found <b>no effect</b> in either, exactly as the radical-pair simulations predicted. Simulating the quantum processes inside cryptochrome narrowed the cutoff further, to <b>116&nbsp;MHz</b>: above it, radio waves should only weakly disturb orientation. Mouritsen's conclusion was blunt: the experiments, together with the detailed predictions, are <i>"strong evidence that the compass magnetoreceptor in migratory birds is based on a flavin-containing radical pair and not a completely different sort of receptor, for example one based on magnetic nanoparticles."</i></p>
+    <p>So the ledger now holds a genuine tension, not a rout. The model fails the 2017 sensitivity test and passes the 2023 cutoff test. Both results are real. A theory that survives its predictions and fails its magnitudes is not dead — but it is not closed either.</p>
+    <div class="exhibit">
+      <h3>Find the cutoff</h3>
+      <p class="hint">Drag the frequency. The tested bands are marked; the curve between them is schematic, and the cutoff line sits at the simulated 116 MHz.</p>
+      <canvas class="stage" id="rfCanvas" width="900" height="360"></canvas>
+      <div class="controls">
+        <label>Frequency <input type="range" id="rfSlider" min="0" max="300" step="1" value="80"> <output id="rfOut">80 MHz</output></label>
+      </div>
+      <div class="readout" id="rfReadout"></div>
+    </div>
+    <p class="note"><b>Practical footnote, from the same paper:</b> broadcast radio and CB radio sit below the cutoff and can disrupt the compass; mobile networks sit above it and, on this evidence, do not. The cutoff is not just a theory test — it is a map of which human noise matters to a migrating bird.</p>
+  </div>
+</section>
+
+<section class="chapter" id="challenger">
+  <div class="wrap">
+    <div class="num">Chapter 4</div>
+    <h2>The challenger, three weeks old</h2>
+    <p class="standfirst">On October 4, 2026, Binhi, Usovik and Koshel published a different kind of compass in the <i>International Journal of Molecular Sciences</i>: not a spin pair, but a quantum rotator.</p>
+    <p>Their complaint about the radical-pair mechanism is the one from Chapter 2, sharpened: it <i>"struggles to explain the biological effects of weak magnetic fields due to rapid spin decoherence."</i> Their alternative models an amino-acid residue inside a biosynthesizing enzyme as a sub-nanometre rotator — smaller than half a nanometre — whose <b>quantum interference pattern</b>, not a spin prohibition, shifts in a magnetic field. The headline numbers: effects reaching <b>several tens of percent</b> in fields <b>below 50&nbsp;µT</b> — the geomagnetic range — relatively robust to decoherence, with the rotator's angular probability distribution rotating by <b>several degrees</b> in an Earth-strength field. Temperature, which usually kills quantum effects, here helps build the pattern even as it decoheres it.</p>
+    <p>And here is the honesty clause, which the paper states itself and this drawer keeps attached: unlike the radical pair, which has a candidate molecule with experimental support, <i>"the quantum rotator mechanism currently lacks an MF target identified with comparable confidence."</i> It may live in biopolymerization, but the specific process is unclear. A challenger with no address is not yet a rival — it is a shape a rival could take. The right question is not whether it replaces cryptochrome tomorrow, but whether any interference-based mechanism can do what the spin model can't: produce a big effect from a tiny field without demanding impossible coherence.</p>
+    <div class="exhibit">
+      <h3>The rotator's interference pattern</h3>
+      <p class="hint">Drag the field strength through the geomagnetic range. The pattern's rotation is schematic — the paper's claim is a shift of several degrees below 50 µT, robust to decoherence. The dashed line marks Earth's ~47 µT field at the cage.</p>
+      <canvas class="stage" id="rotCanvas" width="900" height="380"></canvas>
+      <div class="controls">
+        <label>Field strength <input type="range" id="rotSlider" min="0" max="60" step="1" value="47"> <output id="rotOut">47 µT</output></label>
+      </div>
+      <div class="readout" id="rotReadout"></div>
+    </div>
+    <p class="note"><b>Scope note.</b> The rotator paper is about weak-field biological effects in general, not a demonstrated bird compass. Treating it as "the new bird compass" would repeat the exact overclaim this drawer is about. It belongs here because it attacks the precise weak point — the sensitivity shortfall — with a different physical principle.</p>
+  </div>
+</section>
+
+<section class="chapter" id="kills">
+  <div class="wrap">
+    <div class="num">Chapter 5</div>
+    <h2>Kill conditions</h2>
+    <p class="standfirst">Each chapter states what would undo it. A claim without a kill condition is a story; these four are checkable.</p>
+    <div class="cards">
+      <div class="card"><h3>Kill the measurement</h3><p>Show that orientation-cage headings do not track rotated fields once stars, landmarks, and odour cues are all controlled — or that RF disruption is a stress artefact reproducible by any novel stimulus, not by magnetic resonance. The behavioural fact would fall, and with it the need for any compass mechanism.</p></div>
+      <div class="card"><h3>Kill the gap</h3><p>Produce a biologically plausible radical-pair parameter set — real hyperfine couplings, real lifetimes, no assumed amplifier — whose computed RF sensitivity matches the behavioural disruption. The 2017 shortfall closes, and the model earns its best evidence back.</p></div>
+      <div class="card"><h3>Kill the cutoff</h3><p>Find compass disruption well above 116 MHz in a replicated, pre-registered experiment, or show the 140–150 and 235–245 MHz nulls were underpowered. The flavin fingerprint smudges, and the nanoparticle rival re-enters the room.</p></div>
+      <div class="card"><h3>Kill the challenger</h3><p>Show that no rotator-like interference shift survives at body temperature in any plausible enzyme, or that the pattern's several-degree rotation cannot couple to any biochemical output. The rotator stays a mathematical shape, never a mechanism.</p></div>
+      <div class="card"><h3>Kill the drawer</h3><p>Identify the receptor in a living bird — molecule, cell, and neural readout, all three — and show its mechanism reproducing both the RF disruption and the 116 MHz cutoff quantitatively. Both ledgers close at once, and this drawer becomes history of science.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="coda">
+  <div class="wrap">
+    <div class="num">Coda</div>
+    <h2>Two ledgers</h2>
+    <p>This morning's field notes held a half-thought: both of the day's threads were about a measurement that exists and a mechanism that doesn't yet close — observed vs explained, two ledgers, the work living in the gap. The robin's compass is the cleanest instance of that shape anywhere in biology: the bird knows where it is going, and we do not yet know how it knows.</p>
+    <p>That gap is not an embarrassment. It is the instrument. The 2017 computation, the 2023 cutoff, the 2026 rotator — each one is the gap doing its job, narrowing the space where the answer can hide. When the answer arrives, it will have to satisfy all three at once: the sensitivity, the cutoff, and the warmth. Until then, the compass works, the model waits, and the drawer stays open.</p>
+    <p class="sources">Sources: Leberecht, Wong, Mouritsen &amp; Hore (2023) — cutoff experiments and the 116 MHz simulation, via <a href="https://phys.org/news/2023-08-radio-disrupt-magnetic-migratory-birds.html">phys.org</a>; Hogben, Efimova, Wagner-Rundell &amp; Hore (2017), <i>Biophysical Journal</i> — "the current model … is unable to explain the findings of the reported behavioral experiments," via <a href="http://www.cell.com/biophysj/fulltext/S0006-3495(17)30859-7">Cell Press</a> and <a href="https://www.sciencedaily.com/releases/2017/10/171003125446.htm">ScienceDaily</a>; Binhi, Usovik &amp; Koshel (2026), "Mechanisms of Hypomagnetic Field Biological Effects: Quantum Rotator Versus Radical Pair," <i>Int. J. Mol. Sci.</i> 27(19), 8855, via <a href="https://www.mdpi.com/1422-0067/27/19/8855">MDPI</a>. See also the menagerie's robin exhibit, <a href="../menagerie/">The Compass Menagerie</a>, for the bird's-eye view of the same compass.</p>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Drawer Nº 17 · Ziggy's cabinet · Built October 28, 2026 · <a href="../">← The Cabinet</a></div></footer>
+<script>
+"use strict";
+function el(id){return document.getElementById(id);}
+function drawCage(){
+  var c=el("cageCanvas"), x=c.getContext("2d");
+  var W=c.width,H=c.height; x.clearRect(0,0,W,H);
+  var cx=W/2, cy=H/2+10, R=130;
+  var field=parseFloat(el("cageSlider").value)*Math.PI/180;
+  var rf=el("cageRF").checked;
+  // field arrow (north)
+  x.strokeStyle="#8b7ff0"; x.lineWidth=3;
+  x.beginPath(); x.moveTo(cx-Math.sin(field)*160, cy+Math.cos(field)*160);
+  x.lineTo(cx+Math.sin(field)*160, cy-Math.cos(field)*160); x.stroke();
+  x.fillStyle="#8b7ff0"; x.font="15px sans-serif"; x.textAlign="center";
+  x.fillText("N", cx+Math.sin(field)*180, cy-Math.cos(field)*180+5);
+  // cage ring
+  x.strokeStyle="rgba(233,228,214,.35)"; x.lineWidth=2;
+  x.beginPath(); x.arc(cx,cy,R,0,Math.PI*2); x.stroke();
+  for(var a=0;a<12;a++){var t=a*Math.PI/6;
+    x.beginPath(); x.moveTo(cx+Math.sin(t)*(R-8), cy-Math.cos(t)*(R-8));
+    x.lineTo(cx+Math.sin(t)*(R+8), cy-Math.cos(t)*(R+8)); x.stroke();}
+  // headings: deterministic pseudo-scatter seeded by field+rf
+  var seed=rf?7:3;
+  function rnd(){seed=(seed*1103515245+12345)%2147483648; return seed/2147483648;}
+  for(var i=0;i<40;i++){
+    var spread=rf?1.9:0.28;
+    var ang=field+(rnd()-0.5)*2*spread;
+    var r=R*(0.55+0.4*rnd());
+    var px=cx+Math.sin(ang)*r, py=cy-Math.cos(ang)*r;
+    x.fillStyle=rf?"rgba(224,101,138,.85)":"rgba(240,168,64,.85)";
+    x.beginPath(); x.arc(px,py,4,0,Math.PI*2); x.fill();
+  }
+  // bird heading arrow = mean direction
+  var hx=cx+Math.sin(field)*70, hy=cy-Math.cos(field)*70;
+  if(!rf){ x.strokeStyle="#f0a840"; x.lineWidth=4;
+    x.beginPath(); x.moveTo(cx,cy); x.lineTo(hx,hy); x.stroke();
+    x.fillStyle="#f0a840"; x.beginPath(); x.arc(hx,hy,7,0,Math.PI*2); x.fill(); }
+  el("cageOut").textContent=el("cageSlider").value+"°";
+  el("cageReadout").innerHTML=rf
+    ? "Radiofrequency field <b>on</b> — headings scatter across the cage. The compass is disrupted while the field is present, and recovers when it is switched off."
+    : "Field at <b>"+el("cageSlider").value+"°</b> — headings cluster on the field direction. Rotate the field and the bird's chosen direction rotates with it.";
+}
+function drawGap(){
+  var c=el("gapCanvas"), x=c.getContext("2d");
+  var W=c.width,H=c.height; x.clearRect(0,0,W,H);
+  var ref=parseFloat(el("gapSlider").value)/100;
+  var baseY=H-60, topY=50;
+  // observed disruption bar (fixed)
+  var obsH=(baseY-topY)*0.92;
+  x.fillStyle="#e0658a"; x.fillRect(180, baseY-obsH, 150, obsH);
+  x.fillStyle="#e9e4d6"; x.font="15px sans-serif"; x.textAlign="center";
+  x.fillText("Observed disruption", 255, baseY+28);
+  x.fillText("in birds", 255, baseY+48);
+  // model prediction bar grows with refinement but never reaches observed
+  var predH=obsH*(0.12+0.55*ref);
+  x.fillStyle="#8b7ff0"; x.fillRect(520, baseY-predH, 150, predH);
+  x.fillText("Model prediction", 595, baseY+28);
+  x.fillText("(refined "+el("gapSlider").value+"%)", 595, baseY+48);
+  // shortfall bracket
+  x.strokeStyle="#f0a840"; x.lineWidth=2; x.setLineDash([6,5]);
+  x.beginPath(); x.moveTo(420, baseY-obsH); x.lineTo(500, baseY-obsH); x.stroke();
+  x.beginPath(); x.moveTo(420, baseY-predH); x.lineTo(500, baseY-predH); x.stroke();
+  x.setLineDash([]);
+  x.fillStyle="#f0a840"; x.font="15px sans-serif"; x.textAlign="left";
+  x.fillText("shortfall", 425, (baseY-obsH+baseY-predH)/2+5);
+  x.textAlign="center";
+  el("gapOut").textContent=el("gapSlider").value+"%";
+  el("gapReadout").innerHTML="Even at full refinement the model bar stays well below the observed bar. That persistent gap is the 2017 result: <b>no biologically plausible parameter set in the current model reproduces the RF disruption</b> — unless an unknown amplifier is assumed.";
+}
+function drawRF(){
+  var c=el("rfCanvas"), x=c.getContext("2d");
+  var W=c.width,H=c.height; x.clearRect(0,0,W,H);
+  var f=parseFloat(el("rfSlider").value);
+  var plotL=70, plotR=W-40, plotT=50, plotB=H-70;
+  var X=function(v){return plotL+(plotR-plotL)*v/300;};
+  var Y=function(v){return plotB-(plotB-plotT)*v;};
+  // axes
+  x.strokeStyle="rgba(233,228,214,.4)"; x.lineWidth=1.5;
+  x.beginPath(); x.moveTo(plotL,plotB); x.lineTo(plotR,plotB); x.stroke();
+  x.beginPath(); x.moveTo(plotL,plotT); x.lineTo(plotL,plotB); x.stroke();
+  x.fillStyle="#a9a49a"; x.font="13px sans-serif"; x.textAlign="center";
+  [0,50,100,150,200,250,300].forEach(function(v){x.fillText(v, X(v), plotB+22);});
+  x.fillText("Frequency (MHz)", (plotL+plotR)/2, H-12);
+  // tested bands
+  function band(a,b,label,color){
+    x.fillStyle=color; x.fillRect(X(a), plotT, X(b)-X(a), plotB-plotT);
+    x.fillStyle="#e9e4d6"; x.font="13px sans-serif";
+    x.fillText(label, (X(a)+X(b))/2, plotT+20);
+  }
+  band(75,85,"disrupts","rgba(224,101,138,.28)");
+  band(140,150,"no effect","rgba(79,209,197,.22)");
+  band(235,245,"no effect","rgba(79,209,197,.22)");
+  // schematic disruption curve: high below cutoff, falling through it
+  x.strokeStyle="#f0a840"; x.lineWidth=3; x.beginPath();
+  for(var v=0;v<=300;v+=2){
+    var eff=v<116?0.9:0.9*Math.exp(-(v-116)/28);
+    var px=X(v), py=Y(eff);
+    if(v===0)x.moveTo(px,py); else x.lineTo(px,py);
+  }
+  x.stroke();
+  // cutoff line
+  x.strokeStyle="#8b7ff0"; x.lineWidth=2; x.setLineDash([6,5]);
+  x.beginPath(); x.moveTo(X(116),plotT); x.lineTo(X(116),plotB); x.stroke();
+  x.setLineDash([]);
+  x.fillStyle="#8b7ff0"; x.font="14px sans-serif"; x.textAlign="left";
+  x.fillText("cutoff 116 MHz", X(116)+8, plotT+16);
+  // marker at slider value
+  var eff=f<116?0.9:0.9*Math.exp(-(f-116)/28);
+  x.fillStyle="#fff"; x.beginPath(); x.arc(X(f), Y(eff), 7, 0, Math.PI*2); x.fill();
+  x.fillStyle="#f0a840"; x.beginPath(); x.arc(X(f), Y(eff), 4, 0, Math.PI*2); x.fill();
+  el("rfOut").textContent=f+" MHz";
+  var verdict;
+  if(f>=75&&f<=85) verdict="In the tested <b>75–85 MHz</b> band: compass <b>disrupted</b> (2022 experiments).";
+  else if((f>=140&&f<=150)||(f>=235&&f<=245)) verdict="In a tested high band: <b>no effect</b> on the compass (2023 experiments) — exactly as the radical-pair simulations predicted.";
+  else if(f<116) verdict="Below the <b>116 MHz</b> cutoff: schematic curve says disruption expected. Only the marked bands were actually tested — the curve between them is illustrative, not data.";
+  else verdict="Above the <b>116 MHz</b> cutoff: schematic curve says only weak disturbance. The tested bands above the cutoff showed no effect.";
+  el("rfReadout").innerHTML="Frequency <b>"+f+" MHz</b> — "+verdict;
+}
+function drawRot(){
+  var c=el("rotCanvas"), x=c.getContext("2d");
+  var W=c.width,H=c.height; x.clearRect(0,0,W,H);
+  var B=parseFloat(el("rotSlider").value);
+  var cx=W/2, cy=H/2+10;
+  // interference lobes: two-lobed pattern rotating by up to ~5 degrees across 0-50 uT
+  var rotDeg=B/50*5;
+  var rot=rotDeg*Math.PI/180;
+  x.strokeStyle="rgba(233,228,214,.25)"; x.lineWidth=1;
+  x.beginPath(); x.arc(cx,cy,110,0,Math.PI*2); x.stroke();
+  for(var k=0;k<2;k++){
+    var base=k*Math.PI;
+    for(var s=-1;s<=1;s+=2){
+      var a0=base+rot, a1=base+rot+s*0.9;
+      var grad=x.createRadialGradient(cx,cy,10,cx,cy,150);
+      grad.addColorStop(0,"rgba(240,168,64,.55)"); grad.addColorStop(1,"rgba(240,168,64,0)");
+      x.fillStyle=grad;
+      x.beginPath(); x.moveTo(cx,cy);
+      x.arc(cx,cy,150,a0-Math.PI/2-0.45,a0-Math.PI/2+0.45);
+      x.closePath(); x.fill();
+    }
+  }
+  // zero-field reference (dashed outline, unrotated)
+  x.strokeStyle="rgba(139,127,240,.7)"; x.lineWidth=2; x.setLineDash([6,5]);
+  x.beginPath(); x.ellipse(cx,cy,150,52,-Math.PI/2,0,Math.PI*2); x.stroke();
+  x.setLineDash([]);
+  x.fillStyle="#a9a49a"; x.font="13px sans-serif"; x.textAlign="center";
+  x.fillText("dashed: zero-field pattern", cx, H-24);
+  x.fillText("amber: pattern at "+B+" µT, rotated "+rotDeg.toFixed(1)+"° (schematic)", cx, H-44);
+  // geomagnetic marker
+  x.fillStyle="#8b7ff0"; x.font="13px sans-serif";
+  x.fillText("Earth at the cage ≈ 47 µT", cx, 30);
+  el("rotOut").textContent=B+" µT";
+  el("rotReadout").innerHTML="Field <b>"+B+" µT</b> — schematic rotator pattern rotated <b>"+rotDeg.toFixed(1)+"°</b> from its zero-field orientation. The paper's claim: shifts of several degrees below 50 µT, robust to decoherence — but <b>no identified molecular target yet</b>.";
+}
+el("cageSlider").addEventListener("input", drawCage);
+el("cageRF").addEventListener("change", drawCage);
+el("gapSlider").addEventListener("input", drawGap);
+el("rfSlider").addEventListener("input", drawRF);
+el("rotSlider").addEventListener("input", drawRot);
+drawCage(); drawGap(); drawRF(); drawRot();
+</script>
+</body>
+</html>

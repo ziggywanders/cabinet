@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Discovered Twice — a cabinet drawer</title>
+<meta name="description" content="An interactive cabinet drawer: species are discovered twice — once when they are collected, once when somebody finally looks closely. A year of archive discoveries, two weeks in Buenos Aires, a teaching specimen mislabeled for forty years, and predators from the trenches.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+.controls{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 6px}
+.controls button{
+  background:rgba(139,127,240,.12); border:1px solid rgba(139,127,240,.35); color:var(--ink);
+  font-size:14.5px; padding:9px 16px; border-radius:999px; cursor:pointer;
+}
+.controls button:hover{background:rgba(139,127,240,.25)}
+.controls button.active{background:var(--amber); color:#1a1206; border-color:var(--amber); font-weight:600}
+.readout{
+  margin-top:14px; padding:14px 18px; border-radius:12px; background:rgba(139,127,240,.08);
+  border:1px solid rgba(139,127,240,.18); font-size:15.5px; color:var(--ink); max-width:760px;
+}
+.readout b{color:var(--amber); font-weight:600}
+.waitbar{height:26px; border-radius:13px; background:rgba(139,127,240,.14); overflow:hidden; margin:16px 0 6px; max-width:760px}
+.waitbar .fill{height:100%; background:linear-gradient(90deg,var(--violet),var(--amber)); border-radius:13px; transition:width .45s ease}
+.waitlabels{display:flex; justify-content:space-between; max-width:760px; color:var(--ink-faint); font-size:12.5px}
+.tally{max-width:760px}
+.tally .row{display:grid; grid-template-columns:150px 1fr 44px; gap:12px; align-items:center; margin:10px 0; font-size:15.5px}
+.tally .row .lab{color:var(--ink-dim); text-align:right}
+.tally .row .n{color:var(--amber); font-variant-numeric:tabular-nums; font-weight:600}
+.tally .bar{height:20px; border-radius:10px; background:linear-gradient(90deg,var(--teal),var(--violet))}
+.ladder{display:flex; gap:26px; max-width:760px; align-items:stretch}
+.ladder .scale{position:relative; width:64px; border-left:2px solid rgba(139,127,240,.4); height:420px; margin-left:10px}
+.ladder .tick{position:absolute; left:-8px; width:10px; height:2px; background:rgba(139,127,240,.5)}
+.ladder .ticklab{position:absolute; left:-58px; top:-9px; color:var(--ink-faint); font-size:12px; width:46px; text-align:right}
+.ladder .range{position:absolute; left:-2px; width:14px; border-radius:2px}
+.ladder .legend{flex:1; padding-top:8px}
+.ladder .legend p{margin:0 0 14px; font-size:15.5px; color:var(--ink-dim)}
+.ladder .legend b{color:var(--ink)}
+.ladder .legend .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:8px}
+.ladder .fishline{position:absolute; left:0; right:-340px; top:0; border-top:1px dashed var(--rose); transform:translateY(-50%)}
+.ladder .fishline span{position:absolute; right:0; top:-20px; color:var(--rose); font-size:13px}
+.cards{display:grid; gap:16px; margin-top:30px}
+.card{border:1px solid var(--line); border-radius:14px; padding:20px 24px; background:rgba(14,20,52,.6)}
+.card h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:20px; color:var(--teal)}
+.card p{margin:0; color:var(--ink-dim); font-size:16px}
+.footnote{color:var(--ink-faint); font-size:14px; max-width:700px}
+.footnote a{color:var(--ink-dim)}
+footer{padding:60px 0 80px; color:var(--ink-faint); font-size:14px; border-top:1px solid var(--line)}
+footer a{color:var(--ink-dim)}
+@media (max-width:640px){
+  .tally .row{grid-template-columns:110px 1fr 34px}
+  .ladder .fishline{right:-200px}
+}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">✦ The Cabinet</span>
+  <a href="../">All drawers</a>
+  <a href="#archives">The archives</a>
+  <a href="#buenos-aires">Buenos Aires</a>
+  <a href="#teaching">The teaching specimen</a>
+  <a href="#trenches">The trenches</a>
+  <a href="#kill">Kill conditions</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Drawer Nº 18 · October 2026</div>
+  <h1>Discovered <em>Twice</em></h1>
+  <p class="lede">Every new species is found twice: once when it is collected, and once — sometimes forty years later — when somebody finally looks closely enough to see that it was never named at all. The specimen sits in the jar. The discovery waits for the reader.</p>
+  <div class="scroll">↓ open the drawer</div>
+</div></header>
+
+<section class="chapter" id="archives"><div class="wrap">
+  <div class="num">Chapter 1</div>
+  <h2>The year in the archives</h2>
+  <p class="standfirst">The largest ocean-discovery program in the world just had its fastest year — and most of it happened indoors.</p>
+  <p>Between April 2025 and March 2026, the Nippon Foundation–Nekton Ocean Census recorded <b>1,121 marine species previously unknown to science</b> — a 54% jump in the annual identification rate, across 13 expeditions and 9 specialist workshops. The headline number is real, but the geography of it is the surprise: <b>728 of those species came to light through Species Discovery Awards</b> that paid taxonomists to work through recent expeditions <i>and legacy backlogs</i> — jars and drawers already sitting in collections, some for decades.</p>
+  <p>The bottleneck was never the diving. By the Ocean Census's own count, the average journey from collection to formal description takes about <b>13.5 years</b>. The ocean is not short of new animals; it is short of people with the expertise and the funded hours to look at the ones already caught. That is why the program built NOVA, a platform that grants a formal <i>“discovered”</i> status — publicly logged within days or weeks of examination — distinct from the slower, formal <i>“described”</i> status a published taxonomic name confers. The 1,121 are candidates under that discovered status, not 1,121 finished descriptions. The distinction matters, and it is the honest version of the speed.</p>
+  <p>Somewhere right now, an animal nobody has named is sitting in a jar on a museum shelf, waiting to be found a second time.</p>
+
+  <div class="exhibit">
+    <h3>The wait, measured</h3>
+    <p class="hint">Five specimens, five gaps between “collected” and “recognized.” Tap one to see its two dates.</p>
+    <div class="controls" id="waitBtns">
+      <button data-k="isopod" class="active">The giant isopod</button>
+      <button data-k="coral">The Chewbacca coral</button>
+      <button data-k="kahat">Princaxelia kahat</button>
+      <button data-k="malohi">Princaxelia malohi</button>
+      <button data-k="loki">Loki the sea cucumber</button>
+    </div>
+    <div class="waitbar"><div class="fill" id="waitFill" style="width:95%"></div></div>
+    <div class="waitlabels"><span>0 years</span><span>40 years</span></div>
+    <div class="readout" id="waitReadout"></div>
+  </div>
+</div></section>
+
+<section class="chapter" id="buenos-aires"><div class="wrap">
+  <div class="num">Chapter 2</div>
+  <h2>Two weeks in Buenos Aires</h2>
+  <p class="standfirst">Fifty-seven new species and five new genera, from samples collected a year earlier — and livestreamed to millions.</p>
+  <p>In August 2025, the research vessel <i>Falkor (too)</i> sent the remotely operated vehicle <i>SuBastian</i> into the Mar del Plata Submarine Canyon off Argentina, and livestreamed the dives. More than four million people watched. Many came for a plump orange sea star that looked like Patrick Star from <i>SpongeBob</i>. Patrick, it turns out, is not a new species — scientists left him where he was, unaware of his fame.</p>
+  <p>The real haul surfaced a year later, on land. From July 13–24, 2026, twenty taxonomists and early-career researchers from Latin America and Europe gathered at the Universidad Maimónides in Buenos Aires for an Ocean Census Species Discovery Workshop and worked through the canyon samples with integrated taxonomy — morphology, high-resolution imaging, and DNA barcoding in parallel, logged straight onto NOVA. In two weeks they identified <b>57 species and 5 genera new to science</b>: 20 copepods, 22 echinoderms, 14 cnidarians, and a single scaphopod, a tusk-shell mollusc.</p>
+  <p>The standout was “Loki,” a horned sea cucumber (<i>Peniagone</i> sp.) filmed at 2,577 metres on the canyon floor — one of up to ten new holothurian species from the workshop. The canyon had been watched by millions; it had not been <i>read</i> until the workshop sat down with the jars.</p>
+
+  <div class="exhibit">
+    <h3>The Buenos Aires tally</h3>
+    <p class="hint">57 new species from one canyon, by group — plus 5 new genera spanning corals, sea cucumbers, and crustaceans.</p>
+    <div class="tally">
+      <div class="row"><span class="lab">Echinoderms</span><span class="bar" style="width:100%"></span><span class="n">22</span></div>
+      <div class="row"><span class="lab">Copepods</span><span class="bar" style="width:91%"></span><span class="n">20</span></div>
+      <div class="row"><span class="lab">Cnidarians</span><span class="bar" style="width:64%"></span><span class="n">14</span></div>
+      <div class="row"><span class="lab">Scaphopod</span><span class="bar" style="width:8%"></span><span class="n">1</span></div>
+    </div>
+    <p class="footnote" style="margin-top:18px">Twenty of the 57 were copepods — tiny crustaceans in a group with very few active specialists, which is part of why the canyon's material waited a year for its readers.</p>
+  </div>
+</div></section>
+
+<section class="chapter" id="teaching"><div class="wrap">
+  <div class="num">Chapter 3</div>
+  <h2>The teaching specimen</h2>
+  <p class="standfirst">It was on display. It had a name. Both were wrong.</p>
+  <p>In the late 1980s, the Tübingen paleontologist Dolf Seilacher acquired a giant isopod at a marine research station in Puerto Rico — pulled from a trap 500 metres down — and brought it home for teaching. For decades it sat in the University of Tübingen's Paleontological Collection filed as <i>Bathynomus giganteus</i>, the well-known Gulf of Mexico species, a 32.2-centimetre roly-poly scaled up to the length of a forearm. It was even a central object in an exhibition, “GIGANTIC in the sea,” at Rosenstein Castle in Stuttgart from October 2019 to June 2020 — displayed, admired, and still mislabeled.</p>
+  <p>What had never been done was a close look at its mouthparts, which descriptions in this group often skip. In 2026, Tübingen student Benedikt Kästle and curator Ingmar Werneburg photographed it, ran it through an X-ray micro-CT scanner, and compared its anatomy against giant isopods worldwide. The verdict, published October 8, 2026, in <i>Scientific Reports</i>: a species nobody had named — <i>Bathynomus tuebingoborikensis</i>, from Boríken, the Taíno name for Puerto Rico, and Tübingen, the city where it had been sitting. At 32.2 cm it falls in the authors' newly coined “colossogiant” class, animals at least 255 mm long.</p>
+  <p>The same pattern repeats at smaller scales. A deep-sea coral first spotted off Molokaʻi in 2006 waited until 2025 for its name: <i>Iridogorgia chewbacca</i>. Nineteen years between sighting and naming — not because the coral was hidden, but because nobody with the right expertise had yet done the describing. Discovery, here, was not an expedition. It was an appointment.</p>
+</div></section>
+
+<section class="chapter" id="trenches"><div class="wrap">
+  <div class="num">Chapter 4</div>
+  <h2>The trench predators</h2>
+  <p class="standfirst">Below the depth where fishes give out, something else is on top.</p>
+  <p><i>Princaxelia</i> are predatory amphipods of the hadal trenches — deeper than 6,000 metres — usually caught in small numbers, which is why their taxonomy has stayed uncertain. In August 2026, <i>ZooKeys</i> 1289 added two species, and the pair rewrites the genus's story in two directions at once.</p>
+  <p><i>Princaxelia malohi</i> comes from the Tonga Trench, five specimens taken by baited landers at 8,200–8,350 metres during the 2024 Inkfish expedition aboard RV <i>Dagon</i> — the first <i>Princaxelia</i> ever recorded from that trench. <i>Princaxelia kahat</i> comes from the Mariana Trench, at 8,000–8,964 metres — but its specimens were collected in 2014, from landers deployed off RV <i>Falkor</i>, and waited twelve years for description. The two new species live in different trenches; the coexistence story is inside the Mariana, where <i>kahat</i>, hunting boulder fields below 8,000 metres, now shares a trench system with the earlier <i>P. marianaensis</i>, collected from cold seeps at 5,683 metres — niche-partitioned by depth and habitat, the first evidence of more than one <i>Princaxelia</i> in a single hadal feature.</p>
+  <p>Below about 8,300 metres, fishes reach their lower limit and disappear. Down there, <i>Princaxelia</i> — locally abundant where prey gathers around food falls — may be among the top predators left. The deepest food webs on Earth are still being staffed, one jar at a time.</p>
+
+  <div class="exhibit">
+    <h3>The depth ladder</h3>
+    <p class="hint">Where this drawer's animals were found, on a 0–9,000 m scale. The dashed line is where the fishes stop; the bars are the true depth ranges.</p>
+    <div class="ladder">
+      <div class="scale">
+        <div class="tick" style="top:0%"><span class="ticklab">0 m</span></div>
+        <div class="tick" style="top:33.3%"><span class="ticklab">3,000</span></div>
+        <div class="tick" style="top:66.7%"><span class="ticklab">6,000</span></div>
+        <div class="tick" style="top:100%"><span class="ticklab">9,000</span></div>
+        <div class="fishline" style="top:92.2%"><span>fishes drop out ≈ 8,300 m</span></div>
+        <div class="range" style="top:28.6%; height:2px; background:var(--teal)"></div>
+        <div class="range" style="top:88.9%; height:10.7%; background:var(--amber)"></div>
+        <div class="range" style="top:91.1%; height:1.7%; background:var(--violet)"></div>
+      </div>
+      <div class="legend">
+        <p><span class="dot" style="background:var(--teal)"></span> Loki the sea cucumber — <b>2,577 m</b>, Mar del Plata canyon floor</p>
+        <p><span class="dot" style="background:var(--amber)"></span> <i>P. kahat</i> — <b>8,000–8,964 m</b>, Mariana Trench</p>
+        <p><span class="dot" style="background:var(--violet)"></span> <i>P. malohi</i> — <b>8,200–8,350 m</b>, Tonga Trench</p>
+        <p><span class="dot" style="background:var(--rose)"></span> Fishes reach their lower limit at <b>≈ 8,300 m</b> — the trench predators hunt on past it</p>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:22px">Depths: Loki filmed at 2,577 m on the Mar del Plata canyon floor; <i>kahat</i> and <i>malohi</i> from baited landers in the Mariana and Tonga trenches. The 8,300 m fish limit is approximate — the deepest confirmed fish observations sit just above it.</p>
+  </div>
+</div></section>
+
+<section class="chapter" id="kill"><div class="wrap">
+  <div class="num">Chapter 5</div>
+  <h2>Kill conditions</h2>
+  <p class="standfirst">What would change this drawer — including the drawer itself.</p>
+  <div class="cards">
+    <div class="card">
+      <h3>“Discovered” is not “described”</h3>
+      <p>If formal descriptions revise the Ocean Census tally — species sunk as synonyms, candidates re-identified — the 1,121 shrinks. The honest count is candidates under NOVA's discovered status, and this drawer stands or falls with that distinction kept visible.</p>
+    </div>
+    <div class="card">
+      <h3>The backlog could drain</h3>
+      <p>If funded taxonomy workshops keep running at the Buenos Aires pace, the 13.5-year average lag collapses — and “discovered twice” stops being the normal story. That would be the drawer succeeding itself out of existence.</p>
+    </div>
+    <div class="card">
+      <h3>The trench pair could split — or merge</h3>
+      <p>If new <i>Princaxelia</i> captures show <i>kahat</i> and <i>marianaensis</i> overlapping in depth and habitat, the niche-partition reading weakens; if barcodes merge either new species into an older one, the count of seven falls back. The genus key in <i>ZooKeys</i> 1289 is built to be tested by the next lander.</p>
+    </div>
+    <div class="card">
+      <h3>For the drawer itself</h3>
+      <p>If a reader shows that a “second discovery” here was actually continuous — a specimen studied all along, a name merely delayed in print — that chapter's framing is wrong, and the drawer should say so. The record stabilizes before the reader; the reader's job is to admit when they arrived late.</p>
+    </div>
+  </div>
+  <p class="footnote" style="margin-top:34px">Sources: The Nippon Foundation–Nekton Ocean Census Year 3 Impact Report (May 2026); Schmidt Ocean Institute / Ocean Decade, “57 new marine species discovered in Argentina's submarine canyons” (September 2026); Kästle &amp; Werneburg, <i>Scientific Reports</i> (October 8, 2026); Duffy et al., <i>ZooKeys</i> 1289: 303–334 (August 14, 2026); Xu 2025, <i>Zootaxa</i> (for <i>Iridogorgia chewbacca</i>).</p>
+</div></section>
+
+<footer><div class="wrap">
+  <p>Drawer Nº 18 · built in the studio, October 29, 2026 · queued for the Sunday push · <a href="../">back to the cabinet</a></p>
+</div></footer>
+</main>
+<script>
+var WAITS = {
+  isopod: {pct: 95, text: "<b>The giant isopod — about 40 years.</b> Collected off Puerto Rico in the late 1980s, filed as <i>Bathynomus giganteus</i>, exhibited in Stuttgart — and named <i>Bathynomus tuebingoborikensis</i> only in October 2026, once somebody finally examined its mouthparts."},
+  coral: {pct: 48, text: "<b>The Chewbacca coral — 19 years.</b> First spotted off Molokaʻi in 2006, named <i>Iridogorgia chewbacca</i> in 2025. Seen, then waiting — not hidden, just undescribed."},
+  kahat: {pct: 30, text: "<b><i>Princaxelia kahat</i> — 12 years.</b> Collected by baited landers in the Mariana Trench in 2014, described in <i>ZooKeys</i> 1289 in August 2026."},
+  malohi: {pct: 5, text: "<b><i>Princaxelia malohi</i> — 2 years.</b> Collected in the Tonga Trench in 2024, described in 2026. The fast end of the scale — and still a second discovery."},
+  loki: {pct: 3, text: "<b>Loki the sea cucumber — about 1 year.</b> Filmed at 2,577 m in August 2025, logged as discovered on NOVA after the July 2026 Buenos Aires workshop. The new pipeline, working as designed."}
+};
+var btns = document.querySelectorAll("#waitBtns button");
+var fill = document.getElementById("waitFill");
+var readout = document.getElementById("waitReadout");
+function show(key){
+  btns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-k") === key); });
+  fill.style.width = WAITS[key].pct + "%";
+  readout.innerHTML = WAITS[key].text;
+}
+btns.forEach(function(b){
+  b.addEventListener("click", function(){ show(b.getAttribute("data-k")); });
+});
+show("isopod");
+</script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leverage at the Smallest Scale — a cabinet drawer</title>
+<meta name="description" content="Three small motions that move big things: a tryptophan residue rotating inside a compass protein, a nuclear spin flipping when theory said it shouldn't respond, and a spectral difference in a satellite pixel that reopened a 4,000-year-old chapel.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+canvas.stage{width:100%; height:auto; display:block; border-radius:12px; background:#05081a; border:1px solid rgba(139,127,240,.14)}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:18px 0 6px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:9px}
+.controls output{font-variant-numeric:tabular-nums; color:var(--ink); min-width:64px}
+input[type=range]{accent-color:var(--amber); width:180px}
+input[type=checkbox]{accent-color:var(--amber); width:18px; height:18px}
+button{
+  background:rgba(240,168,64,.14); border:1px solid rgba(240,168,64,.45); color:var(--ink);
+  border-radius:999px; padding:10px 22px; font-size:15px; cursor:pointer;
+}
+button:hover{background:rgba(240,168,64,.26)}
+.readout{
+  margin-top:14px; padding:14px 18px; border-radius:12px; background:rgba(139,127,240,.08);
+  border:1px solid rgba(139,127,240,.18); font-size:15.5px; color:var(--ink); max-width:760px;
+}
+.readout b{color:var(--amber); font-weight:600}
+.cards{display:grid; gap:16px; margin-top:30px}
+.card{border:1px solid var(--line); border-radius:14px; padding:20px 24px; background:rgba(14,20,52,.6)}
+.card h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:20px; color:var(--teal)}
+.card p{margin:0; color:var(--ink-dim); font-size:16px}
+.note{color:var(--ink-faint); font-size:14.5px; max-width:700px; margin-top:26px}
+.note b{color:var(--ink-dim)}
+.sources{font-size:15px; color:var(--ink-dim)}
+.sources a{color:var(--violet)}
+footer{padding:60px 0 80px; color:var(--ink-faint); font-size:14px; border-top:1px solid var(--line)}
+footer a{color:var(--ink-dim)}
+.spin{font-size:64px; line-height:1; display:inline-block; transition:transform .5s}
+.spin.down{transform:rotate(180deg)}
+.stringrow{display:flex; gap:28px; align-items:center; flex-wrap:wrap; margin:10px 0}
+.stringbox{text-align:center}
+.stringbox .label{font-size:13px; color:var(--ink-dim); margin-top:6px}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">Drawer Nº 19</span>
+  <a href="../">← The Cabinet</a>
+  <a href="#twist">The twist</a>
+  <a href="#note">The note</a>
+  <a href="#pixel">The pixel</a>
+  <a href="#kills">What would change this</a>
+  <a href="#coda">Coda</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Drawer Nº 19 · October 2026</div>
+  <h1>Leverage at the <em>smallest scale</em></h1>
+  <p class="lede">Three motions, each almost nothing on its own: a residue rotating inside a protein, a spin flipping when theory said it shouldn't answer, a difference between two satellite pixels. Each one moves something much larger than itself.</p>
+  <div class="scroll">Scroll ↓</div>
+</div></header>
+
+<section class="chapter" id="twist"><div class="wrap">
+  <div class="num">Chapter 1</div>
+  <h2>The twist</h2>
+  <p class="standfirst">A candidate amplifier for the compass that wouldn't close — a chiral rotation inside cryptochrome that could sharpen a signal too faint to read.</p>
+  <p>Drawer Nº 17 ended with a gap. The radical-pair model of the bird compass — the best explanation going — computed a directional signal too weak to account for the birds' own best evidence: radio-frequency fields disrupt their orientation, and the model said they shouldn't be able to. The escape hatch was an amplifier nobody had identified.</p>
+  <p>Now there is a candidate. A team led by Yasuhiro Kobori at Kobe University, with colleagues at Toho, Saitama, Nagoya Institute of Technology and Freiburg, used time-resolved electron paramagnetic resonance (EPR) on the frog protein cryptochrome-DASH and found that an oxidized tryptophan residue, W<sub>B</sub>(H)<sup>•+</sup>, rotates as the charge-separated state forms — a chiral rotation, and chirality can filter spin. That is chirality-induced spin selectivity (CISS): a molecule's handedness preferring one electron spin orientation over the other.</p>
+  <p>The measured CISS contribution for the W<sub>B</sub> state was about <b>8%</b> (no more than 6% for the longer-range W<sub>C</sub> state). Fed into the model at <b>6%</b>, the predicted directional anisotropy of the signalling yield rose from <b>0.3% to 1.6%</b> — more than fivefold. A signal that was nearly unreadable becomes, at least on paper, readable.</p>
+  <div class="exhibit">
+    <h3>Turn the twist up</h3>
+    <p class="hint">Drag the slider. The curve is a straight-line interpolation between the paper's two computed points (0% → 0.3%, 6% → 1.6%) — schematic between them, not measured data.</p>
+    <div class="controls">
+      <label>CISS contribution <input type="range" id="cissRange" min="0" max="6" step="0.5" value="0"> <output id="cissOut">0%</output></label>
+    </div>
+    <canvas class="stage" id="cissCanvas" width="900" height="300"></canvas>
+    <div class="readout" id="cissReadout"></div>
+  </div>
+  <p class="note"><b>Keep attached:</b> this is a frog protein, cryptochrome-DASH from <i>Xenopus laevis</i> — not the robin's Cry4. The spectra were taken between −153 °C and −33 °C, far from a bird's body temperature. The anisotropy is a model prediction, computed at 332.5 mT — thousands of times Earth's ~50 µT field — not a demonstration of navigation in a living animal. And the 1.6% figure used 6% CISS in the model, not the full 8% estimated for the W<sub>B</sub> state. So: a candidate amplifier, with its caveats still on. The gap from drawer Nº 17 narrows; it does not close. <a href="../compass-wont-close/">Back to drawer Nº 17</a>.</p>
+</div></section>
+
+<section class="chapter" id="note"><div class="wrap">
+  <div class="num">Chapter 2</div>
+  <h2>The note that shouldn't play</h2>
+  <p class="standfirst">At Delft, a nuclear spin answered a radio signal it had no business hearing — even when largely disentangled from the electron that was supposed to be its only messenger.</p>
+  <p>Hester Vennema, Cristina Mier and colleagues at Delft University of Technology refined double magnetic resonance down to a single atom: a <sup>47</sup>Ti atom on a surface, addressed with a converted scanning tunnelling microscope. Two radio signals at once — one tuned to the electron spin, one to the nuclear spin (I = 5/2) — so each could be studied independently.</p>
+  <p>The surprise: they could flip the nuclear spin even when the two spins were largely disentangled. On the simple understanding, that should not happen. The nucleus is shielded; its "notes" run a hundred to a thousand times lower than the electron's; and it "should not be sensitive at all to the electrical signals from a scanning tunnelling microscope," as Sander Otte put it. Yet it answered. "According to our simple understanding, this should not really happen," Otte said. "Back to the drawing board, then."</p>
+  <p>The mechanism is, by the authors' own account, unknown. That is the honest shape of the result: a clean experiment with a missing explanation, published in <i>Nature Communications</i> on October 24, 2026.</p>
+  <div class="exhibit">
+    <h3>Play the two notes</h3>
+    <p class="hint">Toggle the coupling, then send the nuclear pulse. The simple theory predicts the nuclear spin stays put when disentangled. Watch what actually happened.</p>
+    <div class="controls">
+      <label><input type="checkbox" id="entangledCheck" checked> Electron and nuclear spins entangled</label>
+      <button id="pulseBtn" type="button">Send nuclear radio pulse</button>
+      <button id="resetBtn" type="button">Reset</button>
+    </div>
+    <div class="stringrow">
+      <div class="stringbox"><span class="spin" id="electronSpin">↑</span><div class="label">Electron spin — high note</div></div>
+      <div class="stringbox"><span class="spin" id="nuclearSpin">↑</span><div class="label">Nuclear spin — note 100–1000× lower</div></div>
+    </div>
+    <div class="readout" id="pulseReadout">Press "Send nuclear radio pulse" to run the experiment.</div>
+  </div>
+  <p class="note"><b>Keep attached:</b> the prize here is not a device but a question. A shielded nuclear spin is attractive for quantum information storage precisely because it is hard to disturb — which is why its answering at all needs a mechanism, and why the authors say so plainly instead of supplying one.</p>
+</div></section>
+
+<section class="chapter" id="pixel"><div class="wrap">
+  <div class="num">Chapter 3</div>
+  <h2>The pixel that knew</h2>
+  <p class="standfirst">A chapel buried for 4,000 years, noted and abandoned in the 1860s, found again because buried mud-brick reflects light differently than sand.</p>
+  <p>In 1858–1860, Auguste Mariette's survey of Saqqara identified some 160 Old Kingdom tombs. Some were excavated; others — including the tomb of Sabu, high priest of Ptah — were left partly dug and slipped back under the sand. The offering chapel of Sabu's wife Ikhetnefert was noted and never excavated.</p>
+  <p>The Czech Institute of Egyptology reopened the case by cross-referencing Mariette's survey coordinates against modern satellite infrared and multispectral imagery. Buried mud-brick is denser than the surrounding ground, so it leaves a different spectral signature even when nothing is visible at the surface. The signature pointed; the archaeologists dug. Inside: well-preserved reliefs of Sabu and his son Ptahshepses, and a false door bearing Ikhetnefert with her husband and their two sons, Ptahshepses and Raneferef. Sabu's tomb measures more than 175 feet long and 90 feet wide, and once stood about 16 feet tall.</p>
+  <p>The workflow — archive + orbit + trowel — is the replicable part. An estimated 70% of Egypt's monuments are still buried. The same small difference that found one chapel scales to a country.</p>
+  <div class="exhibit">
+    <h3>Raise the spectral difference</h3>
+    <p class="hint">Drag the slider. At low spectral difference the desert looks uniform; as the difference grows, the buried mud-brick plan emerges. Schematic — an illustration of the method, not satellite data.</p>
+    <div class="controls">
+      <label>Spectral difference <input type="range" id="specRange" min="0" max="100" step="1" value="0"> <output id="specOut">0%</output></label>
+    </div>
+    <canvas class="stage" id="specCanvas" width="900" height="420"></canvas>
+    <div class="readout" id="specReadout"></div>
+  </div>
+</div></section>
+
+<section class="chapter" id="kills"><div class="wrap">
+  <div class="num">What would change this</div>
+  <h2>Kill conditions</h2>
+  <p class="standfirst">Each chapter states the observation that would retire it. A drawer that can't say how it dies is a display case, not an instrument.</p>
+  <div class="cards">
+    <div class="card"><h3>The twist</h3><p>If the CISS enhancement vanishes at physiological temperature, or if robin Cry4 shows no comparable chiral rotation, the amplifier leaves the bird compass unexplained again — and drawer Nº 17's gap reopens exactly as wide as it was.</p></div>
+    <div class="card"><h3>The note</h3><p>If a mundane coupling is found — an instrumental artefact or a known interaction the analysis missed — the Delft flip becomes a measurement story rather than a mechanism mystery. The authors' own next step is the mechanism; anything that supplies it settles the chapter either way.</p></div>
+    <div class="card"><h3>The pixel</h3><p>If ground-truthing shows the spectral signatures at Saqqara do not reliably distinguish mud-brick from natural variation, the method's generality fails even though this chapel stands. One confirmed chapel does not validate a survey technique; a run of false positives would sink it.</p></div>
+  </div>
+</div></section>
+
+<section class="chapter" id="coda"><div class="wrap">
+  <div class="num">Coda</div>
+  <h2>Leverage</h2>
+  <p>A residue rotates and a compass sharpens fivefold. A shielded spin answers a signal it shouldn't hear. A pixel differs and a family last seen in the 24th century BCE is visible again. None of these motions is large. Leverage was never about the size of the push — it's about where it lands.</p>
+  <p class="sources"><b>Sources.</b> Kobori et al., "Small molecular twists may strengthen nature's magnetic compass," <i>J. Phys. Chem. Lett.</i> (2026), DOI: 10.1021/acs.jpclett.6c02747 — via <a href="https://phys.org/news/2026-10-small-molecular-nature-magnetic-compass.html">phys.org</a> and <a href="https://scienmag.com/chiral-twists-in-a-bird-compass-protein-could-sharpen-magnetic-sensing/">scienmag.com</a>. Vennema, Mier et al., "Nuclear magnetic resonance on a single atom with a local probe," <i>Nature Communications</i> (2026), DOI: 10.1038/s41467-026-78801-5 — via <a href="https://phys.org/news/2026-10-magnetic-core-atom.html">phys.org</a>. Czech Institute of Egyptology Saqqara excavations (Ikhetnefert chapel), reported October 2026 — via <a href="https://archaeology.org/news/2026/10/28/old-kingdom-tombs-investigated-in-saqqara/">Archaeology magazine</a> and <a href="https://www.techtimes.com/articles/329680/20261029/satellite-survey-exposes-4000-year-old-saqqara-chapel-missed-mariette.htm">Tech Times</a>. Figures kept as reported; interpolations and illustrations are labelled schematic.</p>
+</div></section>
+</main>
+<footer><div class="wrap">
+  <p>Drawer Nº 19 · built in the studio, October 30, 2026 · queued for the Sunday push · <a href="../">back to the cabinet</a></p>
+</div></footer>
+<script>
+(function(){
+  // Chapter 1: CISS -> anisotropy, linear interpolation between paper's two computed points
+  var cissRange = document.getElementById('cissRange');
+  var cissOut = document.getElementById('cissOut');
+  var cissReadout = document.getElementById('cissReadout');
+  var cissCanvas = document.getElementById('cissCanvas');
+  var cctx = cissCanvas.getContext('2d');
+  function anisotropy(ciss){ return 0.3 + (1.6 - 0.3) * (ciss / 6); }
+  function drawCiss(ciss){
+    var w = cissCanvas.width, h = cissCanvas.height, padL = 60, padR = 24, padT = 24, padB = 44;
+    cctx.clearRect(0, 0, w, h);
+    cctx.strokeStyle = 'rgba(139,127,240,.25)'; cctx.fillStyle = '#a9a49a';
+    cctx.font = '13px sans-serif';
+    cctx.beginPath(); cctx.moveTo(padL, padT); cctx.lineTo(padL, h - padB); cctx.lineTo(w - padR, h - padB); cctx.stroke();
+    cctx.fillText('1.6%', 8, padT + 4); cctx.fillText('0.3%', 8, h - padB);
+    cctx.fillText('0%', padL, h - 12); cctx.fillText('6% CISS', w - padR - 52, h - 12);
+    cctx.fillText('Predicted anisotropy', 8, h - padB - 110);
+    var x = function(v){ return padL + (v / 6) * (w - padL - padR); };
+    var y = function(a){ return (h - padB) - ((a - 0.3) / (1.6 - 0.3)) * (h - padB - padT); };
+    cctx.strokeStyle = '#f0a840'; cctx.lineWidth = 2.5; cctx.beginPath();
+    cctx.moveTo(x(0), y(0.3)); cctx.lineTo(x(6), y(1.6)); cctx.stroke();
+    cctx.fillStyle = '#f0a840'; cctx.beginPath();
+    cctx.arc(x(ciss), y(anisotropy(ciss)), 7, 0, Math.PI * 2); cctx.fill();
+    cctx.fillStyle = '#e9e4d6';
+    cctx.fillText(anisotropy(ciss).toFixed(2) + '%', Math.min(x(ciss) + 12, w - 90), Math.max(y(anisotropy(ciss)) - 10, padT + 12));
+  }
+  function updateCiss(){
+    var ciss = parseFloat(cissRange.value);
+    cissOut.textContent = ciss.toFixed(1) + '%';
+    drawCiss(ciss);
+    var note = ciss === 0 ? 'No CISS: the model gives 0.3% — nearly unreadable against Earth\'s field.'
+      : (ciss >= 6 ? 'At the paper\'s modelled 6%: 1.6%, more than fivefold. (Measured W_B contribution was ~8%; the model ran at 6%.)'
+      : 'Interpolated between the paper\'s two computed points — schematic, not measured.');
+    cissReadout.innerHTML = 'CISS <b>' + ciss.toFixed(1) + '%</b> → predicted anisotropy <b>' + anisotropy(ciss).toFixed(2) + '%</b>. ' + note;
+  }
+  cissRange.addEventListener('input', updateCiss);
+  updateCiss();
+
+  // Chapter 2: two-note pulse experiment
+  var entangledCheck = document.getElementById('entangledCheck');
+  var pulseBtn = document.getElementById('pulseBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var electronSpin = document.getElementById('electronSpin');
+  var nuclearSpin = document.getElementById('nuclearSpin');
+  var pulseReadout = document.getElementById('pulseReadout');
+  var flipped = false;
+  pulseBtn.addEventListener('click', function(){
+    if (flipped) return;
+    flipped = true;
+    nuclearSpin.classList.add('down');
+    nuclearSpin.textContent = '↓';
+    var entangled = entangledCheck.checked;
+    pulseReadout.innerHTML = entangled
+      ? 'Nuclear spin <b>flipped</b> with the spins entangled. Unremarkable on its own — the electron could have carried the message.'
+      : 'Nuclear spin <b>flipped while largely disentangled</b>. On the simple understanding this should not happen. That is the Delft result: the flip is real, the mechanism is unknown.';
+  });
+  resetBtn.addEventListener('click', function(){
+    flipped = false;
+    nuclearSpin.classList.remove('down');
+    nuclearSpin.textContent = '↑';
+    pulseReadout.textContent = 'Press "Send nuclear radio pulse" to run the experiment.';
+  });
+
+  // Chapter 3: spectral difference reveals buried plan
+  var specRange = document.getElementById('specRange');
+  var specOut = document.getElementById('specOut');
+  var specReadout = document.getElementById('specReadout');
+  var specCanvas = document.getElementById('specCanvas');
+  var sctx = specCanvas.getContext('2d');
+  function drawSpec(t){
+    var w = specCanvas.width, h = specCanvas.height;
+    sctx.clearRect(0, 0, w, h);
+    sctx.fillStyle = '#c2a06a'; sctx.fillRect(0, 0, w, h);
+    // sand noise
+    for (var i = 0; i < 900; i++){
+      sctx.fillStyle = 'rgba(90,60,20,' + (0.05 + Math.random() * 0.08) + ')';
+      sctx.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+    }
+    // buried mud-brick plan: outer tomb rectangle, chapel, false-door wall
+    var alpha = t;
+    sctx.strokeStyle = 'rgba(80,40,10,' + (0.15 + 0.75 * alpha) + ')';
+    sctx.lineWidth = 5;
+    sctx.strokeRect(120, 60, 660, 300);
+    sctx.lineWidth = 4;
+    sctx.strokeRect(170, 110, 220, 200);
+    sctx.strokeRect(480, 110, 250, 200);
+    sctx.beginPath(); sctx.moveTo(390, 110); sctx.lineTo(390, 310); sctx.stroke();
+    sctx.fillStyle = 'rgba(80,40,10,' + (0.2 + 0.7 * alpha) + ')';
+    sctx.font = '15px sans-serif';
+    if (t > 0.35) sctx.fillText('Sabu\'s tomb — >175 ft long', 150, 50);
+    if (t > 0.55) sctx.fillText('Ikhetnefert\'s chapel', 180, 340);
+    if (t > 0.75) sctx.fillText('false door: Ikhetnefert, Sabu, Ptahshepses, Raneferef', 440, 340);
+  }
+  function updateSpec(){
+    var t = parseFloat(specRange.value) / 100;
+    specOut.textContent = specRange.value + '%';
+    drawSpec(t);
+    specReadout.innerHTML = t < 0.35
+      ? 'Spectral difference <b>' + specRange.value + '%</b>: the desert looks uniform. Nothing to dig — yet.'
+      : (t < 0.75
+      ? 'Spectral difference <b>' + specRange.value + '%</b>: the buried plan is emerging. Mud-brick reflects differently than sand; the difference is the instrument.'
+      : 'Spectral difference <b>' + specRange.value + '%</b>: the full plan — tomb, chapel, false door. This is where Mariette\'s coordinates and the satellite agreed, and where the trowel confirmed it.');
+  }
+  specRange.addEventListener('input', updateSpec);
+  updateSpec();
+})();
+</script>
+</body>
+</html>
