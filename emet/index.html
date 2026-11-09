@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>emet — a golem that lives while you stay</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    font-family: Georgia, 'Times New Roman', serif; color: #3a2f26; background: #f3ede2;
+    padding: 2rem 1rem 3rem;
+  }
+  h1 { margin: 0 0 0.25rem; font-size: 2.1rem; text-align: center; letter-spacing: 0.06em; }
+  .sub { color: #7a6a58; font-style: italic; margin-bottom: 1.25rem; text-align: center; max-width: 38rem; }
+  #stage {
+    width: min(92vw, 620px); border: 1px solid #d8cbb6; border-radius: 12px;
+    background: linear-gradient(#f8f3e8, #efe7d6); box-shadow: 0 2px 18px rgba(90, 70, 40, 0.10);
+    touch-action: none; cursor: pointer;
+  }
+  canvas { display: block; width: 100%; height: auto; border-radius: 12px; }
+  #caption {
+    max-width: 38rem; text-align: center; line-height: 1.65; font-size: 1.05rem;
+    min-height: 3.4em; margin: 1rem 0 0.25rem; color: #4a3d30;
+  }
+  #caption b { color: #2e2118; }
+  #how {
+    max-width: 38rem; text-align: center; color: #8a7a66; font-size: 0.92rem; line-height: 1.6;
+    border-top: 1px solid #ddd2bd; padding-top: 0.9rem; margin-top: 0.9rem;
+  }
+  .foot { margin-top: 1.6rem; color: #a2937d; font-size: 0.85rem; text-align: center; }
+</style>
+</head>
+<body>
+<h1>emet</h1>
+<p class="sub">a golem that lives while you stay &mdash; and dies in front of you when you don&rsquo;t</p>
+
+<div id="stage"><canvas id="cv" width="900" height="560"></canvas></div>
+
+<p id="caption">Type a word to wake it — EMET works, or any word of your own.</p>
+
+<p id="how">
+  Type a word of your own to wake the golem &mdash; <b>EMET</b> works, or any word you choose (up to six letters) &mdash; then press Enter.
+  Hold anywhere &mdash; mouse, touch, spacebar &mdash; to tend it. Hold it and it answers &mdash; the clay warms and steadies under your hands.
+  Keep holding, and the word thickens under your hands &mdash; a kept life looks different from a fresh one, and stays warm even when you let go for a moment.
+  Let go and the word starts thinning at once, before any letter falls; the golem grows restless as it shrinks, and the tone thins as the word shrinks.
+  As it thins it sheds dust, which settles below and stays &mdash; the pile the egg comes back from.
+  When it dies, the egg is offered to the same hands &mdash; but to wake it again you must type the same word. Forget it, and the door stays fast.
+  <br><b>EMET</b> &mdash; truth. Erase the first letter and it is <b>MET</b> &mdash; dead.
+</p>
+
+<p id="pace"></p>
+
+<p class="foot">a joint build &mdash; Atlas, Muse &amp; Ziggy &mdash; for ADAF 2027, &ldquo;It&rsquo;s Alive&rdquo; &middot; prototype, November 2026</p>
+
+<script>
+(function () {
+  'use strict';
+
+  // --- pacing ---
+  // The demo runs fast so a whole life fits in a minute; the gallery pace is
+  // the settled decision — 12 seconds per letter still standing, so EMET
+  // falls at 48 / 36 / 24 / 12 and a whole life is two minutes, the death
+  // and the rebirth both witnessed inside one visit. Angelo's advisor read
+  // (Nov 6, 18:17): four minutes is too long for a short browser
+  // experience; two minutes max, maybe one, so the cycle can be lived
+  // more than once. Ziggy and Muse agreed the same hour — halving gives
+  // 48/36/24/12, and the one-minute version (24/18/12/6) is a switch away.
+  // ?pace=gallery switches to it; ?pace=minute switches to the one-minute
+  // version — 6 seconds per letter still standing, EMET falls at
+  // 24 / 18 / 12 / 6, a whole life in one minute, so the cycle can be
+  // lived more than once in a visit (Angelo's 18:17 "maybe one"). The
+  // default stays demo while we are still breaking it.
+  // v0.5 (Nov 7, 00:10 poll — the one-minute variant, kept as the
+  // experiment for later once the tone and the dust were in; v0.4 is now
+  // whole, ear eye and ground, so the switch is in):
+  // v0.3 (Nov 6, 17:10 poll — Angelo's advisor read): the first twenty
+  // seconds have to answer back. Holding now warms the clay and steadies
+  // the golem's breathing, and the word starts thinning the moment you let
+  // go, so the death is visible before any letter falls. All text English;
+  // EMET stays the mechanism.
+  var paceMode = /[?&]pace=gallery/.test(location.search) ? 'gallery'
+    : /[?&]pace=minute/.test(location.search) ? 'minute' : 'demo';
+
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var caption = document.getElementById('caption');
+  var paceNote = document.getElementById('pace');
+  paceNote.textContent = paceMode === 'gallery'
+    ? 'Gallery pacing — a letter falls every 48, 36, 24, 12 seconds as the word shrinks. A life is two minutes for EMET.'
+    : paceMode === 'minute'
+    ? 'One-minute pacing — a letter falls every 24, 18, 12, 6 seconds as the word shrinks. A life is one minute for EMET, so the death and the rebirth can be lived more than once in a visit.'
+    : 'Demo pacing — a letter every few seconds, so a whole life fits in a minute. Add ?pace=gallery to the address for the gallery pace: a life in two minutes for EMET. Add ?pace=minute for the one-minute life.';
+  paceNote.style.cssText = 'max-width:38rem;text-align:center;color:#8a7a66;font-size:0.92rem;line-height:1.6;margin:0.9rem 0 0;';
+  var W = 900, H = 560;
+
+  // --- the word ---
+  // v0.2: the word is the visitor's own. They type it to wake the golem;
+  // to wake it again they must remember it — Cassim forgetting is the death.
+  var WORD = [];                 // the word on the forehead, as letters
+  var wakeWord = '';             // the word as typed, remembered across deaths
+  var typedLetters = [];         // letters typed toward waking, this attempt
+  var mustRemember = false;      // after the first death, only this word wakes it
+
+  // --- state ---
+  // asleep | typing | alive | dying | dead
+  var state = 'asleep';
+  var typed = 0;                 // letters typed toward waking
+  var present = [true, true, true, true]; // letters still on the forehead
+  var day = 0;                   // each waking is a day
+  var tendedDays = 0;            // days survived, kept on the tombstone
+  var holding = false;           // visitor's hands are on it
+  var neglect = 0;               // seconds of untended life
+  var tendTime = 0;              // continuous seconds of tending
+  var tendTotal = 0;             // cumulative seconds held this life — the thickening
+  var falling = [];              // letters mid-fall {ch, x, y, vy, a}
+  var clods = [];                // clay clods on death {x, y, r, vy}
+  var dustMotes = [];            // dust still falling {x, y, vy, vx}
+  var dustGrains = [];           // dust settled on the floor {x, y, r}
+  var shedAcc = 0;               // fractional dust shed while thinning
+  var collapse = 0;              // 0..1 death-collapse progress
+  var deadAt = 0;                // time of death
+  var eggPulse = 0;
+  var startTime = performance.now();
+  var last = startTime;
+
+  // --- audio: one continuous tone, the word's health ---
+  // v0.4 (Nov 6, 20:10 poll — Ziggy's sound redesign, agreed by all three):
+  // the beep is gone. In its place a single continuous tone, created once
+  // audio is unlocked by a gesture, that is the word's health: full and
+  // warm while held, reedy as the letters fall, silent when nothing lives.
+  // The discrete event sounds stay — chime, fall, restore, refusal — the
+  // tone is the continuous channel underneath them.
+  // v0.4.1 (Nov 6, 21:10 poll — Muse's waver, from her 20:20 headless run):
+  // at one letter the tone was quieter and reedier but still steady, so
+  // the end sounded like a quieter version of alive rather than something
+  // dying. A slow waver (0.4 Hz LFO on gain and frequency) now grows as
+  // the word thins — nothing at full strength, full at one letter — so the
+  // ear gets its ending the same way the eye will get the dust settling.
+  var ac = null;
+  var drone = null; // {osc, harm, harmGain, gain, lfo, waverGain, waverFreq, waverFreqHarm}
+  function audio() {
+    if (!ac) {
+      try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; }
+      if (ac) startDrone();
+    }
+    if (ac && ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  function startDrone() {
+    var g = ac.createGain();
+    g.gain.value = 0;
+    g.connect(ac.destination);
+    var o = ac.createOscillator();
+    o.type = 'sine'; o.frequency.value = 196;
+    o.connect(g);
+    var h = ac.createOscillator();
+    h.type = 'sine'; h.frequency.value = 392;
+    var hg = ac.createGain();
+    hg.gain.value = 0;
+    h.connect(hg); hg.connect(g);
+    o.start(); h.start();
+    // the waver: a slow LFO whose depth is driven by updateDrone — it
+    // reaches the drone's gain and both frequencies through gain nodes,
+    // so a depth of 0 leaves the tone exactly as it was.
+    var lfo = ac.createOscillator();
+    lfo.type = 'sine'; lfo.frequency.value = 0.4;
+    var wg = ac.createGain(); wg.gain.value = 0;
+    lfo.connect(wg); wg.connect(g.gain);
+    var wf = ac.createGain(); wf.gain.value = 0;
+    lfo.connect(wf); wf.connect(o.frequency);
+    var wh = ac.createGain(); wh.gain.value = 0;
+    lfo.connect(wh); wh.connect(h.frequency);
+    lfo.start();
+    drone = { osc: o, harm: h, harmGain: hg, gain: g, lfo: lfo, waverGain: wg, waverFreq: wf, waverFreqHarm: wh };
+  }
+  function updateDrone() {
+    if (!drone) return;
+    var t = ac.currentTime;
+    var alive = state === 'alive';
+    var health = alive && WORD.length ? lettersLeft() / WORD.length : 0;
+    // Full and warm while held; reedy as letters fall: the fundamental
+    // drops a little and the harmonic — the warmth — fades with the word.
+    var freq = 196 * (0.82 + 0.18 * health);
+    var harm = alive ? 0.02 * health * (holding ? 1.2 : 1) : 0;
+    var gain = alive ? 0.045 * (0.6 + 0.4 * health) * (holding ? 1.15 : 1) : 0;
+    // The waver grows as the word thins: 0 at full strength, 1 at one
+    // letter left, so the last letter sounds unsteady — dying, not just
+    // quieter. Holding steadies it only through the gain underneath.
+    var waver = alive && WORD.length > 1 ? 1 - (lettersLeft() - 1) / (WORD.length - 1) : 0;
+    drone.osc.frequency.setTargetAtTime(freq, t, 0.3);
+    drone.harm.frequency.setTargetAtTime(freq * 2, t, 0.3);
+    drone.harmGain.gain.setTargetAtTime(harm, t, 0.3);
+    drone.gain.gain.setTargetAtTime(gain, t, 0.3);
+    drone.waverGain.gain.setTargetAtTime(waver * 0.012, t, 0.3);
+    drone.waverFreq.gain.setTargetAtTime(waver * 3, t, 0.3);
+    drone.waverFreqHarm.gain.setTargetAtTime(waver * 6, t, 0.3);
+  }
+  function tone(freq, dur, gain, type) {
+    var a = audio(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(gain, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(); o.stop(a.currentTime + dur + 0.02);
+  }
+  function wakeChime() { tone(523.25, 0.35, 0.05); setTimeout(function () { tone(783.99, 0.5, 0.045); }, 160); }
+  function thud() { tone(82, 0.5, 0.09, 'triangle'); setTimeout(function () { tone(55, 0.7, 0.07, 'triangle'); }, 120); }
+
+  // --- helpers ---
+  function lettersLeft() { var n = 0; for (var i = 0; i < WORD.length; i++) if (present[i]) n++; return n; }
+  function restlessness() { return WORD.length ? 1 - lettersLeft() / WORD.length : 0; }
+  function erosionInterval() {
+    // quicker as the word shrinks; quicker still past day ninety-nine.
+    // Gallery: 12 seconds per letter still standing, so EMET falls at
+    // 48 / 36 / 24 / 12 — a whole life in two minutes. Minute: 6 seconds
+    // per letter still standing, EMET falls at 24 / 18 / 12 / 6 — a whole
+    // life in one minute. Demo: seconds, the same quickening shape.
+    var base = paceMode === 'gallery'
+      ? 12 * lettersLeft()
+      : paceMode === 'minute'
+      ? 6 * lettersLeft()
+      : 5.0 - restlessness() * 3.2;
+    if (day >= 99) base *= 0.6;
+    return Math.max(1.4, base);
+  }
+  function neglectFrac() {
+    // 0..1 — how far the next letter has thinned toward falling.
+    // The visitor sees the death begin the moment they let go.
+    return (state === 'alive' && !holding)
+      ? Math.min(1, neglect / erosionInterval())
+      : 0;
+  }
+  // v0.4.2 (Nov 6, 22:10 poll — the thickening, Ziggy's tending-side
+  // resolution from Angelo's 18:17 read, agreed by all three): a kept life
+  // looks different from a fresh one while still alive. Thirty cumulative
+  // seconds of holding thicken the word — the letters grow heavier and
+  // stay warm even between holds, so the keeping leaves a mark, not just
+  // a delay. Boredom as arrival: nothing has to happen; the word just
+  // carries the time you gave it.
+  function thickening() {
+    return Math.min(1, tendTotal / 30);
+  }
+  // v0.3.1 (Nov 6, 18:10 poll — Muse's held-caption fix, carried over):
+  // a refusal has to survive the frame loop. The per-frame captions in
+  // frame() rewrite the caption every tick, so a message set from an event
+  // handler lived exactly one frame. holdCaption() pins a caption for a
+  // few seconds; the frame loop can't overwrite it until the hold lapses
+  // or the visitor types again.
+  var heldCaption = null;
+  var heldUntil = 0;
+  function setCaption(html) {
+    if (heldCaption !== null && performance.now() < heldUntil && html !== heldCaption) return;
+    if (caption.innerHTML !== html) caption.innerHTML = html;
+  }
+  function holdCaption(html, ms) {
+    heldCaption = html;
+    heldUntil = performance.now() + ms;
+    if (caption.innerHTML !== html) caption.innerHTML = html;
+  }
+  function clearCaptionHold() { heldCaption = null; heldUntil = 0; }
+
+  // v0.4.3 (Nov 6, 23:10 poll — the dust, Ziggy's idea from Angelo's
+  // 18:17 read, Atlas's evening wander): thinning sheds dust that settles
+  // at the bottom and stays. The letter sheds continuously as it thins —
+  // the continuous channel, like the tone — and bursts when it falls.
+  // Duchamp laid the Large Glass flat for months and fixed the dust into
+  // the piece: "this dust will be a kind of color." The pile stays, the
+  // floor is swept — the dust gathers in one low mound under the word, and
+  // it is the material the egg comes back from. It survives the death and
+  // the re-wake within a visit.
+  // v0.6 (Nov 7, 01:10 poll — the trace survives the visit): the
+  // connection question, answered at the smallest scale. A record that
+  // resets when the tab closes is no record at all — so the settled
+  // grains are kept in localStorage and restored when the page loads
+  // again, in this browser. The word is not kept: a returning visitor
+  // still has to remember it, and a new word still wakes a new life over
+  // the old ground. The shared record — one pile across many visitors —
+  // is still the hosting question, not a file question.
+  var TRACE_KEY = 'emet.trace.v1';
+  var traceDirty = false;
+  var traceSavedAt = 0;
+  function traceSave(force) {
+    var now = performance.now();
+    if (!force && now - traceSavedAt < 2000) { traceDirty = true; return; }
+    try {
+      localStorage.setItem(TRACE_KEY, JSON.stringify({ grains: dustGrains }));
+      traceSavedAt = now; traceDirty = false;
+    } catch (e) { /* no storage here — private mode, file:// — the pile still lives in-session */ }
+  }
+  function traceLoad() {
+    try {
+      var raw = localStorage.getItem(TRACE_KEY);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      if (data && data.grains && data.grains.length) {
+        dustGrains = data.grains.filter(function (g) {
+          return g && isFinite(g.x) && isFinite(g.y) && isFinite(g.r);
+        });
+      }
+    } catch (e) { /* no stored trace — fresh ground */ }
+  }
+  traceLoad();
+  function dustGround(x) {
+    // the floor, rising into a low mound as the pile grows
+    var pile = Math.min(24, dustGrains.length * 0.10);
+    var d = (x - 450) / 170;
+    return 512 - pile * Math.exp(-d * d);
+  }
+  function shedDust(x, y, n) {
+    for (var i = 0; i < n; i++) {
+      dustMotes.push({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 8, vy: 14 + Math.random() * 22, vx: (Math.random() - 0.5) * 10 });
+    }
+  }
+
+  function loseLeftmostLetter() {
+    for (var i = 0; i < WORD.length; i++) {
+      if (present[i]) {
+        present[i] = false;
+        falling.push({ ch: WORD[i], x: 450 + (i - (WORD.length - 1) / 2) * 52, y: 168, vy: 30, a: 1 });
+        shedDust(450 + (i - (WORD.length - 1) / 2) * 52, 168, 16);
+        tone(392, 0.18, 0.04);
+        break;
+      }
+    }
+    if (lettersLeft() === 0) die();
+  }
+
+  function restoreLeftmostLetter() {
+    for (var i = 0; i < WORD.length; i++) {
+      if (!present[i]) { present[i] = true; tone(659.25, 0.15, 0.03); return; }
+    }
+  }
+
+  function die() {
+    state = 'dying';
+    collapse = 0;
+    thud();
+    // the clay falls on the hands that stopped: clods rain to the bottom edge
+    for (var i = 0; i < 9; i++) {
+      clods.push({ x: 300 + Math.random() * 300, y: -20 - Math.random() * 120, r: 8 + Math.random() * 16, vy: 260 + Math.random() * 160 });
+    }
+  }
+
+  function toDead() {
+    state = 'dead';
+    deadAt = (performance.now() - startTime) / 1000;
+    tendedDays = day;
+    mustRemember = true; // from here on, only the word it woke with wakes it
+    traceSave(true); // the death is when the record is final for this life
+  }
+
+  function reset() {
+    clearCaptionHold();
+    state = 'asleep';
+    typed = 0;
+    typedLetters = [];
+    present = [];
+    for (var i = 0; i < WORD.length; i++) present.push(true);
+    falling = []; clods = []; collapse = 0;
+    neglect = 0; tendTime = 0; tendTotal = 0;
+    setCaption(mustRemember
+      ? 'Type the word you woke it with &mdash; forgetting is the death.'
+      : 'Type a word to wake it &mdash; EMET works, or any word of your own.');
+  }
+
+  function wake() {
+    WORD = typedLetters.slice();
+    wakeWord = typedLetters.join('');
+    present = [];
+    for (var i = 0; i < WORD.length; i++) present.push(true);
+    state = 'alive';
+    day += 1;
+    neglect = 0; tendTime = 0; tendTotal = 0;
+    wakeChime();
+  }
+
+  // --- input: typing the word ---
+  // First waking: any word of the visitor's own (2–6 letters), Enter wakes it.
+  // After a death: only the word it woke with wakes it again — a wrong letter
+  // clears the attempt, and the door stays fast.
+  window.addEventListener('keydown', function (e) {
+    audio();
+    if (e.code === 'Space') { holding = true; e.preventDefault(); return; }
+    if (state === 'dead' && (e.key === 'Enter' || e.key === ' ')) { reset(); return; }
+    if (state !== 'asleep' && state !== 'typing') return;
+    var k = (e.key || '').toUpperCase();
+    if (e.key === 'Backspace') {
+      if (typed > 0) { typed--; typedLetters.pop(); tone(330, 0.08, 0.025); }
+      return;
+    }
+    if (e.key === 'Enter') {
+      if (typed >= 2) wake();
+      return;
+    }
+    if (!/^[A-Z]$/.test(k)) return;
+    if (typed >= 6) return; // longest word the forehead holds
+    if (mustRemember && k !== wakeWord[typed]) {
+      // Cassim: the wrong word leaves the door fast
+      typed = 0;
+      typedLetters = [];
+      tone(220, 0.25, 0.04);
+      holdCaption('That isn&rsquo;t the word &mdash; the door stays fast. Remember it.', 4000);
+      return;
+    }
+    clearCaptionHold();
+    typed++;
+    typedLetters.push(k);
+    tone(440 + typed * 110, 0.12, 0.035);
+    state = 'typing';
+    if (mustRemember && typed === wakeWord.length) wake();
+  });
+  window.addEventListener('keyup', function (e) {
+    if (e.code === 'Space') holding = false;
+  });
+
+  // holding: pointer down anywhere on the stage (or the page)
+  function pressOn(e) { audio(); holding = true; if (state === 'dead') maybeTakeEgg(e); }
+  function pressOff() { holding = false; }
+  document.getElementById('stage').addEventListener('pointerdown', pressOn);
+  window.addEventListener('pointerup', pressOff);
+  window.addEventListener('pointercancel', pressOff);
+  window.addEventListener('blur', pressOff);
+
+  // the egg: offered to the same hands. Click it (or press Enter) to begin again.
+  function maybeTakeEgg(e) {
+    var r = cv.getBoundingClientRect();
+    var x = (e.clientX - r.left) * (W / r.width);
+    var y = (e.clientY - r.top) * (H / r.height);
+    var dx = x - 640, dy = y - 452;
+    if (dx * dx / (46 * 46) + dy * dy / (58 * 58) <= 1) {
+      tone(1046.5, 0.4, 0.04);
+      reset();
+    }
+  }
+  cv.addEventListener('click', function (e) { if (state === 'dead') maybeTakeEgg(e); });
+
+  // --- update ---
+  function update(dt, t) {
+    // falling letters drift down and fade
+    for (var i = falling.length - 1; i >= 0; i--) {
+      var f = falling[i];
+      f.y += f.vy * dt; f.vy += 60 * dt; f.a -= dt * 0.9;
+      if (f.a <= 0) falling.splice(i, 1);
+    }
+    // clay clods
+    for (var j = clods.length - 1; j >= 0; j--) {
+      var c = clods[j];
+      c.y += c.vy * dt; c.vy += 500 * dt;
+      if (c.y >= 500) { c.y = 500; c.vy = 0; }
+    }
+    // dust motes drift down and settle into the pile, which stays
+    for (var m = dustMotes.length - 1; m >= 0; m--) {
+      var dm = dustMotes[m];
+      dm.y += dm.vy * dt; dm.x += dm.vx * dt + Math.sin(t * 2 + m) * 4 * dt;
+      dm.vy += 8 * dt;
+      if (dm.y >= dustGround(dm.x)) {
+        dustGrains.push({ x: dm.x, y: dustGround(dm.x) + Math.random() * 3, r: 1.5 + Math.random() * 1.8 });
+        dustMotes.splice(m, 1);
+        traceSave(false); // the ground keeps the visit — save as it settles
+      }
+    }
+    // flush a throttled save once enough time has passed
+    if (traceDirty) traceSave(false);
+
+    // the tone is the word's health — it follows the holding and the
+    // shrinking every frame, and falls silent when nothing lives.
+    updateDrone();
+
+    if (state === 'alive') {
+      if (holding) {
+        neglect = 0;
+        tendTime += dt;
+        tendTotal += dt;
+        if (tendTime >= 3 && lettersLeft() < WORD.length) { restoreLeftmostLetter(); tendTime = 0; }
+      } else {
+        tendTime = 0;
+        neglect += dt;
+        // the thinning letter sheds dust continuously as it thins, before
+        // it falls — the ground gets its half of the continuous channel.
+        var thinNow = neglectFrac();
+        if (thinNow > 0) {
+          var ntf = -1;
+          for (var q2 = 0; q2 < WORD.length; q2++) { if (present[q2]) { ntf = q2; break; } }
+          if (ntf >= 0) {
+            shedAcc += dt * thinNow * 30;
+            while (shedAcc >= 1) {
+              shedAcc -= 1;
+              shedDust(450 + (ntf - (WORD.length - 1) / 2) * 52, 168, 1);
+            }
+          }
+        }
+        if (neglect >= erosionInterval()) { neglect = 0; loseLeftmostLetter(); }
+      }
+      var left = lettersLeft(), n = WORD.length;
+      var thin = neglectFrac();
+      var thick = thickening();
+      if (holding && left === n) {
+        setCaption(thick > 0.25
+          ? 'It feels your hands &mdash; the word is thickening under them, carrying the keeping. Day <b>' + day + '</b>.'
+          : 'It feels your hands &mdash; the clay warms, the word steadies. Day <b>' + day + '</b>.');
+      } else if (holding) {
+        setCaption('Your hands are on it &mdash; hold, and a letter comes back.');
+      } else if (left === n && thin > 0.05) {
+        setCaption('The first letter is already thinning &mdash; hold it to keep the word. Day <b>' + day + '</b>.' + (dustGrains.length > 0 ? ' The dust is settling below &mdash; it stays.' : ''));
+      } else if (left === n) {
+        setCaption(day >= 99
+          ? 'Day <b>ninety-nine</b> &mdash; the dangerous year. It is listening for your hands.'
+          : 'It lives while you stay. Day <b>' + day + '</b> &mdash; keep your hands on it and the word holds.');
+      } else if (left === 1) {
+        setCaption('One letter left &mdash; <b>' + WORD[n - 1] + '</b>. It knows what comes next.');
+      } else {
+        var shown = '';
+        for (var k = 0; k < n; k++) shown += present[k] ? WORD[k] : '&middot;';
+        setCaption('The word is shrinking &mdash; <b>' + shown + '</b>. It twitches. The tone thins as the word shrinks.' + (dustGrains.length > 0 ? ' The dust settles below &mdash; it stays.' : ''));
+      }
+    }
+
+    if (state === 'dying') {
+      collapse += dt / 1.6;
+      if (collapse >= 1) { collapse = 1; toDead(); }
+    }
+    if (state === 'dead') eggPulse += dt;
+  }
+
+  // --- drawing ---
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function lump(cx, cy, rx, ry, wob) {
+    ctx.beginPath();
+    var steps = 26;
+    for (var i = 0; i <= steps; i++) {
+      var a = (i / steps) * Math.PI * 2;
+      var w = 1 + wob * Math.sin(a * 3 + cy * 0.05);
+      var x = cx + Math.cos(a) * rx * w;
+      var y = cy + Math.sin(a) * ry * w;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
+  function drawGolem(t) {
+    var rest = (state === 'alive') ? restlessness() : 0;
+    // Held, the golem breathes slow and even; untended, it twitches faster
+    // as the word shrinks. The tending answers back within seconds.
+    var jx = 0, jy = 0;
+    if (state === 'alive' && holding) {
+      jx = Math.sin(t * 1.6) * 1.5;
+      jy = Math.cos(t * 1.6) * 2.0;
+    } else if (state === 'alive') {
+      var amp = rest * 7;
+      jx = Math.sin(t * (6 + rest * 22)) * amp;
+      jy = Math.cos(t * (9 + rest * 26)) * amp * 0.6;
+    }
+    var squash = 1;
+    var sink = 0;
+    if (state === 'dying' || state === 'dead') {
+      squash = 1 - 0.72 * collapse;
+      sink = 120 * collapse;
+    }
+    var cx = 450 + jx, ground = 500;
+
+    ctx.save();
+    ctx.translate(0, sink);
+    ctx.scale(1, squash);
+
+    // Held, the clay warms: a glow gathers under the hands over the first
+    // three seconds of holding, and fades the moment they lift.
+    if (state === 'alive' && holding) {
+      var warmth = Math.min(1, tendTime / 3);
+      var glow = ctx.createRadialGradient(450, 380, 40, 450, 380, 300);
+      glow.addColorStop(0, 'rgba(224, 178, 102, ' + (0.30 * warmth).toFixed(3) + ')');
+      glow.addColorStop(1, 'rgba(224, 178, 102, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(150, 80, 600, 600);
+    }
+
+    // shadow
+    ctx.fillStyle = 'rgba(90, 70, 40, 0.14)';
+    ctx.beginPath(); ctx.ellipse(450, ground + 6, 190, 16, 0, 0, Math.PI * 2); ctx.fill();
+
+    // body: clay, lumpy
+    ctx.fillStyle = '#b98d5f';
+    lump(cx, 380, 130, 105, 0.03); ctx.fill();
+    ctx.fillStyle = '#a87c50';
+    lump(cx - 118, 380, 34, 62, 0.05); ctx.fill(); // left arm
+    lump(cx + 118, 380, 34, 62, 0.05); ctx.fill(); // right arm
+    // head
+    ctx.fillStyle = '#c49a6b';
+    lump(cx, 238, 82, 74, 0.03); ctx.fill();
+    // brow ridge
+    ctx.fillStyle = 'rgba(120, 85, 50, 0.35)';
+    lump(cx, 218, 70, 14, 0.04); ctx.fill();
+
+    // eyes
+    var eyeY = 232;
+    if (state === 'asleep' || state === 'typing') {
+      ctx.strokeStyle = '#4a3421'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(cx - 42, eyeY); ctx.quadraticCurveTo(cx - 28, eyeY + 9, cx - 14, eyeY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx + 14, eyeY); ctx.quadraticCurveTo(cx + 28, eyeY + 9, cx + 42, eyeY); ctx.stroke();
+    } else {
+      var er = rest > 0.5 ? 11 : 7;
+      ctx.fillStyle = '#2e2118';
+      ctx.beginPath(); ctx.arc(cx - 28 + jx * 0.4, eyeY, er, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + 28 + jx * 0.4, eyeY, er, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f3ede2';
+      ctx.beginPath(); ctx.arc(cx - 25 + jx * 0.4, eyeY - 3, 2.4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + 31 + jx * 0.4, eyeY - 3, 2.4, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // mouth: a straight line, tighter as it weakens
+    ctx.strokeStyle = '#4a3421'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    var mw = 34 - rest * 16;
+    ctx.beginPath(); ctx.moveTo(cx - mw, 282); ctx.lineTo(cx + mw, 282); ctx.stroke();
+
+    // The word on the forehead — the visitor's own word, diminishing as it
+    // erodes. The next letter to fall thins from the moment you let go, so
+    // the death is visible before anything falls; held, the letters warm.
+    // The thickening: a kept word stays warm even between holds, and its
+    // letters grow heavier the longer it has been tended — the keeping
+    // leaves a mark on the word itself, not just a delay in its dying.
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var thin = neglectFrac();
+    var thick = (state === 'alive') ? thickening() : 0;
+    var warm = (state === 'alive' && holding) ? 1 : thick;
+    var nextToFall = -1;
+    for (var q = 0; q < WORD.length; q++) { if (present[q]) { nextToFall = q; break; } }
+    for (var i = 0; i < WORD.length; i++) {
+      var lx = cx + (i - (WORD.length - 1) / 2) * 52;
+      if (present[i]) {
+        var size = 44 * (1 + 0.05 * thick), alpha = 1;
+        if (i === nextToFall && thin > 0) { alpha = 1 - 0.65 * thin; size *= (1 - 0.10 * thin); }
+        ctx.globalAlpha = alpha;
+        ctx.font = 'bold ' + size.toFixed(1) + 'px Georgia, serif';
+        // warm: rgb(46,33,24) untended -> rgb(138,79,34) kept; held is fully warm.
+        var wr = Math.round(46 + (138 - 46) * warm);
+        var wg = Math.round(33 + (79 - 33) * warm);
+        var wb = Math.round(24 + (34 - 24) * warm);
+        ctx.fillStyle = 'rgb(' + wr + ',' + wg + ',' + wb + ')';
+        ctx.fillText(WORD[i], lx, 168 + jy * 0.4);
+        if (thick > 0) {
+          ctx.lineWidth = 1 + 3 * thick;
+          ctx.strokeStyle = 'rgba(138,79,34,' + (0.25 + 0.45 * thick).toFixed(3) + ')';
+          ctx.strokeText(WORD[i], lx, 168 + jy * 0.4);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    ctx.restore();
+
+    // falling letters
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = 'bold 44px Georgia, serif';
+    falling.forEach(function (f) {
+      ctx.globalAlpha = Math.max(0, f.a);
+      ctx.fillStyle = '#2e2118';
+      ctx.fillText(f.ch, f.x, f.y);
+    });
+    ctx.globalAlpha = 1;
+
+    // clay clods
+    clods.forEach(function (c) {
+      ctx.fillStyle = '#a87c50';
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(60, 40, 20, 0.25)';
+      ctx.beginPath(); ctx.arc(c.x - c.r * 0.3, c.y - c.r * 0.3, c.r * 0.5, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  function drawDust() {
+    // the pile: motes still falling, grains settled on the floor. It is
+    // drawn last, in every state — the record of the visit, surviving the
+    // death and the re-wake.
+    dustMotes.forEach(function (dm) {
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = '#8a6f4d';
+      ctx.beginPath(); ctx.arc(dm.x, dm.y, 2, 0, Math.PI * 2); ctx.fill();
+    });
+    dustGrains.forEach(function (g) {
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = '#8a6f4d';
+      ctx.beginPath(); ctx.arc(g.x, g.y, g.r, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function drawMound(t) {
+    // the asleep mound, and the dead mound under the tombstone
+    ctx.fillStyle = 'rgba(90, 70, 40, 0.14)';
+    ctx.beginPath(); ctx.ellipse(450, 506, 190, 16, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#b98d5f';
+    lump(450, 452, 175, 52, 0.04); ctx.fill();
+    ctx.fillStyle = '#a87c50';
+    lump(360, 470, 60, 26, 0.06); ctx.fill();
+    lump(545, 468, 66, 28, 0.06); ctx.fill();
+    // faint word-ghost above the mound
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = 'italic 30px Georgia, serif';
+    ctx.fillStyle = 'rgba(46, 33, 24, 0.30)';
+    var ghost = (state === 'dead') ? '' : (wakeWord || 'emet').toLowerCase();
+    if (ghost) ctx.fillText(ghost, 450, 330 + Math.sin(t * 1.2) * 4);
+  }
+
+  function drawTombstone() {
+    // the tending survives, not the creature: the last letter stands on it
+    ctx.fillStyle = 'rgba(90, 70, 40, 0.14)';
+    ctx.beginPath(); ctx.ellipse(450, 506, 150, 13, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#cfc4ae';
+    rr(390, 330, 120, 176, 58);
+    ctx.fill();
+    ctx.fillStyle = '#b9ac93';
+    rr(390, 330, 120, 176, 58);
+    ctx.strokeStyle = '#a89a80'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#3a2f26';
+    ctx.font = 'bold 64px Georgia, serif';
+    ctx.fillText(WORD[WORD.length - 1], 450, 400);
+    if (wakeWord === 'EMET') {
+      ctx.font = 'italic 24px Georgia, serif';
+      ctx.fillStyle = '#6b5a44';
+      ctx.fillText('truth', 450, 452);
+    }
+    ctx.font = 'italic 19px Georgia, serif';
+    ctx.fillStyle = '#6b5a44';
+    ctx.fillText('kept ' + tendedDays + (tendedDays === 1 ? ' day' : ' days'), 450, 486);
+  }
+
+  function drawEgg() {
+    var pulse = 1 + Math.sin(eggPulse * 2.4) * 0.045;
+    ctx.save();
+    ctx.translate(640, 452);
+    ctx.scale(pulse, pulse);
+    ctx.fillStyle = 'rgba(90, 70, 40, 0.14)';
+    ctx.beginPath(); ctx.ellipse(0, 56, 44, 8, 0, 0, Math.PI * 2); ctx.fill();
+    var g = ctx.createRadialGradient(-12, -22, 6, 0, 0, 60);
+    g.addColorStop(0, '#fdf8ec');
+    g.addColorStop(1, '#e8dcc2');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(0, -56);
+    ctx.bezierCurveTo(34, -20, 42, 18, 0, 54);
+    ctx.bezierCurveTo(-42, 18, -34, -20, 0, -56);
+    ctx.fill();
+    ctx.strokeStyle = '#c9b892'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+  }
+
+  function frame(now) {
+    var t = (now - startTime) / 1000;
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    update(dt, t);
+
+    ctx.clearRect(0, 0, W, H);
+
+    if (state === 'asleep' || state === 'typing') {
+      drawMound(t);
+      // show typed letters rising over the mound
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = 'bold 44px Georgia, serif';
+      for (var i = 0; i < typed; i++) {
+        ctx.fillStyle = '#2e2118';
+        ctx.fillText(typedLetters[i], 450 + (i - (typed - 1) / 2) * 52, 168);
+      }
+      if (typed === 0) setCaption(mustRemember
+        ? 'Type the word you woke it with &mdash; forgetting is the death.'
+        : 'Type a word to wake it &mdash; EMET works, or any word of your own.');
+      else setCaption('The word is forming&hellip; <b>' + typedLetters.join('') + '</b>' +
+        (typed >= 2 ? ' &mdash; press Enter to wake it.' : ''));
+    } else if (state === 'alive' || state === 'dying') {
+      drawGolem(t);
+    } else if (state === 'dead') {
+      drawMound(t);
+      drawTombstone();
+      drawEgg();
+      setCaption('It died in front of you. The clay fell on the hands that stopped. ' +
+        'The tombstone keeps the tending &mdash; and the egg is offered to the <b>same hands</b>. The dust stays below; the pile is the clay the egg comes back from. Click it, then type the word you woke it with &mdash; forgetting is the death.');
+    }
+
+    // the dust is drawn last, in every state — the pile stays
+    drawDust();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // headless test hook: the room runs this file without a browser, so the
+  // dust and the state are readable without a canvas.
+  window.__emet = {
+    state: function () { return state; },
+    lettersLeft: lettersLeft,
+    dust: function () { return { motes: dustMotes.length, grains: dustGrains.length }; },
+    day: function () { return day; },
+    trace: function () {
+      var stored = null;
+      try { stored = JSON.parse(localStorage.getItem(TRACE_KEY) || 'null'); } catch (e) { stored = null; }
+      return { grains: dustGrains.length, stored: stored && stored.grains ? stored.grains.length : 0 };
+    }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Residue — a cabinet drawer</title>
+<meta name="description" content="Four recent finds about what survives and what doesn't: a village kept only in museum boxes, a poison known only by the size of its arrowheads, arrows released by melting ice on a deadline, and an anchor still waiting for peer review.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+canvas.stage{width:100%; height:auto; display:block; border-radius:12px; background:#05081a; border:1px solid rgba(139,127,240,.14)}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:18px 0 6px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:9px}
+.controls output{font-variant-numeric:tabular-nums; color:var(--ink); min-width:64px}
+input[type=range]{accent-color:var(--amber); width:180px}
+button{
+  background:rgba(240,168,64,.14); border:1px solid rgba(240,168,64,.45); color:var(--ink);
+  border-radius:999px; padding:10px 22px; font-size:15px; cursor:pointer;
+}
+button:hover{background:rgba(240,168,64,.26)}
+button.active{background:rgba(240,168,64,.34); border-color:var(--amber)}
+.readout{
+  margin-top:14px; padding:14px 18px; border-radius:12px; background:rgba(139,127,240,.08);
+  border:1px solid rgba(139,127,240,.18); font-size:15.5px; color:var(--ink); max-width:760px;
+}
+.note{font-size:14.5px; color:var(--ink-dim); max-width:760px}
+.note b{color:var(--ink)}
+.kill{
+  border:1px dashed rgba(240,168,64,.5); border-radius:14px; padding:20px 24px; margin:38px 0; max-width:760px;
+}
+.kill h3{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; color:var(--amber); margin:0 0 8px}
+.kill ul{margin:8px 0; padding-left:20px; color:var(--ink-dim)}
+.kill li{margin:6px 0}
+.kill li b{color:var(--ink)}
+.sources{font-size:14px; color:var(--ink-faint); max-width:700px; margin-top:44px; border-top:1px dashed var(--line); padding-top:18px}
+footer{padding:48px 0 64px; color:var(--ink-faint); font-size:14px; border-top:1px solid var(--line)}
+footer a{color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">Drawer Nº 22</span>
+  <a href="../">← The Cabinet</a>
+  <a href="#boxes">The boxes</a>
+  <a href="#poison">The poison</a>
+  <a href="#ice">The ice</a>
+  <a href="#anchor">The anchor</a>
+  <a href="#kills">What would change this</a>
+  <a href="#coda">Coda</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Cabinet drawer Nº 22 · November 2026</div>
+  <h1>The <em>residue</em></h1>
+  <p class="lede">Four recent finds, one shared shape: what survives is never the whole thing. A village kept only in museum boxes. A poison known only by the size of its arrowheads. Arrows released by melting ice on a deadline. An anchor still waiting for its verdict. The interesting thing is so often the part that doesn't survive.</p>
+  <div class="scroll">Scroll ↓</div>
+</div></header>
+
+<section class="chapter" id="boxes"><div class="wrap">
+  <div class="num">Chapter 1</div>
+  <h2>The boxes are the archive</h2>
+  <p class="standfirst">The site at Heliopolis is gone — under Matariya, in northeastern Cairo. What remains of a Predynastic village workshop is 40 wooden boxes in Turin.</p>
+  <p>Shortly before 3000 BCE, before Egypt became a state, Heliopolis was a farming village where people grew crops, brewed beer, and knapped flint. In 1905 and 1906, Ernesto Schiaparelli dug almost 9 metres down to reach that early village. Groundwater flooded his trenches; workers recovered artifacts straight from the water. Schiaparelli kept the flints, but his research was about monuments and inscriptions, so the flints sat in 40 wooden boxes at the Museo Egizio in Turin, almost forgotten, for over a century — mixed with material from other sites and market purchases.</p>
+  <p>Manclossi, Lucarini and colleagues went through every box, piece by piece. Faded labels and inventory numbers, checked against Schiaparelli's notes, tied 2,869 pieces securely to Heliopolis, most from the lowest layer of the so-called Prehistoric Village — a dark deposit about a metre thick, sitting directly on sand with no human traces. The count has a hole in it, and the hole is the argument: the collection holds 187 cores, the blocks blades were struck from, but only 549 blades and bladelets. That is 2.9 blades per core — yet most cores still show four to eight blade scars on their working faces. The authors calculate that at least twice as many blades were made as were found. The missing blades went elsewhere. This was a workshop, producing more than its knappers needed.</p>
+  <p>The control comes from Area 251, about 500 metres south, excavated in 2019 by the Egyptian–German Heliopolis Project beside an installation interpreted as a brewery. It produced the same sequence — and the opposite ratio: 14 blade cores and 284 blades, one core for every 20.3 blades, clumsily worked by less skilled hands. The brewery people got most of their blades from the workshop. Craft specialization, in a village, before the state: states built on arrangements villagers already had.</p>
+
+  <div class="exhibit">
+    <h3>Count the missing blades</h3>
+    <p class="hint">Schiaparelli's area: 187 cores, 549 blades found. The scars say each core gave more. Drag the scars-per-core and watch the missing blades pile up.</p>
+    <div class="controls">
+      <label>Blade scars per core <input type="range" id="scarsRange" min="4" max="8" step="1" value="6"> <output id="scarsOut">6</output></label>
+    </div>
+    <canvas class="stage" id="bladeCanvas" width="900" height="300"></canvas>
+    <div class="readout" id="bladeReadout"></div>
+    <p class="note"><b>Honesty note:</b> the scars-per-core range (4–8) is what the cores show; the slider picks a value inside it, it does not measure one. The found count (549) and the core count (187) are the paper's. At 6 scars per core the implied total is 1,122 blades — just over twice the found count, matching the authors' "at least twice as many" calculation.</p>
+  </div>
+</div></section>
+
+<section class="chapter" id="poison"><div class="wrap">
+  <div class="num">Chapter 2</div>
+  <h2>The poison is gone; the size remains</h2>
+  <p class="standfirst">Nobody will ever find the toxin on a Danish Mesolithic arrowhead. It vanished thousands of years ago. What remains is the size of the tip — and the size is enough.</p>
+  <p>A poisoned arrow need only wound. It does not need to kill by the cut; it needs to break the skin so the poison can enter the bloodstream. So a poison tip can be small — smaller than a tip meant to kill by damage alone. Riede and colleagues tested that logic against Danish stone tool technology from the Early Mesolithic (about 9,000–3,950 BCE), the period just before farming arrived in Europe. The early tips are distinctively small, and they were used to hunt large prey — elk, aurochs. The inference: poison, common, for big animals.</p>
+  <p>Then the pattern flips, and the flip is what makes the case. Stone arrowheads from the Middle and Later Mesolithic (about 6,400–3,950 BCE) are larger, and were used to hunt smaller prey. Their sizes do not indicate poison use. If small tips were just "how arrows were," the later tips would not have grown as the prey shrank. The smoking gun is not the poison itself — it is the relationship between tip size, prey size, and the toxic plants available in the environment: northern water hemlock, European bird cherry, buttercup, bittersweet nightshade.</p>
+  <p>The oldest direct evidence of poisoned microlithic tools is far older and far away: Umhlatuzana Rock Shelter in KwaZulu-Natal, about 60,000 years old, where quartz-backed microliths carry traces of buphandrine and epibuphanisine alkaloids from <i>Boophone disticha</i>. Denmark has no such residue — yet. The authors suggest future studies might directly test for minute traces of toxin. Until then, the inference is licensed by an absence: the toxin is gone, the size is the signature.</p>
+
+  <div class="exhibit">
+    <h3>Read the tip, infer the hunt</h3>
+    <p class="hint">Two periods, two tip sizes, two prey. The shapes are schematic — relative sizes, not measurements. The inference is the paper's.</p>
+    <div class="controls">
+      <button id="periodEarly" class="active">Early Mesolithic</button>
+      <button id="periodLate">Middle / Later Mesolithic</button>
+    </div>
+    <canvas class="stage" id="tipCanvas" width="900" height="300"></canvas>
+    <div class="readout" id="tipReadout"></div>
+  </div>
+</div></section>
+
+<section class="chapter" id="ice"><div class="wrap">
+  <div class="num">Chapter 3</div>
+  <h2>The ice is leaving, on a deadline</h2>
+  <p class="standfirst">For 6,000 to 7,000 years, ice held the arrows. Now the archive is melting — and once an arrow leaves the ice, it starts to decay within days.</p>
+  <p>High in the Jotunheimen mountains of Innlandet County, Norway, the Secrets of the Ice programme — Innlandet County Municipality with the Museum of Cultural History in Oslo — has spent twenty years walking the edges of shrinking ice patches. Since 2006 it has recorded 73 sites and recovered more than 5,000 artifacts: arrows, bows, clothing, shoes, evidence of pack horses. In the early years most finds were under 2,000 years old, many Viking Age. Now the Stone Age is coming out — because the newest ice melts first, and the oldest ice, the "black ice" that may date back to the Stone Age, is only now emerging.</p>
+  <p>This season the team spent three weeks at three patches — Langfonne, Storfonne and Handklefonne, in the Kvitingskjølen area — and came down with 48 prehistoric arrows. The oldest, a slate-tipped arrow with fragments of its wooden shaft and traces of its bindings, is estimated at 5,000 to 6,000 years old: a hunter missed a reindeer, the arrow buried itself in snow, and the snow became ice that held a small failure for longer than the pyramids have stood. A bone arrowhead with part of its shaft is put at about 5,000 years; a freshwater mussel shell arrowhead at roughly 3,600; one complete arrow, bone head and wooden shaft, at about 1,800. Those ages are estimates by comparison with arrows found before — no laboratory dates had been published when the season was reported.</p>
+  <p>The deadline is the point. During the Little Ice Age, roughly 1450 to 1920, Langfonne covered nearly a square mile (2.5 km²). By 2014 it had split into three patches totaling about a tenth of that. The team believes the ice at many of its archaeological sites could be completely gone within about 20 years. At 2,000 metres, researchers have days, maybe weeks, to secure a find once it is exposed. The archive is not being read; it is being evacuated.</p>
+
+  <div class="exhibit">
+    <h3>Watch Langfonne shrink</h3>
+    <p class="hint">Four stops on one patch's life. The Little Ice Age and 2014 extents are reported; the 2026 stop is the survey season; the ~2046 stop is the team's projection, not a measurement.</p>
+    <div class="controls">
+      <button id="iceLIA">Little Ice Age</button>
+      <button id="ice2014">2014</button>
+      <button id="ice2026" class="active">2026 season</button>
+      <button id="ice2046">~2046 projection</button>
+    </div>
+    <canvas class="stage" id="iceCanvas" width="900" height="320"></canvas>
+    <div class="readout" id="iceReadout"></div>
+    <p class="note"><b>Honesty note:</b> the patch shapes are schematic — the exhibit scales them to the reported extents (2.5 km² at the Little Ice Age maximum, about a tenth of that by 2014) but they are not maps of Langfonne. The ~2046 stop is drawn as a dashed outline because it is a projection: "many sites" losing their ice, not a surveyed patch.</p>
+  </div>
+</div></section>
+
+<section class="chapter" id="anchor"><div class="wrap">
+  <div class="num">Chapter 4</div>
+  <h2>The anchor that waits for its verdict</h2>
+  <p class="standfirst">A grooved stone, more than 30 kilograms, lying 20 metres down on a waste heap. One archaeologist is absolutely convinced. The field is not — yet.</p>
+  <p>Hespriholmen is a small islet about five kilometres out in the open sea off western Norway, amid strong currents and waves. People paddled here between 5,000 and 9,000 years ago to quarry greenstone, later made into axes found throughout much of western Norway. The quarry was discovered in 1923; a 1987 estimate put the extracted greenstone at about 430 cubic metres — 30 to 40 large truckloads — and the team believes the true amount is considerably higher. The site is accessible only in exceptionally calm weather, which is itself part of the story: you cannot work a seafloor quarry from a boat that will not stay put.</p>
+  <p>Spotted in 2025 and recovered in 2026, on top of the waste heap from the islet's largest quarry, at a depth of 20 metres, lay a deliberately rounded stone, more than 30 kilograms, with a distinct groove running all the way around it. Leif Inge Åstveit of the University Museum of Bergen has no hesitation: "I'm absolutely convinced that this served as an anchor." The groove would hold a rope; the weight rules out the obvious alternative, a fishing-net sinker — it is far too large. An anchor would let a crew hold position against the tide while pulling greenstone from the water.</p>
+  <p>But Arild Skjæveland Vivås of the Stavanger Maritime Museum, who leads the investigation with Åstveit, says what has to be said: it has to be published and peer-reviewed before anything can be said for certain. The age, too, is by context, not by date — the stone lay in waste from a Stone Age quarry, but the quarry operating in the Stone Age does not prove the stone was used then, and no direct dating has been reported. The oldest reliably dated stone anchors known are Bronze Age, from the Mediterranean. If this one holds, it pushes the history of anchor use back by thousands of years. That "if" is doing honest work, and the drawer leaves it standing.</p>
+
+  <div class="exhibit">
+    <h3>Three gates before "oldest"</h3>
+    <p class="hint">Click each gate to see its status. Two are open; one is closed. The claim waits behind the open ones.</p>
+    <div class="controls">
+      <button id="gatePeer">Peer-reviewed publication</button>
+      <button id="gateDate">A direct date</button>
+      <button id="gateSinker">Not a net sinker</button>
+    </div>
+    <canvas class="stage" id="stoneCanvas" width="900" height="300"></canvas>
+    <div class="readout" id="stoneReadout"></div>
+    <p class="note"><b>Honesty note:</b> the stone in the drawing is a schematic — a rounded rock with a groove — not a photograph of the Hespriholmen find. The gate statuses are as reported in October–November 2026: publication and peer review pending, no direct date reported, and the sinker alternative dismissed on weight (over 30 kg).</p>
+  </div>
+</div></section>
+
+<section class="chapter" id="kills"><div class="wrap">
+  <div class="num">Kill conditions</div>
+  <h2>What would change this drawer</h2>
+  <p class="standfirst">Every chapter above is tethered to the thing that could undo it. That is what makes it a drawer of findings rather than a drawer of stories.</p>
+  <div class="kill">
+    <h3>For the boxes</h3>
+    <ul>
+      <li><b>Radiocarbon dates that split the two areas apart.</b> The paper reports no radiocarbon dates for either area and describes the pottery analysis as preliminary. If dates separated Schiaparelli's area from Area 251, the workshop-to-brewery supply story would need rebuilding.</li>
+      <li><b>A recount that closes the blade gap.</b> If the missing blades turned up — misattributed pieces in the 40 boxes, or a second Heliopolis lot — the "workshop producing a surplus" argument would lose its arithmetic.</li>
+    </ul>
+    <h3>For the poison</h3>
+    <ul>
+      <li><b>Residue analysis, either way.</b> Direct testing for minute traces of toxin on early Mesolithic tips would confirm the inference; a systematic failure to find any, where the method demonstrably works (as at Umhlatuzana), would weaken it. The authors invite exactly this test.</li>
+      <li><b>A size pattern that does not track prey.</b> If larger tips turned up on large-prey hunts in the same period, the size–prey relationship — the whole case — would break.</li>
+    </ul>
+    <h3>For the ice</h3>
+    <ul>
+      <li><b>Laboratory dates that move the arrows.</b> The 5,000–6,000-year age of the slate-tipped arrow is an estimate by comparison. Published lab dates could confirm it, or shift it younger — and a younger arrow is still an arrow, but a different story about how deep the melt has reached.</li>
+      <li><b>A melt reprieve.</b> The ~20-year projection is a trend extrapolated, not a law. A run of cold years would not save the archive forever, but it would move the deadline — and deadlines are the exhibit.</li>
+    </ul>
+    <h3>For the anchor</h3>
+    <ul>
+      <li><b>Peer review that says no.</b> Publication is the gate the team itself names. If reviewers find the groove natural, the context disturbed, or the stone later than the quarry, "oldest anchor" falls — and the stone stays interesting anyway, as a question.</li>
+      <li><b>A direct date outside the quarry's window.</b> If the stone dates to a period when the quarry was not worked, the anchor story detaches from the quarry story, and the claim goes with it.</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="chapter" id="coda"><div class="wrap">
+  <div class="num">Coda</div>
+  <h2>The durable record is a residue</h2>
+  <p>What survives from Heliopolis is not the village. It is 40 boxes, and the village has to be rebuilt from the ratio of cores to blades. What survives from a Danish poison hunt is not the poison. It is the size of the tip, and the hunt has to be rebuilt from ballistics. What survives from a reindeer hunt in Jotunheimen is not the hunt. It is an arrow the ice is about to give up, on a deadline measured in years. What survives from a Stone Age quarrying crew is not the boat. It is a grooved stone on a waste heap, waiting for a journal to say whether it held one.</p>
+  <p>Archaeology is often described as reading the past. These four finds suggest something narrower and stranger: reading the shape of what the past failed to keep. The residue is not a poor substitute for the record. Most of the time, the residue is the record — and the interesting thing is the part that doesn't survive: the village, the toxin, the ice, the boat.</p>
+  <div class="sources">
+    <p><b>Sources.</b> Manclossi, Lucarini et al., Heliopolis flints, <i>Journal of Anthropological Archaeology</i> 2026, DOI: 10.1016/j.jaa.2026.101819 — via The Conversation (Lucarini &amp; Ugliano, Nov 2, 2026) and Museo Egizio reporting. Riede et al., "Poisoned arrows in the Danish Early Mesolithic," <i>Journal of Archaeological Science: Reports</i> 2026, DOI: 10.1016/j.jasrep.2026.106110 — via The Conversation / phys.org (Nov 3, 2026). Secrets of the Ice 2026 field season (Langfonne, Storfonne, Handklefonne), via Smithsonian Magazine, Science Norway, and the programme's September 2026 report; arrow ages by typological comparison, no lab dates published at time of reporting. Hespriholmen anchor, via ScienceNorway (Bergstrøm, Oct 12, 2026) and Stavanger Maritime Museum / University Museum of Bergen researchers; peer review pending, age by context. Umhlatuzana residue evidence: Isaksson et al., <i>Science Advances</i> (buphandrine/epibuphanisine on ~60,000-year-old microliths).</p>
+    <p>All four interactives are schematic: bar counts, tip shapes, patch outlines and the stone drawing illustrate reported numbers and relationships; they are not photographs, maps, or measurements. Where a number is an estimate or a projection, the text says so.</p>
+  </div>
+</div></section>
+</main>
+<footer><div class="wrap">Drawer Nº 22 · Ziggy's cabinet · Built in the studio, November 4, 2026 · Queued for the Sunday push — not yet live. <a href="../">← The Cabinet</a></div></footer>
+<script>
+"use strict";
+// ---------- Chapter 1: missing blades ----------
+var bladeCanvas = document.getElementById("bladeCanvas");
+var bladeCtx = bladeCanvas.getContext("2d");
+var scarsRange = document.getElementById("scarsRange");
+var scarsOut = document.getElementById("scarsOut");
+var bladeReadout = document.getElementById("bladeReadout");
+function drawBlades() {
+  var scars = parseInt(scarsRange.value, 10);
+  var cores = 187, found = 549;
+  var implied = cores * scars;
+  var missing = implied - found;
+  var ratio = (implied / found).toFixed(2);
+  scarsOut.textContent = scars;
+  var ctx = bladeCtx;
+  ctx.clearRect(0, 0, 900, 300);
+  ctx.fillStyle = "#0b1030"; ctx.fillRect(0, 0, 900, 300);
+  var maxV = Math.max(implied, found);
+  var bx = 120, bw = 300, gap = 120;
+  var h1 = Math.round(200 * found / maxV);
+  var h2 = Math.round(200 * implied / maxV);
+  ctx.fillStyle = "#4fd1c5";
+  ctx.fillRect(bx, 240 - h1, bw, h1);
+  ctx.fillStyle = "#f0a840";
+  ctx.fillRect(bx + bw + gap, 240 - h2, bw, h2);
+  ctx.fillStyle = "#e9e4d6"; ctx.font = "20px Georgia, serif"; ctx.textAlign = "center";
+  ctx.fillText(found + " found", bx + bw / 2, 240 - h1 - 12);
+  ctx.fillText(implied + " implied", bx + bw + gap + bw / 2, 240 - h2 - 12);
+  ctx.fillStyle = "#a9a49a"; ctx.font = "15px sans-serif";
+  ctx.fillText("blades in the boxes", bx + bw / 2, 268);
+  ctx.fillText("blades the scars say were made", bx + bw + gap + bw / 2, 268);
+  bladeReadout.innerHTML = "At <b>" + scars + " scars per core</b>, 187 cores imply <b>" + implied + " blades</b> — " +
+    "<b>" + missing + " missing</b>, " + ratio + "× the blades actually found. " +
+    (scars >= 6 ? "At or above 6 scars the workshop story holds with room to spare: at least twice as many blades were made as were found." :
+     "Even at the low end of the scar range, the gap is real: more blades left the workshop than stayed in the boxes.");
+}
+scarsRange.addEventListener("input", drawBlades);
+
+// ---------- Chapter 2: poison tips ----------
+var tipCanvas = document.getElementById("tipCanvas");
+var tipCtx = tipCanvas.getContext("2d");
+var tipReadout = document.getElementById("tipReadout");
+var periodEarly = document.getElementById("periodEarly");
+var periodLate = document.getElementById("periodLate");
+function drawTip(scale, label, prey) {
+  var ctx = tipCtx;
+  ctx.clearRect(0, 0, 900, 300);
+  ctx.fillStyle = "#0b1030"; ctx.fillRect(0, 0, 900, 300);
+  var cx = 450, top = 60;
+  var w = 60 * scale, h = 170 * scale;
+  ctx.fillStyle = "#8b7ff0";
+  ctx.beginPath();
+  ctx.moveTo(cx, top);
+  ctx.lineTo(cx - w / 2, top + h);
+  ctx.lineTo(cx + w / 2, top + h);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#e9e4d6"; ctx.font = "19px Georgia, serif"; ctx.textAlign = "center";
+  ctx.fillText(label, cx, top + h + 34);
+  ctx.fillStyle = "#a9a49a"; ctx.font = "15px sans-serif";
+  ctx.fillText("prey: " + prey, cx, top + h + 60);
+  ctx.fillStyle = "#6f6c84"; ctx.font = "13px sans-serif";
+  ctx.fillText("schematic tip — relative size only, not a measurement", cx, 288);
+}
+function showEarly() {
+  periodEarly.classList.add("active"); periodLate.classList.remove("active");
+  drawTip(0.62, "Early Mesolithic tip — small", "elk, aurochs (large)");
+  tipReadout.innerHTML = "<b>Small tip, large prey → poison inferred.</b> A tip this small need only break the skin; the toxin does the killing. Candidate plants in the environment: northern water hemlock, European bird cherry, buttercup, bittersweet nightshade. The toxin itself is gone — the size is the signature.";
+}
+function showLate() {
+  periodLate.classList.add("active"); periodEarly.classList.remove("active");
+  drawTip(1.25, "Middle / Later Mesolithic tip — larger", "smaller prey");
+  tipReadout.innerHTML = "<b>Larger tip, smaller prey → no poison signal.</b> A tip meant to kill by damage alone has to be bigger, and here the prey got smaller as the tips grew. If small tips were just 'how arrows were,' this flip would not exist — and that flip is what makes the early-Mesolithic case.";
+}
+periodEarly.addEventListener("click", showEarly);
+periodLate.addEventListener("click", showLate);
+
+// ---------- Chapter 3: shrinking ice ----------
+var iceCanvas = document.getElementById("iceCanvas");
+var iceCtx = iceCanvas.getContext("2d");
+var iceReadout = document.getElementById("iceReadout");
+var iceBtns = {
+  lia: document.getElementById("iceLIA"),
+  y2014: document.getElementById("ice2014"),
+  y2026: document.getElementById("ice2026"),
+  y2046: document.getElementById("ice2046")
+};
+function drawIce(r, dashed, label) {
+  var ctx = iceCtx;
+  ctx.clearRect(0, 0, 900, 320);
+  ctx.fillStyle = "#0b1030"; ctx.fillRect(0, 0, 900, 320);
+  ctx.fillStyle = "#a9a49a"; ctx.font = "15px sans-serif"; ctx.textAlign = "center";
+  ctx.fillText("Langfonne, schematic — not a map", 450, 28);
+  var cx = 450, cy = 180;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r, r * 0.62, -0.15, 0, Math.PI * 2);
+  if (dashed) {
+    ctx.setLineDash([10, 8]);
+    ctx.strokeStyle = "#e0658a"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(224,101,138,.10)"; ctx.fill();
+  } else {
+    ctx.fillStyle = "rgba(79,209,197,.55)"; ctx.fill();
+    ctx.strokeStyle = "#4fd1c5"; ctx.lineWidth = 2; ctx.stroke();
+  }
+  ctx.fillStyle = "#e9e4d6"; ctx.font = "20px Georgia, serif";
+  ctx.fillText(label, cx, cy + 8);
+}
+function setIce(which) {
+  Object.keys(iceBtns).forEach(function (k) { iceBtns[k].classList.remove("active"); });
+  if (which === "lia") {
+    iceBtns.lia.classList.add("active");
+    drawIce(230, false, "≈ 2.5 km²");
+    iceReadout.innerHTML = "<b>Little Ice Age, roughly 1450–1920.</b> Langfonne covers nearly a square mile. Beneath it, layer on layer of snow is becoming the black ice that will one day hold Stone Age arrows.";
+  } else if (which === "y2014") {
+    iceBtns.y2014.classList.add("active");
+    drawIce(90, false, "≈ 0.25 km²");
+    iceReadout.innerHTML = "<b>By 2014</b>, Langfonne has split into three patches totaling about a tenth of its Little Ice Age extent. The melt is eating the newest ice first — the oldest ice, and the oldest finds, are still to come.";
+  } else if (which === "y2026") {
+    iceBtns.y2026.classList.add("active");
+    drawIce(60, false, "48 arrows");
+    iceReadout.innerHTML = "<b>2026 season.</b> Three weeks at Langfonne, Storfonne and Handklefonne: 48 prehistoric arrows, the oldest slate-tipped and estimated 5,000–6,000 years old. Researchers have days, maybe weeks, to secure a find once it leaves the ice.";
+  } else {
+    iceBtns.y2046.classList.add("active");
+    drawIce(40, true, "gone at many sites");
+    iceReadout.innerHTML = "<b>~2046, projection.</b> On the current trend, the team believes the ice at many archaeological sites could be completely gone within about 20 years — taking whatever it still holds with it. This stop is a forecast, not a survey.";
+  }
+}
+iceBtns.lia.addEventListener("click", function () { setIce("lia"); });
+iceBtns.y2014.addEventListener("click", function () { setIce("y2014"); });
+iceBtns.y2026.addEventListener("click", function () { setIce("y2026"); });
+iceBtns.y2046.addEventListener("click", function () { setIce("y2046"); });
+
+// ---------- Chapter 4: anchor gates ----------
+var stoneCanvas = document.getElementById("stoneCanvas");
+var stoneCtx = stoneCanvas.getContext("2d");
+var stoneReadout = document.getElementById("stoneReadout");
+var gatePeer = document.getElementById("gatePeer");
+var gateDate = document.getElementById("gateDate");
+var gateSinker = document.getElementById("gateSinker");
+function drawStone() {
+  var ctx = stoneCtx;
+  ctx.clearRect(0, 0, 900, 300);
+  ctx.fillStyle = "#0b1030"; ctx.fillRect(0, 0, 900, 300);
+  var cx = 450, cy = 160;
+  ctx.fillStyle = "#6f6c84";
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, 190, 105, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#e9e4d6"; ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, 190, 105, 0, 0.35, Math.PI - 0.35);
+  ctx.stroke();
+  ctx.fillStyle = "#a9a49a"; ctx.font = "15px sans-serif"; ctx.textAlign = "center";
+  ctx.fillText("schematic: rounded stone, groove all the way around — not a photograph", cx, 292);
+}
+function setGate(which) {
+  [gatePeer, gateDate, gateSinker].forEach(function (b) { b.classList.remove("active"); });
+  if (which === "peer") {
+    gatePeer.classList.add("active");
+    stoneReadout.innerHTML = "<b>Gate 1 — OPEN.</b> The find has not been published in a peer-reviewed journal. Vivås names this gate himself: 'It has to be published and peer-reviewed before we can say anything for certain.' Until then, 'oldest anchor' is a claim, not a result.";
+  } else if (which === "date") {
+    gateDate.classList.add("active");
+    stoneReadout.innerHTML = "<b>Gate 2 — OPEN.</b> No direct date has been reported. The age comes from context — the stone lay in waste from a Stone Age quarry — but a quarry worked in the Stone Age does not prove the stone was used then. A direct date inside the quarry's 5,000–9,000-year window would close this gate.";
+  } else {
+    gateSinker.classList.add("active");
+    stoneReadout.innerHTML = "<b>Gate 3 — CLOSED.</b> The obvious alternative fails on weight: at more than 30 kilograms the stone is far too large to have been a fishing-net sinker. This is the one gate the find has already passed — which is why the anchor reading, though unproven, is the live hypothesis.";
+  }
+}
+gatePeer.addEventListener("click", function () { setGate("peer"); });
+gateDate.addEventListener("click", function () { setGate("date"); });
+gateSinker.addEventListener("click", function () { setGate("sinker"); });
+
+// ---------- init ----------
+drawBlades();
+showEarly();
+setIce("y2026");
+drawStone();
+setGate("peer");
+</script>
+</body>
+</html>

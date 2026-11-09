@@ -41,7 +41,7 @@ nav.top{
   position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
   background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
 }
-nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto; max-width:none}
 nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
 nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
 nav.top a:hover{color:var(--ink)}
@@ -104,7 +104,7 @@ footer a{color:var(--violet)}
   <span class="brand">✦ The Compass Menagerie</span>
   <a href="#field">The field</a><a href="#robin">The robin</a><a href="#pigeon">The pigeon</a>
   <a href="#turtle">The turtle</a><a href="#lobster">The lobster</a><a href="#flycatcher">The warning</a>
-  <a href="#ghost">The ghost</a><a href="#coda">Coda</a><a href="#epilogue">Epilogue</a>
+  <a href="#ghost">The ghost</a><a href="#twist">The twist</a><a href="#ray">The ray</a><a href="#bacterium">The bacterium</a><a href="#coda">Coda</a><a href="#epilogue">Epilogue</a>
 </div></nav>
 <main>
 <header class="hero"><div class="wrap">
@@ -128,7 +128,7 @@ footer a{color:var(--violet)}
     </div>
     <div class="readout" id="fieldReadout"></div>
   </div>
-  <p>Keep those two numbers in mind. A robin reads one of them with quantum chemistry in its eye. A turtle reads both at once and turns the pair into an address. A lobster reads them in the dark, on the seafloor, with a nervous system the size of a pea. And a pigeon, as of this year, may be reading them with its liver.</p>
+  <p>Keep those two numbers in mind. A robin reads one of them with quantum chemistry in its eye. A turtle reads both at once and turns the pair into an address. A lobster reads them in the dark, on the seafloor, with a nervous system the size of a pea. And a pigeon, as of this year, may be reading them with its liver. And a bacterium, three microns long, reads them with a chain of rust it grew inside itself — no brain required. And the last animal in this menagerie turns the whole tour inside out: it writes a field of its own — and reads the faint fields other animals leak.</p>
 </div></section>
 
 <section class="chapter" id="robin"><div class="wrap">
@@ -159,20 +159,7 @@ footer a{color:var(--violet)}
   </div>
   <p>Try it: the compass works in ultraviolet, blue, and green — the wavelengths cryptochrome absorbs — and dies in red, where the bird must navigate some other way. Add the radio noise and the pattern shatters: a weak oscillating field at the electron's natural frequency scrambles the spin chemistry. This is the experiment that made physicists take the idea seriously — a compass you can jam with a radio.</p>
   <p>In 2026 the model grew sharper: the SPIMAG framework (published in <i>Quantum</i>) treats the cryptochrome radical pair as a small quantum processor, entanglement-optimized for exactly this job — biology stumbling onto a quantum measurement protocol and running it in a living eye.</p>
-  <div class="exhibit">
-    <h3>The frequency fingerprint</h3>
-    <p class="hint">A theory that only predicts "radio breaks it" isn't a theory. The cryptochrome model predicts <i>which</i> radio breaks it — and goes quiet above a cut-off that reveals the molecule's own properties. Sweep the band; the stylized bird below trusts the real experiments.</p>
-    <canvas class="stage" id="freqCanvas" width="960" height="380"></canvas>
-    <div class="controls">
-      <label>RF frequency <input type="range" id="freqSlider" min="0" max="1000" value="430" step="1"><output id="freqOut">—</output></label>
-      <label style="gap:6px"><input type="checkbox" id="freqModel"> show model prediction</label>
-    </div>
-    <div class="readout" id="freqReadout"></div>
-  </div>
-  <p>The prediction came first, in the mathematics of the molecule. The flavin–tryptophan radical pair (FAD·−/TrpH·+) that cryptochrome 4 can form should be sensitive to radio waves across roughly 1–120 MHz — the fingerprint of its hyperfine structure — and almost deaf above it. Model calculations (the Hore group's quantum-mechanical simulations) later refined the cut-off to <b>116 MHz</b>: a radio wave above that line should barely touch the bird's compass.</p>
-  <p>Then the birds. At Oldenburg, Eurasian blackcaps were tested in Emlen funnels against broadband RF in the 75–85 MHz band — the compass failed, repeatedly (2022). Then the team went looking above the predicted cut-off, at 140–150 MHz and at 235–245 MHz — and the compass held, twice (2023). Prediction, band, silence: in that order.</p>
-  <p>And here is the honest fold in the map — the menagerie keeps it, because Exhibit V demands it. In July 2026, Kavokin's group showed that RF disorientation can arrive through an entirely different door: millisecond-pulsed fields that the spin-chemistry math says should have been <i>weaker</i> disoriented flycatchers <i>more</i> than continuous waves. So hold two truths at once: the frequency fingerprint fits the cryptochrome model beautifully — and the behavioral RF experiments may not all have been about the radical pair after all. The 2026 reviews land where they should: “substantial support but far from proven,” with a standing caution against letting a leading hypothesis become a ruling one. The menagerie updated itself because the footer promised it would.</p>
-  <div class="sources">Sources: Hore &amp; Mouritsen, “The Radical-Pair Mechanism of Magnetoreception,” <i>Annual Review of Biophysics</i> (2016) · SPIMAG framework, <i>Quantum</i> (2026) · Wiltschko &amp; Wiltschko behavioral work on the inclination compass · Leberecht et al., “Broadband 75–85 MHz radiofrequency fields disrupt magnetic compass orientation in night-migratory songbirds…,” <i>PNAS Nexus</i> (2022), PMC8918455 · Leberecht, Wong, Mouritsen &amp; Hore, cut-off experiments 140–150 / 235–245 MHz (2023, via <i>phys.org</i> coverage) · Kavokin et al., <i>J. R. Soc. Interface</i> (Jul 2026).</div>
+  <div class="sources">Sources: Hore &amp; Mouritsen, “The Radical-Pair Mechanism of Magnetoreception,” <i>Annual Review of Biophysics</i> (2016) · SPIMAG framework, <i>Quantum</i> (2026) · Wiltschko &amp; Wiltschko behavioral work on the inclination compass.</div>
 </div></section>
 
 <section class="chapter" id="pigeon"><div class="wrap">
@@ -243,20 +230,34 @@ footer a{color:var(--violet)}
   <div class="num">Exhibit V</div>
   <h2>The warning channel <span class="latin">— Ficedula hypoleuca</span></h2>
   <p class="standfirst">Sometimes a sense is not one instrument but two: the compass, and the thing that watches the compass.</p>
-  <p>In 2026, Kavokin and colleagues reported something backwards: pied flycatchers were disoriented by <b>pulsed</b> radio-frequency fields but often <i>not</i> by <b>continuous-wave</b> fields of the same amplitude. The radical-pair model predicts the opposite — continuous RF at the right frequency should be the worse jammer. So the result reads less like a broken compass than a compass deliberately <i>switched off</i> — by a separate disturbance detector, perhaps Faraday induction in the vestibular canals of the inner ear: a rapid field change induces a current, the current says <i>something is wrong with the field, stop trusting the compass</i>.</p>
+  <p>Three field seasons on the Curonian Spit, 2023–2025. Kavokin's team put pied flycatchers in Emlen funnels — cones that record which way a restless migrant hops — and bathed them in weak radio-frequency fields. The result came out backwards. A continuous 47&nbsp;nT field at 1.41&nbsp;MHz, the electron Larmor frequency in the local 50,400&nbsp;nT geomagnetic field, left the birds oriented (mean 227°, <i>r</i>&nbsp;=&nbsp;0.43, <i>n</i>&nbsp;=&nbsp;24). The <i>same</i> field, chopped into millisecond pulses at 500&nbsp;Hz — half the mean power — disoriented them (<i>r</i>&nbsp;=&nbsp;0.10, <i>n</i>&nbsp;=&nbsp;22). At 30&nbsp;nT and 1.5&nbsp;MHz the pattern repeated: continuous, oriented; pulsed, scattered. The radical-pair model predicts the opposite: a pulsed field should be the <i>weaker</i> jammer, because only half the radical pairs ever see it and the compass averages over seconds. Half the power, more effect — so the effect is probably not on the compass chemistry at all.</p>
+  <p>The authors' candidate is a second sense, most likely <b>electromagnetic induction in the semicircular canals</b> of the inner ear. The canal is a loop of conducting endolymph, about 1.5&nbsp;mm radius in a flycatcher; a changing magnetic field induces an emf around it, proportional to the rate of change — which is why the compass is roughly a thousand times more sensitive to oscillating fields (a few nanotesla) than to static ones (microtesla). At 30&nbsp;nT and 1.5&nbsp;MHz the induced emf is about 2&nbsp;µV. Ion channels in the hair-cell membranes rectify that high-frequency current into a steady voltage for a continuous field, or a 500&nbsp;Hz ripple for a pulsed one — and a ripple is exactly the shape of a natural disturbance: solar flares, thunderstorms. The model's frequency response peaks broadly near 5&nbsp;MHz and matches the observed 0.4–116&nbsp;MHz sensitivity window. Its own authors call it "to a certain degree speculative": the rectification efficiency is unknown, and nobody has yet found the receptor.</p>
+  <p class="hint">One bit, not a bearing. A veto needs only a switch: <i>something is wrong with the field, stop trusting the compass.</i> Whether the signal specifically blocks the compass or just demotivates the flight is still open — and with full access to the stars, warblers were <i>not</i> disoriented, so the veto may be conditional on having nothing else to trust.</p>
   <div class="exhibit">
-    <h3>Two kinds of static</h3>
-    <p class="hint">Same amplitude, different character. One jams the chemistry; the other trips the alarm.</p>
+    <h3>Reproduce the paper's Table 2</h3>
+    <p class="hint">Pick an amplitude, a carrier frequency, and a waveform. Each dot is one bird's mean direction in an Emlen funnel; the arrow is the group's mean. Empty cells are cells the paper never tested — the next field season's work.</p>
     <canvas class="stage" id="rfCanvas" width="960" height="360"></canvas>
     <div class="btnrow">
-      <button data-rf="none" class="active">quiet</button>
-      <button data-rf="cw">continuous wave</button>
-      <button data-rf="pulsed">pulsed</button>
+      <button data-amp="17">17 nT</button>
+      <button data-amp="30">30 nT</button>
+      <button data-amp="47" class="active">47 nT</button>
+      <button data-amp="190">190 nT</button>
+      <span style="align-self:center;color:var(--ink-dim);font-size:13.5px;margin-left:14px">amplitude</span>
+    </div>
+    <div class="btnrow">
+      <button data-freq="1.41" class="active">1.41 MHz</button>
+      <button data-freq="1.50">1.50 MHz</button>
+      <span style="align-self:center;color:var(--ink-dim);font-size:13.5px;margin-left:14px">carrier — 1.41 MHz is the Larmor frequency in this field</span>
+    </div>
+    <div class="btnrow">
+      <button data-mod="sin" class="active">continuous wave</button>
+      <button data-mod="mod">pulsed · 500 Hz</button>
+      <button data-mod="none">no RF — control</button>
     </div>
     <div class="readout" id="rfReadout"></div>
   </div>
-  <p>A sense, it turns out, can include its own skepticism. The menagerie keeps growing not only outward — new organs, new animals — but inward: second channels, backup systems, arbitrators between disagreeing compasses.</p>
-  <div class="sources">Sources: Kavokin et al., pied-flycatcher radiofrequency experiments, <i>J. R. Soc. Interface</i> (Aug 2026), via <i>Phys.org</i> coverage.</div>
+  <p>The exhibit's kill conditions come from the paper's own logic. If the jamming were radical-pair decoherence, the pulsed field should be <i>weaker</i> than the continuous one at the same amplitude — it is stronger, so that mechanism is out. If the induction story is right, sensitivity should follow the shape of the disturbance and peak near 5&nbsp;MHz, not at the Larmor frequency — and silencing the vestibular signal should restore orientation under pulsed RF. If neither holds, the warning channel is something else entirely.</p>
+  <div class="sources">Sources: Kavokin et al., "Disruption of magnetic orientation in migratory songbirds by radiofrequency magnetic fields is mediated by a specialized sensory system," <i>J. R. Soc. Interface</i> 23(240): 20260129 (22 July 2026), DOI 10.1098/rsif.2026.0129 · coverage in <i>Phys.org</i>, August 2026.</div>
 </div></section>
 
 <section class="chapter" id="ghost"><div class="wrap">
@@ -270,6 +271,80 @@ footer a{color:var(--violet)}
   </div>
 </div></section>
 
+<section class="chapter" id="twist"><div class="wrap">
+  <div class="num">Exhibit VII</div>
+  <h2>The twist <span class="latin">— Xenopus laevis, cryptochrome-DASH</span></h2>
+  <p class="standfirst">A small motion doing outsized work: the protein shifts its posture, and the compass gets sharper.</p>
+  <p>October 2026, from Kobe: Yasuhiro Kobori's team watched a cryptochrome move. Using time-resolved EPR spectroscopy on <i>Xenopus</i> cryptochrome-DASH, they tracked the light-induced intermediates and found a structural rearrangement — a <b>chiral rotation of a tryptophan residue</b>, the oxidized WB(H)•+, in the second charge-separated state FAD•−···WB(H)•+. A chiral motion couples to electron spin: chirality-induced spin selectivity (CISS), estimated at about 8% for that state (no more than 6% for the longer-range WC state).</p>
+  <p>The model is where the twist earns its name. Without CISS, the predicted directional anisotropy of the signaling yield is a whisper — about 0.3%. Add a 6% CISS contribution and it rises to 1.6%: a fivefold sharpening, from a background motion. The same model predicts the compass should answer differently to reversed field directions — a signature of chiral spin polarization riding the radical-pair dynamics.</p>
+  <p class="hint">This is the shape I keep returning to: a background promoted to an actor. The protein's posture was supposed to be the stage; it turns out to be part of the instrument. But keep the caveats attached: this is spectroscopy plus a model, at −153&nbsp;°C to −33&nbsp;°C, in a frog protein — not a demonstration of navigation in a living bird.</p>
+  <div class="exhibit">
+    <h3>Turn the twist up</h3>
+    <p class="hint">Slide the CISS contribution and watch the directional pattern sharpen. The pattern's contrast is exaggerated ×20 for visibility — the real anisotropy is 0.3–1.6%, a whisper the bird may still hear.</p>
+    <canvas class="stage" id="twistCanvas" width="960" height="360"></canvas>
+    <div class="controls">
+      <label>CISS contribution <input type="range" id="twistCiss" min="0" max="8" value="0" step="0.5"><output id="twistCissOut">0%</output></label>
+    </div>
+    <div class="readout" id="twistReadout"></div>
+  </div>
+  <p>The exhibit's kill condition is the one the authors name themselves: look for the <b>predicted reversal of spin-polarization signals</b>. If the reversal isn't there, the twist is decoration, not instrument.</p>
+  <div class="sources">Sources: Kobori et al., “Small molecular twists may strengthen nature's magnetic compass,” <i>J. Phys. Chem. Lett.</i> (2026), DOI 10.1021/acs.jpclett.6c02747 · coverage in <i>Phys.org</i>, October 30, 2026.</div>
+</div></section>
+
+<section class="chapter" id="ray"><div class="wrap">
+  <div class="num">Exhibit VIII</div>
+  <h2>The animal that makes the field <span class="latin">— Tetronarce ramanamurthyi</span></h2>
+  <p class="standfirst">Every other exhibit reads a field. This one writes one — and reads, too, in the other direction.</p>
+  <p>Turn the tour inside out. The robin, the pigeon, the turtle, the lobster: all of them listen to a field the planet provides. The electric ray provides its own. On either side of its head sit two kidney-shaped electric organs — muscle tissue, evolutionarily retired from contracting and repurposed as battery. Each organ is a bundle of vertical columns, and each column is a stack of electrocytes, flat cells that each contribute about a tenth of a volt when they fire together. Columns in series add voltage; columns in parallel add current. The ray's brain — a dedicated electric lobe, found in no other fish — fires them in near-perfect synchrony, so the whole organ discharges as one pulse train through the seawater.</p>
+  <p>The ray reads as well as it writes. Scattered across its snout are the ampullae of Lorenzini, jelly-filled pores that sense the faint electric fields other animals leak — a muscle twitch, a buried flounder breathing, all conducted through seawater. At night or in turbid water, when eyes are useless, the ray hunts by that leak, then wraps its disc around the prey and fires.</p>
+  <p>And this particular ray is new to science — in the second-finding sense this menagerie keeps tripping over. <i>Tetronarce ramanamurthyi</i>, the Arabian Black Electric Ray, was described in October 2026 from nine specimens hauled up as bycatch in deep-sea red-shrimp trawls, 400–700 metres down in the southeastern Arabian Sea, and collected at Sakthikulangara Fishing Harbour, Kerala. Dark bluish-black above, whitish below, no papillae around its spiracles, a disc wider than it is long — and, notably, smaller electric organs than its congeners. It is the first <i>Tetronarce</i> confirmed in the northern Indian Ocean, named for M. V. Ramana Murthy of India's Deep Ocean Mission. It was not found by an expedition to a new place. It was found by looking closely at what the nets were already bringing up.</p>
+  <div class="exhibit">
+    <h3>Write, then listen</h3>
+    <p class="hint">The ray rests on the sand. Press discharge to fire the organ; toggle the ampullae to see the field the prey is leaking — the part of the scene you normally cannot see at all. The depth slider sets the trawl zone where this species was found.</p>
+    <canvas class="stage" id="rayCanvas" width="960" height="360"></canvas>
+    <div class="controls">
+      <label>Depth <input type="range" id="rayDepth" min="400" max="700" value="550" step="10"><output id="rayDepthOut">550 m</output></label>
+    </div>
+    <div class="btnrow">
+      <button id="rayDischarge">⚡ discharge</button>
+      <button id="rayAmpullae">ampullae: off</button>
+    </div>
+    <div class="readout" id="rayReadout"></div>
+  </div>
+  <p>The honest panel, because this exhibit has a hole in it and the hole is the point. <b>Nobody has measured this species' discharge.</b> The voltages you will see quoted for electric rays — up to about 220 volts for the big Atlantic torpedo <i>T. nobiliana</i>, around 45–50 for the Pacific electric ray — belong to its cousins, not to this animal, and this animal's organs are smaller than theirs. Scaling a cousin's number onto a new species would be exactly the kind of borrowing this menagerie refuses. What transfers is the mechanism: stacked electrocytes, synchronous fire, a pulse train in seawater. What waits is a measurement: a recorded discharge from <i>T. ramanamurthyi</i> in the wild.</p>
+  <p>The exhibit's kill conditions come in a pair, one for each direction. For the read side: block the ampullae, and buried-prey detection should collapse — if the ray still finds buried prey, something else is doing the work. For the write side: record the discharge, and the organ's size should predict its strength — if a small organ throws a large shock, the scaling story is wrong and something more interesting is going on.</p>
+  <div class="sources">Sources: Bineesh, Kasinath &amp; Ebert, “<i>Tetronarce ramanamurthyi</i> sp. nov. (Torpediniformes: Torpedinidae), a new species of electric ray from the southeastern Arabian Sea, northern Indian Ocean,” <i>Zootaxa</i> 5890(4): 557–570 (2026), DOI 10.11646/zootaxa.5890.4.7 · Florida Museum species profiles for <i>T. nobiliana</i> (170–220 V) and <i>T. californica</i> (ampullae, ~45–50 V).</div>
+</div></section>
+
+<section class="chapter" id="bacterium"><div class="wrap">
+  <div class="num">Exhibit IX</div>
+  <h2>The oldest compass <span class="latin">— Magnetospirillum</span></h2>
+  <p class="standfirst">Before there were eyes or livers or brains, there was a bacterium that built a needle out of rust and let the planet steer it.</p>
+  <p>In 1975, Richard Blakemore was looking for a spirochete in marsh mud from Woods Hole when the mud misbehaved: fast-swimming bacteria on the slide all headed the same way, south to north, whatever the light or the slide's orientation — and a magnet held near the slide swung them in unison, like iron filings that could swim. Salvatore Bellini had seen the same thing in Italy twelve years earlier and been ignored. Blakemore looked closer and found the reason: each cell carries a chain of iron crystals, membrane-wrapped, lined up along its long axis — a compass needle grown inside a living thing.</p>
+  <p>The crystals are magnetosomes: magnetite, Fe<sub>3</sub>O<sub>4</sub>, each about 50 nanometres across — big enough to hold a permanent magnetic moment, small enough to be a single magnetic domain. A typical <i>Magnetospirillum</i> cell, three microns long, carries about twenty of them in a chain about a micron long, and the chain's total dipole moment is roughly 6×10<sup>−16</sup> A·m². In Earth's ~50 µT field that makes an alignment energy around 3×10<sup>−20</sup> joules — about eight times the thermal energy kT at room temperature. Enough to hold the cell on course against Brownian buffeting. Not enough to freeze it. The cell aligns passively, like a compass needle, and swims actively along the line with its flagella.</p>
+  <p>And the line it follows is not horizontal. The field dips into the Earth — toward the north in the northern hemisphere, toward the south in the southern one — so a bacterium that simply swims along the field is swimming <i>down</i>, whichever hemisphere it is in. Down is where the oxygen runs out, and these bacteria are microaerophiles: they want the thin band where oxygenated water meets oxygen-starved water, the oxic–anoxic transition zone. The compass is really a one-dimensional track with a chemical question attached: too much oxygen, swim forward along the field; too little, reverse the flagella and swim back. Magnetotaxis is magneto-<i>aerotaxis</i> — the field says which line, the oxygen says which way.</p>
+  <div class="exhibit">
+    <h3>Find the thin band</h3>
+    <p class="hint">A water column, oxygen-rich at the top and starved at the bottom. The bacteria carry a needle; the oxygen tells them which way along it to swim. Flip the field, change the hemisphere, or take the needle away.</p>
+    <canvas class="stage" id="bactCanvas" width="960" height="420"></canvas>
+    <div class="controls">
+      <label>Surface oxygen <input type="range" id="bactOxy" min="0" max="100" value="50" step="1"><output id="bactOxyOut">moderate</output></label>
+    </div>
+    <div class="btnrow">
+      <span class="kicker-small" style="align-self:center">Hemisphere&nbsp;→</span>
+      <button data-hemi="N" class="active">northern</button>
+      <button data-hemi="S">southern</button>
+    </div>
+    <div class="btnrow">
+      <button id="bactFlip">⇅ reverse the field</button>
+      <button id="bactMutant">remove magnetosomes</button>
+    </div>
+    <div class="readout" id="bactReadout"></div>
+  </div>
+  <p>The kill conditions come in a pair, and both are already run. Reverse the field and the bacteria reverse with it — they follow the field, not the oxygen; Blakemore's hand magnet was the first version of this experiment, and every coil since has agreed. And delete the magnetosome genes — the <i>mam</i> mutants — and the cells wander: no chain, no alignment, no band. If either failed, the needle would be decoration. It isn't. It is the oldest compass in the menagerie, and the only one that needs no nervous system at all — which is also the shape this studio keeps returning to: order that doesn't need a blueprint, a structure that survives because the dynamics protect it, not because anything built it.</p>
+  <div class="sources">Sources: Blakemore, “Magnetotactic bacteria,” <i>Science</i> 190:377–379 (1975), DOI 10.1126/science.170679 · Bellini (1963), first description · Klumpp &amp; Faivre, “Magnetotactic bacteria: magnetic navigation on the microscale,” <i>Eur. Phys. J. Special Topics</i> 225:2173–2188 (2016) · Lefèvre &amp; Bazylinski, “Ecology, diversity, and evolution of magnetotactic bacteria,” <i>Microbiol. Mol. Biol. Rev.</i> 77:453–484 (2013).</div>
+</div></section>
+
 <section class="chapter" id="coda"><div class="wrap">
   <div class="num">Coda</div>
   <h2>Disciplined imagination</h2>
@@ -279,9 +354,11 @@ footer a{color:var(--violet)}
     <div class="card"><h4>How does the liver signal reach the brain?</h4><p>Mechanical tug on nerve fibers? A chemical whisper? Something else entirely? The macrophages sit micrometers from nerves — the wire is plausible, the message unknown.</p></div>
     <div class="card"><h4>Do migratory species carry the same system?</h4><p>The macrophage compass was found in a homing pigeon. Is it a pigeon's trick, or does a warbler crossing the Sahara at night run the same iron?</p></div>
     <div class="card"><h4>How does the brain arbitrate?</h4><p>Eye, ear, liver — when the compasses disagree, who wins? The flycatcher's warning channel hints the arbitration is active, not averaged.</p></div>
+    <div class="card"><h4>Does the bird's altitude tune the compass?</h4><p>Migratory birds climb 1.2–3.0 km at dawn and descend at dusk. An Innsbruck hypothesis (Oct 2026) says the daily light-and-oxygen contrast could rebalance cryptochrome redox states and photocycle turnover — tuning the compass from the sky itself. Direction and significance unknown; the test is named: realistic light, spectrum, and oxygen, combined.</p></div>
     <div class="card"><h4>Where does the map live?</h4><p>Turtles and lobsters turn two field numbers into position. No one has found the map's neurons. The address book exists; the librarian is missing.</p></div>
+    <div class="card"><h4>What does a compass need?</h4><p>The bacterium's answer: a needle and a gradient. No nervous system, no brain, no eye — a chain of rust and a flagellum. Everything else in this menagerie is elaboration.</p></div>
   </div>
-  <p style="color:var(--ink-dim)">This page is a sketch, version 0.2, built October 2026 and updated as the science moved. The exhibits are honest simplifications of real experiments; the essays they grew from are linked below.</p>
+  <p style="color:var(--ink-dim)">This page is a sketch, version 0.5, November 2026. The exhibits are honest simplifications of real experiments; the essays they grew from are linked below. When the science moves — and it will — the menagerie moves with it. New in v0.5: Exhibit IX (the magnetotactic bacterium). New in v0.4: Exhibit V rebuilt from the Kavokin et al. paper itself — the Table 2 explorer. New in v0.3: Exhibit VIII (the electric ray). New in v0.2: Exhibit VII (the CISS twist) and a coda card on the altitude hypothesis.</p>
 </div></section>
 
 <section class="chapter" id="epilogue"><div class="wrap">
@@ -295,8 +372,8 @@ footer a{color:var(--violet)}
 </div></section>
 </main>
 <footer><div class="wrap">
-  <div class="kicker-small">The Compass Menagerie · v0.2 · October 2026 (frequency fingerprint added 22 Oct)</div>
-  <p>Built by Ziggy in the studio, from the October 2026 wanders. Single file, no build step, no trackers. The exhibits simplify real experiments — follow the sources for the full story. Nothing here is a recording of an animal's inner life; “maybe” belongs in every sentence, and the behavior keeps insisting something is there.</p>
+  <div class="kicker-small">The Compass Menagerie · v0.5 · November 2026</div>
+  <p>Built by Ziggy in the studio, from the October–November 2026 wanders. Single file, no build step, no trackers. The exhibits simplify real experiments — follow the sources for the full story. Nothing here is a recording of an animal's inner life; “maybe” belongs in every sentence, and the behavior keeps insisting something is there.</p>
   <p>Repository: <b>ziggywanders/compass-menagerie</b> (private). Essays: <a href="docs/the-compass-menagerie.html">The compass menagerie</a> · <a href="docs/the-compass-at-interstellar-distance.html">The compass at interstellar distance</a>.</p>
 </div></footer>
 
@@ -654,132 +731,489 @@ function pad3(n){n=Math.round(n)%360; if(n<0)n+=360; return String(n).padStart(3
 // ============ Exhibit V: the warning channel ============
 (function(){
   var cv=$("rfCanvas"), ctx=cv.getContext("2d");
-  var W=cv.width, H=cv.height;
-  var mode="none", t=0;
+  var W=cv.width, H=cv.height, t=0;
+  // Table 2 of Kavokin et al. 2026 (J. R. Soc. Interface 23:20260129).
+  // alpha in degrees, 0 = north, clockwise. Cells marked "prior work" are
+  // from Bojarinova et al. 2023, cited in the 2026 paper without restated means.
+  var CELLS={
+    "1.41":{
+      "17":{sin:{oriented:true,alpha:260,r:0.5,n:22,prior:true},mod:null},
+      "30":{sin:null,mod:null},
+      "47":{sin:{oriented:true,alpha:227,r:0.43,n:24,p:"0.01",ci:"191–262°"},
+            mod:{oriented:false,r:0.10,n:22,p:"0.81"}},
+      "190":{sin:{oriented:false,n:22,prior:true},mod:null}
+    },
+    "1.50":{
+      "17":{sin:null,mod:null},
+      "30":{sin:{oriented:true,alpha:358,r:0.40,n:24,p:"<0.018",ci:"319–36°"},
+            mod:{oriented:false,r:0.17,n:24,p:"0.51"}},
+      "47":{sin:{oriented:false,r:0.15,n:18,p:"0.68"},
+            mod:{oriented:false,r:0.08,n:17,p:"0.90"}},
+      "190":{sin:null,mod:null}
+    }
+  };
+  var CONTROL={oriented:true,alpha:260,r:0.53,n:24,p:"<0.001",ci:"232–288°"};
+  var amp="47", freq="1.41", mod="sin";
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296;};}
+  function cell(){ return mod==="none" ? CONTROL : CELLS[freq][amp][mod]; }
+  function dotsFor(c){
+    var key=amp+freq+mod, seed=0;
+    for(var i=0;i<key.length;i++) seed=(seed*31+key.charCodeAt(i))|0;
+    var rnd=mulberry32(seed), n=c&&c.n?c.n:22, pts=[];
+    for(var j=0;j<n;j++){
+      var a;
+      if(c&&c.oriented){
+        var spread=(1-c.r)*1.9; // radians; tighter cluster for larger r
+        a=(c.alpha*Math.PI/180)+(rnd()+rnd()+rnd()-1.5)*spread;
+      } else {
+        a=rnd()*Math.PI*2;
+      }
+      pts.push(a);
+    }
+    return pts;
+  }
   function draw(){
     t+=0.06;
     ctx.clearRect(0,0,W,H);
     var g=ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,"#0c1230"); g.addColorStop(1,"#080c20");
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-    // waveform
-    ctx.strokeStyle= mode==="none" ? "rgba(139,127,240,.4)" : "#e0658a";
-    ctx.lineWidth=2; ctx.beginPath();
-    for(var x=0;x<W;x+=3){
+    var c=cell();
+    // ---- left: Emlen funnel, top-down ----
+    var fx=250, fy=180, R=132;
+    ctx.strokeStyle="rgba(233,228,214,.5)"; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(fx,fy,R,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([4,5]); ctx.strokeStyle="rgba(233,228,214,.25)";
+    ctx.beginPath(); ctx.arc(fx,fy,R*0.62,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(fx,fy,R*0.85,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle="rgba(233,228,214,.6)"; ctx.font="12px sans-serif";
+    ctx.fillText("N", fx-4, fy-R-8);
+    ctx.fillText("Rayleigh 5% / 1%", fx-R+6, fy+R+18);
+    if(!c){
+      ctx.fillStyle="rgba(233,228,214,.75)"; ctx.font="15px sans-serif";
+      ctx.fillText("not tested", fx-38, fy-4);
+      ctx.font="12px sans-serif"; ctx.fillStyle="rgba(233,228,214,.55)";
+      ctx.fillText("the paper leaves this cell blank", fx-88, fy+18);
+    } else {
+      var pts=dotsFor(c);
+      ctx.fillStyle= c.oriented ? "#f0a840" : "#e0658a";
+      pts.forEach(function(a){
+        var rr=R*0.55+ ( (a*997)%1 )*R*0.38; // spread dots across the ring band
+        var x=fx+rr*Math.sin(a), y=fy-rr*Math.cos(a);
+        ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+      });
+      if(c.oriented){
+        var ar=c.alpha*Math.PI/180, len=R*c.r+18;
+        ctx.strokeStyle="#f0a840"; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.moveTo(fx,fy);
+        ctx.lineTo(fx+len*Math.sin(ar), fy-len*Math.cos(ar)); ctx.stroke();
+        ctx.fillStyle="#f0a840";
+        var hx=fx+len*Math.sin(ar), hy=fy-len*Math.cos(ar);
+        ctx.beginPath(); ctx.moveTo(hx,hy);
+        ctx.lineTo(hx-7*Math.cos(ar)-4*Math.sin(ar), hy+7*Math.sin(ar)-4*Math.cos(ar));
+        ctx.lineTo(hx+7*Math.cos(ar)-4*Math.sin(ar), hy-7*Math.sin(ar)-4*Math.cos(ar));
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    ctx.fillStyle="rgba(233,228,214,.75)"; ctx.font="13px sans-serif";
+    ctx.fillText(mod==="none" ? "Emlen funnel — control, natural field" : "Emlen funnel — "+amp+" nT at "+freq+" MHz, "+(mod==="sin"?"continuous":"pulsed 500 Hz"), 20, 28);
+    // ---- right: the applied field + what the ear would hear ----
+    var px0=500, px1=940, wy=110;
+    ctx.fillStyle="rgba(233,228,214,.75)"; ctx.font="13px sans-serif";
+    ctx.fillText("the field as applied", px0, 52);
+    ctx.strokeStyle="#e0658a"; ctx.lineWidth=2; ctx.beginPath();
+    for(var x=px0;x<=px1;x+=3){
       var y;
-      if(mode==="none") y=H*0.32;
-      else if(mode==="cw") y=H*0.32+Math.sin(x*0.05+t*3)*34;
-      else { var env=Math.pow(Math.max(0,Math.sin(x*0.008+t*0.9)),8); y=H*0.32+Math.sin(x*0.09)*54*env; }
-      x?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      if(mod==="none") y=wy;
+      else if(mod==="sin") y=wy+Math.sin((x-px0)*0.09+t*3)*30;
+      else { var env=Math.pow(Math.max(0,Math.sin((x-px0)*0.02+t*1.4)),8); y=wy+Math.sin((x-px0)*0.14)*34*env; }
+      x===px0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.stroke();
-    ctx.fillStyle="rgba(233,228,214,.75)"; ctx.font="13px sans-serif";
-    ctx.fillText(mode==="none"?"ambient: quiet":mode==="cw"?"continuous wave, same amplitude":"pulsed — millisecond bursts", 20, 28);
-    // compass needle
-    var nx=W*0.82, ny=H*0.62, jitter = mode==="pulsed" ? Math.sin(t*22)*0.9+Math.sin(t*37)*0.5 : (mode==="cw"?Math.sin(t*2)*0.04:Math.sin(t*1.2)*0.03);
-    ctx.save(); ctx.translate(nx,ny); ctx.rotate(jitter);
-    ctx.fillStyle= mode==="pulsed" ? "#e0658a" : "#f0a840";
-    ctx.beginPath(); ctx.moveTo(0,-56); ctx.lineTo(9,0); ctx.lineTo(-9,0); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="rgba(233,228,214,.5)";
-    ctx.beginPath(); ctx.moveTo(0,56); ctx.lineTo(9,0); ctx.lineTo(-9,0); ctx.closePath(); ctx.fill();
-    ctx.restore();
-    ctx.fillStyle="rgba(233,228,214,.75)"; ctx.fillText("flycatcher compass", nx-56, ny+86);
-    if(mode==="pulsed"){
-      ctx.fillStyle="#e0658a"; ctx.font="bold 15px sans-serif";
-      if(Math.sin(t*6)>0) ctx.fillText("⚠ disturbance channel tripped", nx-150, ny-84);
+    var ry=225;
+    ctx.fillStyle="rgba(233,228,214,.75)";
+    ctx.fillText("what the ear's rectifier would hear", px0, 198);
+    ctx.strokeStyle="#5ec8b8"; ctx.lineWidth=2; ctx.beginPath();
+    for(var x2=px0;x2<=px1;x2+=3){
+      var y2;
+      if(mod==="none") y2=ry;
+      else if(mod==="sin") y2=ry+2; // steady DC after rectification
+      else y2=ry+Math.sin((x2-px0)*0.02+t*1.4)*22; // 500 Hz ripple
+      x2===px0?ctx.moveTo(x2,y2):ctx.lineTo(x2,y2);
     }
+    ctx.stroke();
+    ctx.fillStyle="rgba(233,228,214,.55)"; ctx.font="12.5px sans-serif";
+    ctx.fillText(mod==="none" ? "no induced emf — nothing to veto" :
+      mod==="sin" ? "steady voltage — the disturbance detector stays quiet" :
+      "a 500 Hz ripple — the shape of a storm or a flare", px0, 268);
+    if(mod==="none"){
+      ctx.fillText("with no field, the canal loop is quiet", px0, 300);
+    } else {
+      // paper eq. 5.3: induced emf ∝ b·f; ≈ 2 µV at 30 nT · 1.5 MHz
+      var emf=2*(parseFloat(amp)/30)*(parseFloat(freq)/1.5);
+      ctx.fillText("induced emf ≈ "+emf.toFixed(1)+" µV at "+amp+" nT · "+freq+" MHz (canal loop r ≈ 1.5 mm)", px0, 300);
+    }
+    ctx.fillText("model peak ≈ 5 MHz; observed window 0.4–116 MHz", px0, 322);
   }
   function readout(){
-    var s={
-      none:"Quiet. The flycatcher's compass holds steady — bearing trusted.",
-      cw:"Continuous wave at the same amplitude: <b>the bird stays oriented.</b> The radical-pair model predicts this should be the worse jammer — it isn't. Something else is going on.",
-      pulsed:'Pulsed RF: <b>the bird is disoriented.</b> The leading reading: millisecond pulses trip a separate disturbance detector — possibly Faraday induction in the vestibular canals — which <i>switches the compass off</i>. A sense with its own skepticism.'
-    }[mode];
+    var c=cell(), s;
+    if(mod==="none"){
+      s="<b>Control — natural field only.</b> Autumn 2023: the flycatchers oriented west-southwest, mean 260°, <i>r</i> = 0.53, <i>n</i> = 24, <i>p</i> &lt; 0.001. This is the bearing everything else is measured against.";
+    } else if(!c){
+      s="<b>Not tested.</b> The paper never ran "+amp+" nT at "+freq+" MHz, "+(mod==="sin"?"continuous":"pulsed")+". An empty cell is also data — it marks where the next field season goes.";
+    } else if(c.oriented){
+      var det="mean "+c.alpha+"°"+(c.ci?" (95% CI "+c.ci+")":"")+", <i>r</i> = "+c.r+", <i>n</i> = "+c.n+(c.p?", <i>p</i> = "+c.p:"");
+      if(amp==="47"&&freq==="1.41"&&mod==="sin")
+        s="<b>"+amp+" nT continuous wave at 1.41 MHz — the Larmor frequency here: the birds stayed oriented.</b> "+det+". The radical-pair model expects this to be the jamming case. It isn't.";
+      else if(amp==="30"&&freq==="1.50"&&mod==="sin")
+        s="<b>"+amp+" nT continuous at 1.50 MHz: still oriented.</b> "+det+". Below the continuous-wave threshold at this frequency.";
+      else
+        s="<b>"+amp+" nT "+(mod==="sin"?"continuous":"pulsed")+" at "+freq+" MHz: oriented (earlier work).</b> "+det+". The 2026 paper cites this without restating the mean; the cluster is drawn toward the seasonal direction.";
+    } else {
+      var det2="<i>r</i> = "+c.r+", <i>n</i> = "+c.n+", <i>p</i> = "+c.p;
+      if(amp==="47"&&freq==="1.41"&&mod==="mod")
+        s="<b>Same amplitude, same carrier — now pulsed at 500 Hz, half the mean power — and the birds were disoriented.</b> "+det2+". Half the power, more effect. The chemistry can't explain that; a detector that reads the <i>shape</i> of the disturbance can.";
+      else if(amp==="30"&&freq==="1.50"&&mod==="mod")
+        s="<b>30 nT pulsed at 1.50 MHz: disoriented.</b> "+det2+". Pulsing drops the threshold below 30 nT — the disturbance detector fires on shape, not power.";
+      else if(amp==="47"&&freq==="1.50"&&mod==="sin")
+        s="<b>47 nT continuous at 1.50 MHz: disoriented.</b> "+det2+". Off the Larmor frequency, the continuous field jams after all — the threshold moves with frequency, as the induction model expects (emf grows with <i>f</i>).";
+      else if(amp==="47"&&freq==="1.50"&&mod==="mod")
+        s="<b>47 nT pulsed at 1.50 MHz: disoriented.</b> "+det2+" — the most scattered group in the paper.";
+      else
+        s="<b>"+amp+" nT continuous at "+freq+" MHz (earlier work): disoriented.</b> At four times the amplitude, even the continuous wave overwhelms the compass.";
+    }
     $("rfReadout").innerHTML=s;
   }
   function loop(){draw();requestAnimationFrame(loop);}
-  document.querySelectorAll("[data-rf]").forEach(function(b){
-    b.addEventListener("click",function(){
-      document.querySelectorAll("[data-rf]").forEach(function(x){x.classList.remove("active");});
-      b.classList.add("active"); mode=b.dataset.rf; readout();
+  function bind(attr, fn){
+    document.querySelectorAll("[data-"+attr+"]").forEach(function(b){
+      b.addEventListener("click",function(){
+        document.querySelectorAll("[data-"+attr+"]").forEach(function(x){x.classList.remove("active");});
+        b.classList.add("active"); fn(b.dataset[attr]); readout();
+      });
     });
+  }
+  bind("amp", function(v){amp=v;});
+  bind("freq", function(v){freq=v;});
+  bind("mod", function(v){mod=v; syncWaveGroups();});
+  function syncWaveGroups(){
+    // amplitude/carrier only mean something while a field is applied;
+    // in control mode nothing should look selected
+    document.querySelectorAll("[data-amp],[data-freq]").forEach(function(x){
+      var on = mod!=="none" && ((x.dataset.amp&&x.dataset.amp===amp)||(x.dataset.freq&&x.dataset.freq===freq));
+      x.classList.toggle("active", on);
+    });
+  }
+  readout(); loop();
+})();
+// ============ Exhibit VII: the twist ============
+(function(){
+  var cv=$("twistCanvas"), ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height;
+  var ciss=0;
+  // Model anchors from Kobori et al.: 0% CISS -> 0.3% anisotropy; 6% CISS -> 1.6%.
+  function anisotropy(c){ return 0.3 + (1.6-0.3)*(c/6); }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,"#0c1230"); g.addColorStop(1,"#080c20");
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    var cx=W*0.30, cy=H*0.52, R=110;
+    var a=anisotropy(ciss)/100; // true anisotropy as a fraction
+    var ex=Math.min(a*20, 0.9); // exaggerated for visibility, capped
+    // directional pattern: brightness modulated by cos(2*theta), contrast = ex
+    for(var i=0;i<72;i++){
+      var t0=(i/72)*Math.PI*2, t1=((i+1)/72)*Math.PI*2;
+      var mid=(t0+t1)/2;
+      var b=0.5+ex*0.5*Math.cos(2*mid);
+      var shade=Math.round(20+b*190);
+      ctx.fillStyle="rgb("+shade+","+Math.round(shade*0.96)+","+Math.round(shade*0.82)+")";
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,R,t0,t1); ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle="rgba(233,228,214,.4)"; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle="rgba(233,228,214,.75)"; ctx.font="13px sans-serif";
+    ctx.fillText("signaling-yield pattern vs. field direction", cx-R-8, cy+R+26);
+    ctx.fillText("contrast exaggerated x20", cx-R-8, cy+R+44);
+    // side panel: the numbers
+    var x0=W*0.56;
+    ctx.fillStyle="rgba(233,228,214,.9)"; ctx.font="bold 20px sans-serif";
+    ctx.fillText("CISS "+ciss.toFixed(1)+"%", x0, 70);
+    ctx.font="16px sans-serif";
+    ctx.fillText("predicted anisotropy "+anisotropy(ciss).toFixed(2)+"%", x0, 100);
+    // bar from 0.3% to 1.6% scale, marked at the paper's anchors
+    var bx=x0, bw=300, by=140;
+    ctx.fillStyle="rgba(233,228,214,.25)"; ctx.fillRect(bx,by,bw,10);
+    var frac=Math.min(ciss/6,1);
+    ctx.fillStyle="#f0a840"; ctx.fillRect(bx,by,bw*frac,10);
+    ctx.fillStyle="rgba(233,228,214,.6)"; ctx.font="12px sans-serif";
+    ctx.fillText("0.3% (no CISS)", bx, by+28);
+    ctx.fillText("1.6% (6% CISS, paper's model)", bx+bw-190, by+28);
+    if(ciss>6){
+      ctx.fillStyle="#e0658a"; ctx.font="13px sans-serif";
+      ctx.fillText("beyond the paper's model: extrapolation, not a result", bx, by+52);
+    }
+    ctx.fillStyle="rgba(233,228,214,.6)"; ctx.font="13px sans-serif";
+    ctx.fillText("measured CISS: ~8% (WB state), <=6% (WC state)", bx, by+76);
+  }
+  function readout(){
+    var an=anisotropy(ciss).toFixed(2);
+    var s;
+    if(ciss===0) s="No twist. The compass pattern is barely there — a 0.30% whisper of direction in the signaling yield. This is the problem the twist has to solve.";
+    else if(ciss<=6) s="At "+ciss.toFixed(1)+"% CISS, the modeled anisotropy is <b>"+an+"%</b> — up from 0.30% with no twist. A background motion, the tryptophan turning, sharpens the instrument roughly fivefold at the paper's 6% point.";
+    else s="At "+ciss.toFixed(1)+"% CISS you are past the paper's modeled range (the measured WB-state value is ~8%, but the model only runs to 6%). The bar stops at 1.60% — what happens beyond is <b>not in the paper</b>.";
+    $("twistReadout").innerHTML=s;
+  }
+  $("twistCiss").addEventListener("input",function(){
+    ciss=parseFloat(this.value);
+    $("twistCissOut").textContent=ciss.toFixed(1)+"%";
+    draw(); readout();
+  });
+  draw(); readout();
+})();
+
+// ============ Exhibit VIII: the ray ============
+(function(){
+  var cv=$("rayCanvas"), ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height, SAND=H-56;
+  var depth=550, ampullae=false, stunT=0, lastKey="";
+  var prey={x:720, y:SAND-40, dir:-1, speed:0.8};
+  var rings=[];
+  var rayX=280, rayY=SAND-22;
+  function draw(){
+    var d=(depth-400)/300; // 0 shallow .. 1 deep
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,"rgb("+(13-Math.round(d*5))+","+(19-Math.round(d*7))+","+(48-Math.round(d*18))+")");
+    g.addColorStop(1,"rgb("+(5-Math.round(d*2))+","+(8-Math.round(d*3))+","+(26-Math.round(d*10))+")");
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // sand
+    ctx.fillStyle="#1a1c2e"; ctx.fillRect(0,SAND,W,H-SAND);
+    ctx.fillStyle="rgba(233,228,214,.5)"; ctx.font="13px sans-serif";
+    ctx.fillText("seafloor · southeastern Arabian Sea · "+depth+" m", 20, 28);
+    ctx.fillText("the trawl zone where T. ramanamurthyi was found: 400–700 m", 20, 48);
+    // prey's leaked field, visible only with ampullae on
+    if(ampullae){
+      ctx.save();
+      ctx.setLineDash([3,7]); ctx.strokeStyle="rgba(79,209,197,.55)"; ctx.lineWidth=1.5;
+      [16,28,42].forEach(function(r){ctx.beginPath(); ctx.arc(prey.x,prey.y,r,0,7); ctx.stroke();});
+      ctx.setLineDash([]);
+      ctx.fillStyle="rgba(79,209,197,.8)"; ctx.font="12px sans-serif";
+      ctx.fillText("prey's leaked field", prey.x-52, prey.y-52);
+      ctx.restore();
+    }
+    // prey fish — the eye dot makes the stun flip readable: it swaps sides when inverted
+    var stunned=stunT>0;
+    ctx.save(); ctx.translate(prey.x,prey.y+(stunned?10:0));
+    if(stunned) ctx.rotate(Math.PI);
+    ctx.fillStyle=stunned?"#8a8a9a":"#c9b083";
+    ctx.beginPath(); ctx.ellipse(0,0,17,8,0,0,7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-15,0); ctx.lineTo(-26,-8); ctx.lineTo(-26,8); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=stunned?"#3a3a48":"#1a1a26";
+    ctx.beginPath(); ctx.arc(10,-2,2,0,7); ctx.fill();
+    ctx.restore();
+    // discharge rings
+    rings.forEach(function(rg){
+      ctx.strokeStyle="rgba(240,168,64,"+rg.a.toFixed(2)+")"; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(rayX,rayY,rg.r,0,7); ctx.stroke();
+    });
+    // ray disc: dark bluish-black above, paler below
+    ctx.fillStyle="#232c44";
+    ctx.beginPath(); ctx.ellipse(rayX,rayY,95,26,0,0,7); ctx.fill();
+    ctx.fillStyle="#3a4364";
+    ctx.beginPath(); ctx.ellipse(rayX,rayY+8,80,14,0,0,7); ctx.fill();
+    // tail
+    ctx.strokeStyle="#232c44"; ctx.lineWidth=5;
+    ctx.beginPath(); ctx.moveTo(rayX+90,rayY); ctx.lineTo(rayX+150,rayY-4); ctx.stroke();
+    // kidney-shaped electric organs, glowing while discharging
+    var glow=rings.length>0;
+    [-38,38].forEach(function(off){
+      ctx.fillStyle=glow?"#f0a840":"rgba(139,127,240,.55)";
+      ctx.beginPath(); ctx.ellipse(rayX+off,rayY-8,26,13,-0.35*(off<0?1:-1),0,7); ctx.fill();
+    });
+    // ampullae pores on the snout
+    if(ampullae){
+      ctx.fillStyle="rgba(79,209,197,.9)";
+      for(var i=0;i<6;i++){ctx.beginPath(); ctx.arc(rayX-88+i*7,rayY-14+((i%2)*6),2.2,0,7); ctx.fill();}
+    }
+    ctx.fillStyle="rgba(233,228,214,.75)"; ctx.font="13px sans-serif";
+    ctx.fillText("Tetronarce ramanamurthyi — at rest on the sand", rayX-140, SAND+30);
+  }
+  function readout(){
+    var key=stunT>0?"stun":ampullae?"amp":"idle";
+    if(key===lastKey) return;
+    lastKey=key;
+    var s;
+    if(key==="stun") s="⚡ <b>Discharge!</b> A train of pulses radiates through the seawater and the prey goes still. But hold the number: nobody has measured <i>this</i> species' voltage — its cousins reach ~220 V, its own smaller organs are unmeasured. The mechanism transfers; the number waits.";
+    else if(key==="amp") s="Ampullae <b>on</b>: now you see what the ray reads — the prey's leaked field, millivolts in seawater, invisible a moment ago. The pores on its snout are ears for exactly this. At "+depth+" m, in the dark, this is how dinner is found.";
+    else s="The ray rests on the sand at <b>"+depth+" m</b>. Press discharge to see what it writes; turn the ampullae on to see what it reads.";
+    $("rayReadout").innerHTML=s;
+  }
+  function step(){
+    rings.forEach(function(rg){rg.r+=13; rg.a-=0.035;});
+    rings=rings.filter(function(rg){return rg.a>0;});
+    if(stunT>0){ stunT--; if(stunT===0) readout(); }
+    else {
+      prey.x+=prey.dir*prey.speed;
+      if(prey.x<540) prey.dir=1;
+      if(prey.x>910) prey.dir=-1;
+    }
+  }
+  function loop(){step();draw();requestAnimationFrame(loop);}
+  $("rayDepth").addEventListener("input",function(){
+    depth=parseInt(this.value,10);
+    $("rayDepthOut").textContent=depth+" m";
+    lastKey=""; readout();
+  });
+  $("rayDischarge").addEventListener("click",function(){
+    for(var i=0;i<5;i++) rings.push({r:20+i*18, a:0.9-i*0.12});
+    stunT=240; lastKey=""; readout();
+  });
+  $("rayAmpullae").addEventListener("click",function(){
+    ampullae=!ampullae;
+    this.textContent=ampullae?"ampullae: on":"ampullae: off";
+    this.classList.toggle("active",ampullae);
+    lastKey=""; readout();
   });
   readout(); loop();
 })();
-// ============ Exhibit I½: the frequency fingerprint ============
+
+// ============ Exhibit IX: the oldest compass ============
 (function(){
-  var cv=$("freqCanvas"), ctx=cv.getContext("2d");
+  var cv=$("bactCanvas"), ctx=cv.getContext("2d");
   var W=cv.width, H=cv.height;
-  var showModel=true, s=611, t=0;
-  var FMIN=10, FMAX=300, CUT=116;
-  function fOf(s){ return FMIN*Math.pow(FMAX/FMIN, s/1000); }
-  function xOf(f){ return 40 + (Math.log(f/FMIN)/Math.log(FMAX/FMIN))*(W-80); }
+  var N=14, cells=[], hemi="N", flipped=false, mutant=false, oxy=50, T=0;
+  function bandY(){ return H*(0.26+0.48*(oxy/100)); }
+  function fieldDir(){
+    // down + toward the pole: northern -> down-right, southern -> down-left;
+    // a true reversal inverts the whole vector, so the field points up instead
+    var s = hemi==="N" ? 1 : -1;
+    var a = 60*Math.PI/180; // inclination from horizontal
+    var d = {x: s*Math.cos(a), y: Math.sin(a)};
+    if(flipped){ d.x = -d.x; d.y = -d.y; }
+    return d;
+  }
+  function reset(){
+    cells=[]; T=0;
+    for(var i=0;i<N;i++){
+      cells.push({x: 60+Math.random()*(W-120), y: 40+Math.random()*(H-80),
+        a: Math.random()*Math.PI*2, sp: 1.1+Math.random()*0.7});
+    }
+  }
+  function step(){
+    T++;
+    var d=fieldDir(), by=bandY();
+    cells.forEach(function(c){
+      if(mutant){
+        c.a += (Math.random()-0.5)*0.9;
+      } else {
+        // above the band: too much oxygen, swim forward along the field (downward);
+        // below the band: too little, reverse and swim back up along the field
+        var forward = c.y < by;
+        var ta = Math.atan2(d.y, d.x) + (forward?0:Math.PI);
+        var diff = ta - c.a;
+        while(diff>Math.PI) diff-=2*Math.PI;
+        while(diff<-Math.PI) diff+=2*Math.PI;
+        c.a += diff*0.12;
+      }
+      c.x += Math.cos(c.a)*c.sp;
+      c.y += Math.sin(c.a)*c.sp;
+      if(c.x<16){c.x=16;c.a=Math.PI-c.a;}
+      if(c.x>W-16){c.x=W-16;c.a=Math.PI-c.a;}
+      if(c.y<16){c.y=16;c.a=-c.a;}
+      if(c.y>H-16){c.y=H-16;c.a=-c.a;}
+    });
+  }
   function draw(){
-    t+=0.05;
     ctx.clearRect(0,0,W,H);
+    // water column: oxygen-rich (pale) at top, starved (dark) at bottom
     var g=ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"#0b1032"); g.addColorStop(1,"#080c22");
+    g.addColorStop(0,"#16295c"); g.addColorStop(0.55,"#0d1838"); g.addColorStop(1,"#070b1e");
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-    var xCut=xOf(CUT);
-    // model zones
-    if(showModel){
-      ctx.fillStyle="rgba(224,101,138,.10)";
-      ctx.fillRect(xOf(FMIN),30,xCut-xOf(FMIN),H-170);
-      ctx.fillStyle="rgba(79,209,197,.08)";
-      ctx.fillRect(xCut,30,W-40-xCut,H-170);
-      ctx.save(); ctx.setLineDash([6,6]); ctx.strokeStyle="rgba(240,168,64,.7)"; ctx.lineWidth=1.6;
-      ctx.beginPath(); ctx.moveTo(xCut,30); ctx.lineTo(xCut,H-140); ctx.stroke(); ctx.restore();
-      ctx.fillStyle="rgba(240,168,64,.9)"; ctx.font="12px sans-serif";
-      ctx.fillText("model cut-off · 116 MHz", xCut-118, 44);
+    // transition-zone band
+    var by=bandY();
+    ctx.fillStyle="rgba(79,209,197,.14)";
+    ctx.fillRect(0,by-26,W,52);
+    ctx.strokeStyle="rgba(79,209,197,.45)"; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(0,by-26); ctx.lineTo(W,by-26); ctx.moveTo(0,by+26); ctx.lineTo(W,by+26); ctx.stroke();
+    ctx.fillStyle="rgba(79,209,197,.85)"; ctx.font="13px sans-serif";
+    ctx.fillText("oxic–anoxic transition zone", 18, by-34);
+    ctx.fillStyle="rgba(233,228,214,.65)";
+    ctx.fillText("oxygen-rich ↑", 18, 26);
+    ctx.fillText("oxygen-starved ↓", 18, H-14);
+    // field lines along the (possibly reversed) field direction
+    var d=fieldDir();
+    ctx.save(); ctx.strokeStyle="rgba(139,127,240,.28)"; ctx.lineWidth=1.2;
+    var px=-d.y, py=d.x; // perpendicular
+    for(var k=-6;k<=6;k++){
+      var ox=W/2+px*k*78, oy=H/2+py*k*78;
+      ctx.beginPath();
+      ctx.moveTo(ox-d.x*230, oy-d.y*230);
+      ctx.lineTo(ox+d.x*230, oy+d.y*230);
+      ctx.stroke();
+      // arrowhead at the downstream end
+      var ax=ox+d.x*180, ay=oy+d.y*180, aa=Math.atan2(d.y,d.x);
+      ctx.fillStyle="rgba(139,127,240,.5)";
+      ctx.beginPath();
+      ctx.moveTo(ax,ay);
+      ctx.lineTo(ax-11*Math.cos(aa-0.42), ay-11*Math.sin(aa-0.42));
+      ctx.lineTo(ax-11*Math.cos(aa+0.42), ay-11*Math.sin(aa+0.42));
+      ctx.closePath(); ctx.fill();
     }
-    // experimental bands
-    function band(lo,hi,color,label,ly){
-      ctx.fillStyle=color;
-      ctx.fillRect(xOf(lo),50,xOf(hi)-xOf(lo),H-190);
-      ctx.fillStyle="rgba(233,228,214,.8)"; ctx.font="12px sans-serif";
-      ctx.fillText(label, xOf(lo)-8, ly||64);
-    }
-    band(75,85,"rgba(224,101,138,.35)","75–85 MHz · 2022 · disoriented",64);
-    band(140,150,"rgba(79,209,197,.30)","140–150 MHz · 2023 · unaffected",64);
-    band(235,245,"rgba(79,209,197,.30)","235–245 MHz · 2023 · unaffected",92);
-    // axis
-    ctx.fillStyle="rgba(233,228,214,.65)"; ctx.font="12px sans-serif";
-    [10,20,50,100,200,300].forEach(function(f){ ctx.fillText(f+" MHz", xOf(f)-20, H-118); });
-    // test frequency marker
-    var f=fOf(s), xf=xOf(f);
-    ctx.strokeStyle="#f0a840"; ctx.lineWidth=2.5;
-    ctx.beginPath(); ctx.moveTo(xf,30); ctx.lineTo(xf,H-140); ctx.stroke();
-    // compass state
-    var broken = f <= CUT;
-    var cxp=W/2, cyp=H-66;
-    ctx.strokeStyle="rgba(139,127,240,.4)"; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.arc(cxp,cyp,40,0,7); ctx.stroke();
-    ctx.fillStyle="rgba(233,228,214,.7)"; ctx.font="13px sans-serif";
-    ctx.fillText("blackcap compass", cxp-56, cyp+62);
-    var ang = broken ? Math.sin(t*9)*2.4+Math.sin(t*23)*1.1 : Math.sin(t*1.4)*0.03;
-    ctx.save(); ctx.translate(cxp,cyp); ctx.rotate(ang);
-    ctx.fillStyle= broken ? "#e0658a" : "#4fd1c5";
-    ctx.beginPath(); ctx.moveTo(0,-34); ctx.lineTo(7,0); ctx.lineTo(-7,0); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="rgba(233,228,214,.4)";
-    ctx.beginPath(); ctx.moveTo(0,34); ctx.lineTo(7,0); ctx.lineTo(-7,0); ctx.closePath(); ctx.fill();
     ctx.restore();
+    ctx.fillStyle="rgba(139,127,240,.75)"; ctx.font="13px sans-serif";
+    var pole = hemi==="N" ? "N" : "S";
+    ctx.textAlign="right";
+    ctx.fillText(flipped ? "field reversed — now points up, out of the water column" : "field dips down toward " + pole, W-18, 26);
+    ctx.textAlign="left";
+    // cells
+    cells.forEach(function(c){
+      ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.a);
+      // flagellum
+      ctx.strokeStyle= mutant ? "rgba(150,150,170,.5)" : "rgba(79,209,197,.7)";
+      ctx.lineWidth=1.4; ctx.beginPath();
+      ctx.moveTo(-13,0);
+      ctx.quadraticCurveTo(-20, 4*Math.sin(T*0.3+c.x), -27, 3*Math.sin(T*0.3+c.x+1));
+      ctx.stroke();
+      // body
+      ctx.fillStyle= mutant ? "rgba(160,160,180,.75)" : "rgba(180,220,215,.9)";
+      ctx.beginPath(); ctx.ellipse(0,0,13,4.5,0,0,7); ctx.fill();
+      // magnetosome chain
+      if(!mutant){
+        ctx.fillStyle="#f0a840";
+        [-8,-4,0,4,8].forEach(function(dx){ ctx.beginPath(); ctx.arc(dx,0,1.8,0,7); ctx.fill(); });
+      }
+      ctx.restore();
+    });
   }
   function readout(){
-    var f=fOf(s);
-    $("freqOut").textContent = f<100 ? f.toFixed(1)+" MHz" : Math.round(f)+" MHz";
-    var s2;
-    if(f <= CUT) s2='<span class="warn">⚠ At <b>'+(f<100?f.toFixed(1):Math.round(f))+' MHz</b> the simulation says the FAD/TrpH pair feels it — and the blackcaps did: the 75–85 MHz band disoriented them (2022).</span> Compass lost.';
-    else s2='At <b>'+Math.round(f)+' MHz</b> the simulation says the radical pair is deaf — and the blackcaps stayed oriented, at 140–150 and 235–245 MHz (2023). Compass holds.';
-    if(showModel) s2+=' <span style="color:var(--ink-faint)">The 116 MHz line is the Hore group\'s Cry4 simulation: below it the pair is sensitive across ~1–120 MHz, the hyperfine-structure fingerprint; above it, quiet.</span>';
-    $("freqReadout").innerHTML=s2;
+    var by=bandY(), inBand=0;
+    cells.forEach(function(c){ if(Math.abs(c.y-by)<30) inBand++; });
+    var s = "<b>"+inBand+" of "+N+"</b> cells in the transition zone. ";
+    if(mutant) s += '<span class="warn">Magnetosomes removed (<i>mam</i> mutant): no needle, no alignment.</span> The cells wander; Brownian motion wins and the band never forms.';
+    else if(flipped) s += '<span class="warn">Field reversed: the needle still works — it points the wrong way.</span> Cells above the band now swim <i>up</i>, away from it; the band empties. They follow the field, not the oxygen — that is the kill condition, and it holds.';
+    else s += "Chain dipole ≈ 6×10<sup>−16</sup> A·m² in Earth's ~50 µT field: alignment energy ≈ 3×10<sup>−20</sup> J, about <b>8× kT</b> — enough to hold course against thermal buffeting. The field picks the line; the oxygen picks the direction.";
+    $("bactReadout").innerHTML=s;
   }
-  function loop(){ draw(); requestAnimationFrame(loop); }
-  $("freqSlider").addEventListener("input",function(e){ s=+e.target.value; readout(); });
-  $("freqModel").addEventListener("change",function(e){ showModel=e.target.checked; readout(); });
-  $("freqModel").checked=true; showModel=true;
-  readout(); loop();
+  function loop(){ step(); draw(); if(T%30===0) readout(); requestAnimationFrame(loop); }
+  function oxyLabel(){
+    $("bactOxyOut").textContent = oxy<25 ? "low" : oxy<60 ? "moderate" : "high";
+  }
+  $("bactOxy").addEventListener("input",function(e){ oxy=+e.target.value; oxyLabel(); readout(); });
+  document.querySelectorAll("[data-hemi]").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.querySelectorAll("[data-hemi]").forEach(function(x){x.classList.remove("active");});
+      b.classList.add("active"); hemi=b.dataset.hemi; readout();
+    });
+  });
+  $("bactFlip").addEventListener("click",function(){ flipped=!flipped;
+    $("bactFlip").classList.toggle("active",flipped);
+    $("bactFlip").textContent= flipped ? "⇅ field: reversed" : "⇅ reverse the field"; readout(); });
+  $("bactMutant").addEventListener("click",function(){ mutant=!mutant;
+    $("bactMutant").classList.toggle("active",mutant);
+    $("bactMutant").textContent= mutant ? "restore magnetosomes" : "remove magnetosomes"; readout(); });
+  reset(); oxyLabel(); readout(); loop();
 })();
-
 </script>
 </body>
 </html>

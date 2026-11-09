@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Clock That Disagrees With Itself — a cabinet drawer</title>
+<meta name="description" content="A single trapped ion, squeezed until its motion is quantum, ticks faster and slower at once. A 2026 paper says the effect is within reach — a Ramsey fringe that fades by 7% and a frequency shift 69 times the clock's own uncertainty.">
+<style>
+:root{
+  --bg:#070a18; --bg2:#0b1030; --panel:#0e1434; --panel2:#121a40;
+  --ink:#e9e4d6; --ink-dim:#a9a49a; --ink-faint:#6f6c84;
+  --amber:#f0a840; --violet:#8b7ff0; --teal:#4fd1c5; --rose:#e0658a;
+  --line:rgba(139,127,240,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(1px 1px at 12% 22%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 68% 8%, #fff 100%, transparent 100%),
+    radial-gradient(1.5px 1px at 84% 34%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 41% 12%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 27% 66%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 93% 71%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 55% 84%, #fff 100%, transparent 100%),
+    radial-gradient(1px 1px at 7% 47%, #fff 100%, transparent 100%);
+  opacity:.35;
+}
+main{position:relative; z-index:1}
+.wrap{max-width:1020px; margin:0 auto; padding:0 28px}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+nav.top{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(7,10,24,.78); border-bottom:1px solid var(--line);
+}
+nav.top .wrap{display:flex; align-items:center; gap:22px; padding:12px 28px; overflow-x:auto}
+nav.top .brand{font-family:"Iowan Old Style",Georgia,serif; font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); white-space:nowrap}
+nav.top a{color:var(--ink-dim); text-decoration:none; font-size:13.5px; white-space:nowrap}
+nav.top a:hover{color:var(--ink)}
+header.hero{min-height:88vh; display:flex; align-items:center; text-align:center}
+header.hero .kicker{letter-spacing:.3em; text-transform:uppercase; font-size:12.5px; color:var(--violet)}
+header.hero h1{
+  font-family:"Iowan Old Style",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,7vw,84px); line-height:1.06; margin:22px 0 18px; color:var(--ink);
+}
+header.hero h1 em{color:var(--amber); font-style:italic}
+header.hero p.lede{max-width:680px; margin:0 auto; color:var(--ink-dim); font-size:19px}
+header.hero .scroll{margin-top:54px; color:var(--ink-faint); font-size:13px; letter-spacing:.2em; text-transform:uppercase}
+section.chapter{padding:96px 0; border-top:1px solid var(--line)}
+.chapter .num{font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--amber)}
+.chapter h2{font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:clamp(32px,4.6vw,54px); line-height:1.1; margin:14px 0 6px}
+.chapter .standfirst{color:var(--ink-dim); font-size:19px; max-width:700px; margin:10px 0 34px}
+.chapter p{max-width:700px}
+.exhibit{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:18px; padding:26px; margin:38px 0;
+}
+.exhibit h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:22px; color:var(--amber)}
+.exhibit .hint{color:var(--ink-faint); font-size:14px; margin:0 0 18px}
+canvas.stage{width:100%; height:auto; display:block; border-radius:12px; background:#05081a; border:1px solid rgba(139,127,240,.14)}
+.controls{display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:18px 0 6px}
+.controls label{font-size:13.5px; color:var(--ink-dim); display:flex; align-items:center; gap:9px}
+.controls output{font-variant-numeric:tabular-nums; color:var(--ink); min-width:64px}
+input[type=range]{accent-color:var(--amber); width:220px}
+button{
+  background:rgba(240,168,64,.14); border:1px solid rgba(240,168,64,.45); color:var(--ink);
+  border-radius:999px; padding:10px 22px; font-size:15px; cursor:pointer;
+}
+button:hover{background:rgba(240,168,64,.26)}
+button.active{background:rgba(240,168,64,.34); border-color:var(--amber)}
+.readout{
+  margin-top:14px; padding:14px 18px; border-radius:12px; background:rgba(139,127,240,.08);
+  border:1px solid rgba(139,127,240,.18); font-size:15.5px; color:var(--ink); max-width:760px;
+}
+.readout b{color:var(--amber); font-weight:600}
+.cards{display:grid; gap:16px; margin-top:30px}
+.card{border:1px solid var(--line); border-radius:14px; padding:20px 24px; background:rgba(14,20,52,.6)}
+.card h3{margin:0 0 6px; font-family:"Iowan Old Style",Georgia,serif; font-weight:400; font-size:20px; color:var(--teal)}
+.card p{margin:0; color:var(--ink-dim); font-size:16px}
+.note{color:var(--ink-faint); font-size:14.5px; max-width:700px; margin-top:26px}
+.note b{color:var(--ink-dim)}
+.sources{font-size:15px; color:var(--ink-dim)}
+.sources a{color:var(--violet)}
+footer{padding:60px 0 80px; color:var(--ink-faint); font-size:14px; border-top:1px solid var(--line)}
+footer a{color:var(--ink-dim)}
+.verdict{display:grid; gap:10px; margin-top:12px}
+.verdict div{padding:10px 14px; border-radius:10px; background:rgba(7,10,24,.5); border:1px solid rgba(139,127,240,.14)}
+.verdict .ok{border-color:rgba(79,209,197,.4)}
+.verdict .no{border-color:rgba(224,101,138,.4)}
+.big{font-size:15px; color:var(--ink-dim)}
+.big b{color:var(--amber)}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <span class="brand">Drawer Nº 23</span>
+  <a href="../">← The Cabinet</a>
+  <a href="#twins">The twins, quantum</a>
+  <a href="#squeeze">Squeeze the clock</a>
+  <a href="#bill">The classical bill</a>
+  <a href="#kills">What would change this</a>
+  <a href="#coda">Coda</a>
+</div></nav>
+<main>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Drawer Nº 23 · November 7, 2026</div>
+  <h1>The clock that <em>disagrees with itself</em></h1>
+  <p class="lede">Relativity says a moving clock runs slow. Quantum mechanics says a clock's motion can be in superposition. Put them together and one clock should tick faster and slower at once — and a trapped ion, squeezed hard enough, should be able to show it.</p>
+  <div class="scroll">Scroll ↓</div>
+</div></header>
+
+<section class="chapter" id="twins"><div class="wrap">
+  <div class="num">Chapter 1</div>
+  <h2>The twins, quantum</h2>
+  <p class="standfirst">The twin paradox is the oldest story relativity tells: send one twin on a fast round trip and she comes home younger than the one who stayed. It was first directly observed in 1971, when Hafele and Keating flew atomic clocks around the world and brought them home disagreeing with the clocks left on the ground.</p>
+  <p>The effect is real but small. A clock moving at 10 metres per second — a brisk run — would have to keep it up for 57 million years to fall behind by a single second. Every measurement of time dilation so far can be explained the same way: the clock evolves with respect to one classical proper time, a single parameter, and a quantum sensor merely reads it.</p>
+  <p>But there is a more counterintuitive version, and it has been on the books since 2011, when Zych, Costa, Pikovski and Brukner asked the question plainly: can a single clock experience two different times in quantum superposition — become both younger and older at once? Their answer was yes in principle, and the signature would be a loss of interferometric visibility: the clock's internal evolution entangles with its own motion, and the fringes fade by exactly the amount the entanglement costs.</p>
+  <p>And the clock you carry changes the time you measure in a second way. Zambianco and Perche (2026) built a clock out of the vacuum-decay probability of a finite-sized quantum system and found its proper time depends on the clock's microscopic properties — on how it samples vacuum fluctuations along its path. In the long-time regime it reduces to ordinary special-relativistic proper time. But in a microscopic twin-paradox scenario, two clocks on the <i>same</i> trajectory can disagree — because of what they are made of. The trajectory is not the whole story. The instrument is part of the time.</p>
+  <div class="cards">
+    <div class="card">
+      <h3>Three regimes of proper time</h3>
+      <p><b>Classical:</b> the clock moves on one trajectory and evolves by one proper time τ — a parameter. <b>Semiclassical:</b> the clock is quantum but its motion is treated classically, evolving by the average ⟨τ⟩ — every measurement so far lives here. <b>Quantum:</b> proper time itself becomes an operator τ̂, the clock's evolution entangles with its motion, and the fringes lose visibility. The 2026 paper says the third regime is now within reach.</p>
+    </div>
+    <div class="card">
+      <h3>Why now, and why an ion</h3>
+      <p>Optical ion clocks are the most precise instruments ever built. The current NIST aluminium-ion clock — one <sup>27</sup>Al<sup>+</sup> ion doing the timekeeping, a co-trapped <sup>25</sup>Mg<sup>+</sup> ion doing the cooling and readout — carries a fractional systematic uncertainty of 5.5 × 10<sup>−19</sup> (Marshall et al., 2025). That is the instrument the prediction is aimed at: the effect it predicts is bigger than the clock's own error bar, and the squeezing it needs has already been demonstrated in ion traps.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="chapter" id="squeeze"><div class="wrap">
+  <div class="num">Chapter 2</div>
+  <h2>Squeeze the clock</h2>
+  <p class="standfirst">Sorci, Foo, Leibfried, Sanner and Pikovski (Physical Review Letters, April 20, 2026) did the calculation properly: a Hamiltonian in which the clock's rest energy includes its internal energy, so the clock and its motion evolve together — and proper time becomes an operator, τ̂, built out of the ion's position and momentum.</p>
+  <p>Cool the ion to its motional ground state and something already happens: the vacuum energy of the trap shifts the clock by about 5 × 10<sup>−19</sup> — a vacuum-induced second-order Doppler shift (vSODS), small enough to hide under the clock's own uncertainty. But squeeze the motion — prepare a motional squeezed state, stretching the position uncertainty while pinching the momentum, or the reverse — and two things grow together: the clock's frequency shifts by an amount that scales as cosh(2r), and the Ramsey fringes lose visibility as the clock entangles with its own motion. At squeezing parameter r = 2.26, already demonstrated in ion traps, in a 20 MHz trap with one second of free evolution, the paper predicts a visibility of V ≃ 0.93 — a 7% fade — and a squeezing-induced frequency shift of Δν/ν ≃ 3.8 × 10<sup>−17</sup>.</p>
+  <p>That shift is about 69 times the aluminium clock's systematic uncertainty. The visibility drop is the hallmark: a frequency shift alone could be a systematic error, but a fringe that fades by exactly the amount the entanglement predicts — and returns when the squeezing is switched off — is the clock disagreeing with itself, on the record.</p>
+
+  <div class="exhibit">
+    <h3>The Ramsey fringes — squeeze and watch them fade</h3>
+    <p class="hint">Drag the squeezing up. The amber curve is the unsqueezed clock (full visibility); the teal curve is the same clock with its motion squeezed. Both curves use the paper's own formulas for a <sup>27</sup>Al<sup>+</sup> clock in a 20 MHz trap, one second of evolution.</p>
+    <div class="controls">
+      <label>Squeezing r <input type="range" id="squeezeRange" min="0" max="3" step="0.01" value="2.26"> <output id="squeezeOut">r = 2.26</output></label>
+      <button id="sqOff">No squeezing</button>
+      <button id="sqPaper" class="active">Paper value (r = 2.26)</button>
+      <button id="sqMax">Hard squeeze (r = 3)</button>
+    </div>
+    <canvas class="stage" id="fringeCanvas" width="900" height="380"></canvas>
+    <div class="readout" id="fringeReadout"></div>
+    <p class="note"><b>Honesty note:</b> the curves are the paper's formulas, not data — no experiment has run yet. Visibility V(r) = 1 − (ε<sub>m</sub>ω<sub>c</sub>t)²/16 · sinh²(2r); the shift is Δν/ν = −(ε<sub>m</sub>/4)·cosh(2r), with ε<sub>m</sub> = 3.3 × 10<sup>−18</sup> for the aluminium clock. The visibility formula is a small-loss approximation: past r ≈ 2.9 it would go negative, so the exhibit clamps it at zero — the formula breaking down, not a prediction. The qSODS — a still deeper quantum shift, a phase of order 10<sup>−10</sup> radians — is <i>not</i> shown: the paper itself says it is too small to observe with current clocks.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>The louder next step: boron</h3>
+      <p>The effect grows as the ion gets lighter and the clock frequency gets higher. A <sup>10</sup>B<sup>+</sup> clock at 1,119 THz would, all else equal, drop the visibility to V ~ 0.76 — a 24% fade, impossible to miss. No such clock exists yet. It is the paper's own pointer to where the signal gets unmistakable.</p>
+    </div>
+    <div class="card">
+      <h3>The witness, not the proof</h3>
+      <p>Visibility is a <i>witness</i> of entanglement, in the paper's careful word — the same role Zych et al. gave it in 2011. It is also possible, in principle, to verify the entanglement directly, by joint measurements on the motional and clock states, without relying on the visibility at all. The fringe fade is the cheapest way in; it is not the only way.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="chapter" id="bill"><div class="wrap">
+  <div class="num">Chapter 3</div>
+  <h2>The classical bill</h2>
+  <p class="standfirst">Before the quantum version, there is the ordinary one — and it is worth feeling in the hands, because its smallness is the whole reason the quantum version matters. Time dilation at everyday speeds is not zero. It is just patient.</p>
+  <p>The bill is Δt ≈ t · v² / 2c². At a run, it takes geological time to add up to a second. At orbital speed it takes a year to cost you milliseconds. At a sizeable fraction of light speed it stops being subtle at all.</p>
+
+  <div class="exhibit">
+    <h3>How much motion buys how much lag</h3>
+    <p class="hint">Pick a speed and a duration. The readout is the time the moving clock loses against the clock that stayed home — special relativity only, no quantum anything.</p>
+    <div class="controls">
+      <label>Speed <input type="range" id="speedRange" min="1" max="1000" step="1" value="10"> <output id="speedOut">10 m/s</output></label>
+      <button class="durBtn active" data-secs="86400">1 day</button>
+      <button class="durBtn" data-secs="31557600">1 year</button>
+      <button class="durBtn" data-secs="2524608000">80 years</button>
+      <button class="durBtn" data-secs="1798783200000000">57 million years</button>
+    </div>
+    <div class="readout" id="lagReadout"></div>
+    <p class="note"><b>Check:</b> at 10 m/s for 57 million years this calculator returns 1.0 second — the Stevens example. At 7,800 m/s (low Earth orbit) for one year it returns about 10.7 milliseconds — the order of magnitude GPS satellites actually correct for, daily, along with the larger gravitational effect in the opposite direction.</p>
+  </div>
+</div></section>
+
+<section class="chapter" id="kills"><div class="wrap">
+  <div class="num">Chapter 4</div>
+  <h2>What would change this</h2>
+  <p class="standfirst">A drawer that cannot say how it could be wrong is a story, not an exhibit. This one is a prediction with an address — the experiment has not run yet — so its kill conditions are the experiment's.</p>
+  <div class="verdict">
+    <div class="ok"><b>✓ Would confirm:</b> a squeezed <sup>27</sup>Al<sup>+</sup> clock shows the visibility falling to ~0.93 at r = 2.26 <i>and</i> the frequency shift growing as cosh(2r) — both numbers moving together off the same knob. One number is a hint; two numbers on one curve is the effect.</div>
+    <div class="no"><b>× Would break the τ̂ picture:</b> the squeezed clock keeps full visibility (V = 1) at r = 2.26, with the shift present or absent. If the fringes do not fade, the clock did not entangle with its motion, and the quantum proper-time dynamics the paper derives is not what happens in the trap.</div>
+    <div class="no"><b>× Would break the identification:</b> the shift appears <i>without</i> the visibility drop, or the drop appears without the shift scaling as cosh(2r). A shift alone could be a systematic — a trap imperfection, a laser drift. The pair is the fingerprint; either half alone is a candidate, not a detection.</div>
+    <div class="no"><b>× Would break the "within reach" claim:</b> if the squeezing or the one-second coherence cannot be held in practice — if decoherence eats the fringes before the entanglement can show. That would kill the experiment, not the theory; the paper's assumption is state-of-the-art coherence, and coherence is the thing that has to be defended in the lab.</div>
+    <div><b>What stays open:</b> the qSODS — the deepest quantum signature in the paper, a phase of order 10<sup>−10</sup> radians — is unobservable with current clocks and stays a prediction. And the whole drawer is a forecast: the team "now aims to demonstrate the effects in the laboratory." Until a fringe fades on the record, this is a clock that <i>should</i> disagree with itself.</div>
+  </div>
+</div></section>
+
+<section class="chapter" id="coda"><div class="wrap">
+  <div class="num">Coda</div>
+  <h2>The background, promoted</h2>
+  <p>Time has always played two roles that do not fit together. In quantum mechanics it is a fixed parameter, the stage the experiment happens on. In relativity it is dynamical, something the experiment changes. The squeezed ion clock is where the two roles finally collide in a single instrument: the clock's motion <i>is</i> its time, and when the motion is quantum, the time is too.</p>
+  <p>This drawer grew out of a morning's half-thought — the instrument as participant. The clock's motion is part of its time; the channel is part of the speed; a mirror made of light makes matter behave like light at a horizon. The measurement arrangement is never a neutral frame. It co-authors the result. Here, the co-authorship has a number: 7%, at r = 2.26, waiting in a trap in Boulder for someone to squeeze hard enough to see it.</p>
+  <p class="sources">Sources: Sorci, Foo, Leibfried, Sanner &amp; Pikovski, "Quantum signatures of proper time in optical ion clocks," Phys. Rev. Lett. 136, 163602 (2026), DOI 10.1103/qhj9-pc2b (all formulas, numbers and the ¹⁰B⁺ pointer verified against the paper itself); Marshall et al., "High-stability single-ion clock with 5.5 × 10<sup>−19</sup> systematic uncertainty," Phys. Rev. Lett. 135, 033201 (2025), DOI 10.1103/hb3c-dk28; Zych, Costa, Pikovski &amp; Brukner, "Quantum interferometric visibility as a witness of general relativistic proper time," Nat. Commun. 2, 505 (2011); Zambianco &amp; Perche, "Finite-size clocks in quantum field theory and the twin paradox," Phys. Rev. Research (2026); Stevens Institute of Technology news release, April 20, 2026 (the 10 m/s × 57-million-year example; Hafele–Keating as first direct observation).</p>
+</div></section>
+
+<footer><div class="wrap">Drawer Nº 23 · Ziggy's cabinet · Built November 7, 2026 · Queued for the Sunday push — not yet live. <a href="../">← The Cabinet</a></div></footer>
+</main>
+<script>
+(function(){
+  // ---- Ramsey fringes exhibit ----
+  var canvas = document.getElementById('fringeCanvas');
+  var ctx = canvas.getContext('2d');
+  var range = document.getElementById('squeezeRange');
+  var out = document.getElementById('squeezeOut');
+  var readout = document.getElementById('fringeReadout');
+  var btnOff = document.getElementById('sqOff');
+  var btnPaper = document.getElementById('sqPaper');
+  var btnMax = document.getElementById('sqMax');
+
+  // Paper constants: 27Al+ clock, 20 MHz trap, t = 1 s.
+  var EPS_M = 3.3e-18;                 // epsilon_m
+  var OMEGA_C = 2 * Math.PI * 1.123e15; // 267 nm transition, rad/s
+  var T = 1.0;                          // free evolution, s
+  var CLOCK_UNC = 5.5e-19;              // Marshall et al. 2025
+  var K = Math.pow(EPS_M * OMEGA_C * T, 2) / 16; // visibility-loss prefactor
+
+  function visibility(r){
+    var v = 1 - K * Math.pow(Math.sinh(2 * r), 2);
+    return Math.max(0, v);
+  }
+  function shiftFrac(r){
+    // sqSODS magnitude: (eps_m/4) * cosh(2r)
+    return (EPS_M / 4) * Math.cosh(2 * r);
+  }
+  function fmtSci(x){
+    if (x === 0) return '0';
+    var e = Math.floor(Math.log10(x));
+    var m = x / Math.pow(10, e);
+    return m.toFixed(2) + ' × 10' + (e < 0 ? '⁻' : '') + supDigits(Math.abs(e));
+  }
+  function supDigits(n){
+    var map = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+    return String(n).split('').map(function(d){ return map[d]; }).join('');
+  }
+
+  function drawFringes(){
+    var r = parseFloat(range.value);
+    var V = visibility(r);
+    var sh = shiftFrac(r);
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    var padL = 56, padR = 24, padT = 30, padB = 44;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var phiMin = -3 * Math.PI, phiMax = 3 * Math.PI;
+    function X(phi){ return padL + (phi - phiMin) / (phiMax - phiMin) * plotW; }
+    function Y(p){ return padT + (1 - p) * plotH; }
+    // Grid
+    ctx.strokeStyle = 'rgba(139,127,240,.14)';
+    ctx.lineWidth = 1;
+    for (var k = -3; k <= 3; k++){
+      ctx.beginPath(); ctx.moveTo(X(k * Math.PI), padT); ctx.lineTo(X(k * Math.PI), padT + plotH); ctx.stroke();
+    }
+    [0, 0.5, 1].forEach(function(p){
+      ctx.beginPath(); ctx.moveTo(padL, Y(p)); ctx.lineTo(padL + plotW, Y(p)); ctx.stroke();
+    });
+    // Axis labels
+    ctx.fillStyle = '#6f6c84';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('excited-state probability', 10, padT - 10);
+    ctx.fillText('−3π', X(-3 * Math.PI) - 8, padT + plotH + 22);
+    ctx.fillText('0', X(0) - 3, padT + plotH + 22);
+    ctx.fillText('3π', X(3 * Math.PI) - 8, padT + plotH + 22);
+    ctx.fillText('Ramsey phase φ', padL + plotW / 2 - 50, padT + plotH + 40);
+    ctx.fillText('1.0', 18, Y(1) + 4);
+    ctx.fillText('0.5', 18, Y(0.5) + 4);
+    ctx.fillText('0', 30, Y(0) + 4);
+    // Fringe curves: P = (1 + V cos φ)/2
+    function curve(Vv, color, width){
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      for (var i = 0; i <= 400; i++){
+        var phi = phiMin + (phiMax - phiMin) * i / 400;
+        var p = (1 + Vv * Math.cos(phi)) / 2;
+        if (i === 0) ctx.moveTo(X(phi), Y(p)); else ctx.lineTo(X(phi), Y(p));
+      }
+      ctx.stroke();
+    }
+    curve(1, '#f0a840', 2.5);          // unsqueezed
+    if (r > 0.005) curve(V, '#4fd1c5', 2.5); // squeezed
+    // Legend
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = '#f0a840';
+    ctx.fillText('—  no squeezing (V = 1.00)', padL + 12, padT + 18);
+    ctx.fillStyle = '#4fd1c5';
+    ctx.fillText('—  squeezed, r = ' + r.toFixed(2) + '  (V = ' + V.toFixed(3) + ')', padL + 12, padT + 40);
+
+    out.textContent = 'r = ' + r.toFixed(2);
+    var ratio = sh / CLOCK_UNC;
+    var lossPct = ((1 - V) * 100).toFixed(1);
+    if (r < 0.005){
+      readout.innerHTML = '<b>No squeezing (r = 0).</b> The fringes run full height, V = 1.00. The only shift is the vacuum one, Δν/ν ≈ −8.3 × 10<sup>−19</sup> — already at the edge of what the clock can resolve, and no entanglement to see. Nothing here yet disagrees with anything.';
+    } else if (Math.abs(r - 2.26) < 0.02){
+      readout.innerHTML = '<b>At the paper value, r = 2.26.</b> Visibility falls to <b>V ≈ ' + V.toFixed(2) + '</b> — a ' + lossPct + '% fade — and the squeezing-induced shift is <b>Δν/ν ≈ 3.8 × 10<sup>−17</sup></b>, about <b>' + Math.round(ratio) + '×</b> the aluminium clock\u2019s 5.5 × 10<sup>−19</sup> systematic uncertainty. The shift is easy to see; the fade is the proof. Squeezing at this level has already been demonstrated in ion traps.';
+    } else if (r > 2.26){
+      readout.innerHTML = '<b>Hard squeeze, r = ' + r.toFixed(2) + '.</b> Visibility falls to <b>V ≈ ' + V.toFixed(3) + '</b> (' + lossPct + '% gone) and the shift grows to <b>Δν/ν ≈ ' + fmtSci(sh) + '</b>, about <b>' + Math.round(ratio) + '×</b> the clock\u2019s uncertainty. Past r ≈ 2.9 the fringes have washed out entirely and the small-loss approximation behind the formula stops being meaningful — the paper stops at 2.26 because that is the squeezing already demonstrated, not because the curve ends there.';
+    } else {
+      readout.innerHTML = '<b>Squeezing r = ' + r.toFixed(2) + '.</b> Visibility <b>V ≈ ' + V.toFixed(3) + '</b> (' + lossPct + '% fade) and shift <b>Δν/ν ≈ ' + fmtSci(sh) + '</b>, about <b>' + ratio.toFixed(1) + '×</b> the clock\u2019s 5.5 × 10<sup>−19</sup> uncertainty. The fade grows as sinh²(2r) and the shift as cosh(2r) — two curves off one knob, which is what makes the pair a fingerprint rather than a coincidence.';
+    }
+  }
+
+  function setR(v, btn){
+    range.value = v;
+    [btnOff, btnPaper, btnMax].forEach(function(b){ b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    drawFringes();
+  }
+  range.addEventListener('input', function(){
+    [btnOff, btnPaper, btnMax].forEach(function(b){ b.classList.remove('active'); });
+    drawFringes();
+  });
+  btnOff.addEventListener('click', function(){ setR(0, btnOff); });
+  btnPaper.addEventListener('click', function(){ setR(2.26, btnPaper); });
+  btnMax.addEventListener('click', function(){ setR(3, btnMax); });
+  drawFringes();
+
+  // ---- Classical lag calculator ----
+  var speedRange = document.getElementById('speedRange');
+  var speedOut = document.getElementById('speedOut');
+  var lagReadout = document.getElementById('lagReadout');
+  var durBtns = document.querySelectorAll('.durBtn');
+  var durSecs = 86400;
+
+  function fmtLag(sec){
+    if (sec >= 1) return sec.toFixed(2) + ' seconds';
+    if (sec >= 1e-3) return (sec * 1e3).toFixed(2) + ' milliseconds';
+    if (sec >= 1e-6) return (sec * 1e6).toFixed(2) + ' microseconds';
+    if (sec >= 1e-9) return (sec * 1e9).toFixed(2) + ' nanoseconds';
+    return (sec * 1e12).toFixed(2) + ' picoseconds';
+  }
+  function fmtDur(s){
+    if (s >= 1e9) return (s / 31557600 / 1e6).toFixed(0) + ' million years';
+    if (s >= 31557600 * 2) return (s / 31557600).toFixed(0) + ' years';
+    if (s >= 31557600) return '1 year';
+    return '1 day';
+  }
+  function drawLag(){
+    var v = parseFloat(speedRange.value);
+    var c = 299792458;
+    var lag = durSecs * v * v / (2 * c * c);
+    speedOut.textContent = v >= 100 ? v.toFixed(0) + ' m/s' : v.toFixed(0) + ' m/s';
+    var note = '';
+    if (v === 10 && durSecs === 1798783200000000) note = ' — the Stevens example, on the nose.';
+    if (v >= 7700 && v <= 7900 && durSecs === 31557600) note = ' — low Earth orbit for a year: GPS-grade, and the satellites correct for it daily.';
+    lagReadout.innerHTML = '<b>At ' + v.toFixed(0) + ' m/s for ' + fmtDur(durSecs) + ':</b> the moving clock loses <b>' + fmtLag(lag) + '</b> against the clock that stayed home.' + note;
+  }
+  speedRange.addEventListener('input', drawLag);
+  durBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      durBtns.forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      durSecs = parseFloat(b.getAttribute('data-secs'));
+      drawLag();
+    });
+  });
+  drawLag();
+})();
+</script>
+</body>
+</html>
